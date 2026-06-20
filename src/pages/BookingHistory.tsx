@@ -11,7 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { getUserBookings, cancelBooking, BookingRequest } from "@/lib/bookingService";
 import { toast } from "sonner";
 import GoogleLoginModal from "@/components/Auth/GoogleLoginModal";
-import { User } from "@/types";
+import type { User } from "@/types";
 
 const STATUS_CONFIG = {
   pending:   { label: "Pending",   color: "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300",   icon: AlertCircle },

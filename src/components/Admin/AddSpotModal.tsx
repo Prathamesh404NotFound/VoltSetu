@@ -123,7 +123,7 @@ export default function AddSpotModal({ isOpen, onClose, onSuccess }: AddSpotModa
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [users, setUsers] = useState<any[]>([]);
 
-  const totalSteps = 3;
+  const totalSteps = 4;
   const progress = (currentStep / totalSteps) * 100;
 
   useEffect(() => {
@@ -433,7 +433,7 @@ export default function AddSpotModal({ isOpen, onClose, onSuccess }: AddSpotModa
           </div>
         );
 
-      case 2:
+      case 3:
         return (
           <div className="space-y-6">
             <div>
@@ -472,7 +472,7 @@ export default function AddSpotModal({ isOpen, onClose, onSuccess }: AddSpotModa
           </div>
         );
 
-      case 3:
+      case 4:
         return (
           <div className="space-y-6">
             <div>

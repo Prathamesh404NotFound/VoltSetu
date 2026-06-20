@@ -12,7 +12,7 @@ import { getHostEarnings, EarningsSummary } from "@/lib/earningsService";
 import { toast } from "sonner";
 import GoogleLoginModal from "@/components/Auth/GoogleLoginModal";
 import HostRegistrationModal from "@/components/HostRegistration/HostRegistrationModal";
-import { User } from "@/types";
+import type { User } from "@/types";
 
 export default function Earnings() {
   const { user } = useAuth() as { user: User | null };

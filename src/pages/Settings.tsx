@@ -13,7 +13,7 @@ import { toast } from "sonner";
 import { updateProfile } from "firebase/auth";
 import { auth } from "@/lib/firebase-services";
 import GoogleLoginModal from "@/components/Auth/GoogleLoginModal";
-import { User } from "@/types";
+import type { User } from "@/types";
 
 export default function Settings() {
   const { user, logout } = useAuth() as { user: User | null; logout: () => Promise<void> };
