@@ -11,6 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { getUserBookings, cancelBooking, BookingRequest } from "@/lib/bookingService";
 import { toast } from "sonner";
 import GoogleLoginModal from "@/components/Auth/GoogleLoginModal";
+import { User } from "@/types";
 
 const STATUS_CONFIG = {
   pending:   { label: "Pending",   color: "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300",   icon: AlertCircle },
@@ -23,7 +24,7 @@ const STATUS_CONFIG = {
 const FILTERS = ["All", "Pending", "Approved", "Completed", "Cancelled", "Rejected"];
 
 export default function BookingHistory() {
-  const { user } = useAuth();
+  const { user } = useAuth() as { user: User | null };
   const [bookings, setBookings] = useState<BookingRequest[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("All");
@@ -32,7 +33,7 @@ export default function BookingHistory() {
 
   useEffect(() => {
     if (!user) { setLoading(false); return; }
-    getUserBookings(user.uid)
+    getUserBookings(user.id)
       .then(setBookings)
       .catch(() => toast.error("Failed to load booking history"))
       .finally(() => setLoading(false));
@@ -42,7 +43,7 @@ export default function BookingHistory() {
     if (!user) return;
     setCancelling(booking.id);
     try {
-      await cancelBooking(user.uid, booking.id);
+      await cancelBooking(user.id, booking.id);
       setBookings(prev => prev.map(b => b.id === booking.id ? { ...b, status: "cancelled" } : b));
       toast.success("Booking cancelled.");
     } catch {

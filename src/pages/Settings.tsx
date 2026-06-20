@@ -13,9 +13,10 @@ import { toast } from "sonner";
 import { updateProfile } from "firebase/auth";
 import { auth } from "@/lib/firebase-services";
 import GoogleLoginModal from "@/components/Auth/GoogleLoginModal";
+import { User } from "@/types";
 
 export default function Settings() {
-  const { user, logout } = useAuth();
+  const { user, logout } = useAuth() as { user: User | null; logout: () => Promise<void> };
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -31,7 +32,7 @@ export default function Settings() {
 
   useEffect(() => {
     if (!user) { setLoading(false); return; }
-    getUserProfile(user.uid)
+    getUserProfile(user.id)
       .then((p) => {
         setProfile(p);
         setDisplayName(p.displayName || user.displayName || "");
@@ -51,7 +52,7 @@ export default function Settings() {
         await updateProfile(auth.currentUser, { displayName });
       }
       // Update RTDB profile
-      await updateUserProfile(user.uid, { displayName, phone });
+      await updateUserProfile(user.id, { displayName, phone });
       toast.success("Profile updated successfully!");
     } catch {
       toast.error("Failed to save profile. Please try again.");
@@ -64,7 +65,7 @@ export default function Settings() {
     if (!user) return;
     setSaving(true);
     try {
-      await updateNotificationPrefs(user.uid, notifPrefs);
+      await updateNotificationPrefs(user.id, notifPrefs);
       toast.success("Notification preferences saved!");
     } catch {
       toast.error("Failed to save preferences.");

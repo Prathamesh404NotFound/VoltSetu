@@ -1,5 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Search, MapPin, Filter, SlidersHorizontal, BadgeCheck, Zap, Loader2 } from "lucide-react";
+import { calculateDistanceKm } from "@/lib/utils";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
 import SpotCard from "@/components/SpotCard";
 import BookingModal from "@/components/BookingModal";
@@ -17,6 +18,9 @@ export default function FindSpots() {
   const [spots, setSpots] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedSpot, setSelectedSpot] = useState<any | null>(null);
+  const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
+  const [locationLoading, setLocationLoading] = useState(true);
+  const [locationError, setLocationError] = useState<string | null>(null);
 
   useEffect(() => {
     getAllChargingSpots()
@@ -32,25 +36,104 @@ export default function FindSpots() {
       });
   }, []);
 
-  const filteredSpots = spots.filter((spot) => {
-    // text search
-    if (searchQuery.trim()) {
-      const query = searchQuery.toLowerCase();
-      if (!spot.name?.toLowerCase().includes(query) && 
-          !spot.city?.toLowerCase().includes(query) && 
-          !spot.address?.toLowerCase().includes(query)) {
-        return false;
+  // Fetch user location on mount
+  useEffect(() => {
+    if (!navigator.geolocation) {
+      setLocationError("Geolocation not supported");
+      setLocationLoading(false);
+      return;
+    }
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        setUserLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude });
+        setLocationLoading(false);
+      },
+      (err) => {
+        console.error(err);
+        setLocationError(err.message);
+        setLocationLoading(false);
       }
+    );
+  }, []);
+  // Helper to parse time strings like "8:00 AM - 11:00 PM"
+  function parseTimeRange(range: string): { start: number; end: number } | null {
+    const parts = range.split("-").map(p => p.trim());
+    if (parts.length !== 2) return null;
+    const toMinutes = (t: string): number => {
+      const match = t.match(/(\d{1,2}):(\d{2})\s*(AM|PM)/i);
+      if (!match) return 0;
+      let hour = parseInt(match[1], 10);
+      const minute = parseInt(match[2], 10);
+      const period = match[3].toUpperCase();
+      if (period === "PM" && hour !== 12) hour += 12;
+      if (period === "AM" && hour === 12) hour = 0;
+      return hour * 60 + minute;
+    };
+    const start = toMinutes(parts[0]);
+    const end = toMinutes(parts[1]);
+    return { start, end };
+  }
+
+  function isSpotOpen(availableHours: string | undefined): boolean {
+    if (!availableHours) return true; // assume always open if not specified
+    const range = parseTimeRange(availableHours);
+    if (!range) return true;
+    const now = new Date();
+    const nowMins = now.getHours() * 60 + now.getMinutes();
+    if (range.start <= range.end) {
+      return nowMins >= range.start && nowMins <= range.end;
+    } else {
+      // overnight range
+      return nowMins >= range.start || nowMins <= range.end;
+    }
+  }
+
+  // Compute spots with distance if user location is available
+  const spotsWithDistance = spots.map((spot) => {
+    let distance: number | null = null;
+    if (userLocation && spot.coordinates) {
+      distance = calculateDistanceKm(
+        userLocation.lat,
+        userLocation.lng,
+        spot.coordinates.lat,
+        spot.coordinates.lng
+      );
+    }
+    return { ...spot, distance };
+  });
+
+  // Apply filters and sorting
+  const filteredSpots = useMemo(() => {
+    let result = spotsWithDistance.filter((spot) => {
+      // text search
+      if (searchQuery.trim()) {
+        const query = searchQuery.toLowerCase();
+        if (
+          !spot.name?.toLowerCase().includes(query) &&
+          !spot.city?.toLowerCase().includes(query) &&
+          !spot.address?.toLowerCase().includes(query)
+        ) {
+          return false;
+        }
+      }
+
+      // categorization filters
+      if (activeFilter === "Open Now") return isSpotOpen(spot.availableHours);
+      if (activeFilter === "Verified") return spot.isVerified;
+      if (activeFilter === "Under Rs 50") return spot.pricePerHour < 50;
+      if (activeFilter === "Top Rated") return spot.rating >= 4.5;
+      // "Nearest" filter will be handled by sorting below
+      return true;
+    });
+
+    if (activeFilter === "Nearest" && userLocation) {
+      result = result
+        .filter((s) => s.distance !== null)
+        .sort((a, b) => (a.distance as number) - (b.distance as number));
     }
 
-    // categorization filters
-    if (activeFilter === "Open Now") return true; // assuming all are open for MVP since we don't track live open/closed
-    if (activeFilter === "Verified") return spot.isVerified;
-    if (activeFilter === "Under Rs 50") return spot.pricePerHour < 50;
-    if (activeFilter === "Top Rated") return spot.rating >= 4.5;
-    if (activeFilter === "Nearest") return true; // mock nearest for MVP
-    return true;
-  });
+    return result;
+  }, [spotsWithDistance, searchQuery, activeFilter, userLocation]);
 
   return (
     <div className="pt-24">
@@ -96,8 +179,8 @@ export default function FindSpots() {
                 key={f}
                 onClick={() => setActiveFilter(f)}
                 className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all ${activeFilter === f
-                    ? "bg-primary text-primary-foreground shadow-md"
-                    : "bg-card border border-border text-muted-foreground hover:bg-muted"
+                  ? "bg-primary text-primary-foreground shadow-md"
+                  : "bg-card border border-border text-muted-foreground hover:bg-muted"
                   }`}
               >
                 {f}
@@ -129,16 +212,16 @@ export default function FindSpots() {
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {filteredSpots.map((spot, i) => (
                   <div key={spot.id || i} className="reveal" style={{ transitionDelay: `${Math.min(i, 10) * 0.05}s` }}>
-                    <SpotCard 
+                    <SpotCard
                       id={spot.id}
                       name={spot.name}
                       host={spot.hostName}
                       hostPhone={spot.hostPhone}
-                      distance="1.2 km" // Map distance logic could be added here
+                      distance={spot.distance ? `${spot.distance.toFixed(1)} km` : undefined}
                       pricePerHour={spot.pricePerHour}
-                      rating={spot.rating || 5.0} // Fallback rating if none
+                      rating={(!spot.reviews?.length && !spot.totalCharges) ? null : spot.rating}
                       reviews={spot.reviews?.length || spot.totalCharges || 0}
-                      isOpen={true} // assume true
+                      isOpen={isSpotOpen(spot.availableHours)}
                       isVerified={spot.isVerified}
                       outletType={spot.outletType}
                       availableHours={spot.availableHours}
@@ -164,10 +247,10 @@ export default function FindSpots() {
       <CTABanner title="Can't find a spot nearby?" subtitle="Register your home outlet and become the charging spot your neighborhood needs." />
 
       {selectedSpot && (
-        <BookingModal 
-          isOpen={!!selectedSpot} 
-          onClose={() => setSelectedSpot(null)} 
-          spot={selectedSpot} 
+        <BookingModal
+          isOpen={!!selectedSpot}
+          onClose={() => setSelectedSpot(null)}
+          spot={selectedSpot}
         />
       )}
     </div>

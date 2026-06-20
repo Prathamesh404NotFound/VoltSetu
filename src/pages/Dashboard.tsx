@@ -66,10 +66,12 @@ export default function Dashboard() {
       </div>
 
       <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <Card>
+        <Card className="rounded-2xl hover:-translate-y-1 hover:shadow-xl transition-all duration-300">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Spent</CardTitle>
-            <DollarSign className="h-4 w-4 text-muted-foreground" />
+            <div className="w-10 h-10 rounded-xl gradient-primary flex items-center justify-center">
+              <DollarSign className="h-5 w-5 text-white" />
+            </div>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">₹{Math.round(totalSpent)}</div>
@@ -77,10 +79,12 @@ export default function Dashboard() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="rounded-2xl hover:-translate-y-1 hover:shadow-xl transition-all duration-300">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Sessions</CardTitle>
-            <Zap className="h-4 w-4 text-muted-foreground" />
+            <div className="w-10 h-10 rounded-xl gradient-green flex items-center justify-center">
+              <Zap className="h-5 w-5 text-white" />
+            </div>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{completedCount}</div>
@@ -88,10 +92,12 @@ export default function Dashboard() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="rounded-2xl hover:-translate-y-1 hover:shadow-xl transition-all duration-300">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Bookings</CardTitle>
-            <History className="h-4 w-4 text-muted-foreground" />
+            <div className="w-10 h-10 rounded-xl gradient-primary flex items-center justify-center">
+              <History className="h-5 w-5 text-white" />
+            </div>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{bookings.length}</div>
@@ -99,20 +105,22 @@ export default function Dashboard() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="rounded-2xl hover:-translate-y-1 hover:shadow-xl transition-all duration-300">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Saved CO₂</CardTitle>
-            <TrendingUp className="h-4 w-4 text-muted-foreground" />
+            <div className="w-10 h-10 rounded-xl gradient-green flex items-center justify-center">
+              <TrendingUp className="h-5 w-5 text-white" />
+            </div>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{completedCount * 4 || "—"} kg</div>
-            <p className="text-xs text-muted-foreground">Estimated environmental impact</p>
+            <p className="text-xs text-muted-foreground">Estimated at ~4kg CO₂ per charge vs. petrol scooter</p>
           </CardContent>
         </Card>
       </div>
 
       <div className="grid lg:grid-cols-2 gap-6">
-        <Card className="flex flex-col">
+        <Card className="flex flex-col rounded-2xl hover:-translate-y-1 hover:shadow-xl transition-all duration-300">
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle>Recent Bookings</CardTitle>
             <Link to="/dashboard/bookings" className="text-sm text-primary hover:underline font-medium">
@@ -147,7 +155,7 @@ export default function Dashboard() {
         </Card>
 
         {profile?.role !== "host" && profile?.role !== "admin" && (
-          <Card className="overflow-hidden relative bg-gradient-to-br from-ev-green/10 to-primary/10 border-none">
+          <Card className="overflow-hidden relative bg-gradient-to-br from-ev-green/10 to-primary/10 border-none rounded-2xl hover:-translate-y-1 hover:shadow-xl transition-all duration-300">
             <CardContent className="p-8 pb-10 mt-4 text-center">
               <div className="w-16 h-16 gradient-green rounded-2xl flex items-center justify-center mx-auto shadow-lg mb-5">
                 <Zap className="w-8 h-8 text-white" />
@@ -166,7 +174,7 @@ export default function Dashboard() {
         )}
 
         {(profile?.role === "host" || profile?.role === "admin") && (
-          <Card className="flex flex-col">
+          <Card className="flex flex-col rounded-2xl hover:-translate-y-1 hover:shadow-xl transition-all duration-300">
             <CardHeader className="flex flex-row items-center justify-between">
               <CardTitle>Host Actions</CardTitle>
             </CardHeader>

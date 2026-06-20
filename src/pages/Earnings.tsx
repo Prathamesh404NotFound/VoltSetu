@@ -12,9 +12,10 @@ import { getHostEarnings, EarningsSummary } from "@/lib/earningsService";
 import { toast } from "sonner";
 import GoogleLoginModal from "@/components/Auth/GoogleLoginModal";
 import HostRegistrationModal from "@/components/HostRegistration/HostRegistrationModal";
+import { User } from "@/types";
 
 export default function Earnings() {
-  const { user } = useAuth();
+  const { user } = useAuth() as { user: User | null };
   const [isHost, setIsHost] = useState<boolean | null>(null);
   const [summary, setSummary] = useState<EarningsSummary | null>(null);
   const [loading, setLoading] = useState(true);
@@ -25,11 +26,11 @@ export default function Earnings() {
     if (!user) { setLoading(false); return; }
     (async () => {
       try {
-        const profile = await getUserProfile(user.uid);
+        const profile = await getUserProfile(user.id);
         const host = profile.role === "host" || profile.role === "admin";
         setIsHost(host);
         if (host) {
-          const data = await getHostEarnings(user.uid);
+          const data = await getHostEarnings(user.id);
           setSummary(data);
         }
       } catch {
