@@ -288,7 +288,7 @@ const AdminUsersPage: React.FC = () => {
                 </p>
               </div>
             ) : (
-              <div className="overflow-x-auto">
+              <div className="responsive-table">
                 <Table>
                   <TableHeader>
                     <TableRow>

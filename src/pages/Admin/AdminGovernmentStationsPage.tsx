@@ -621,158 +621,160 @@ const AdminGovernmentStationsPage: React.FC = () => {
               </p>
             </div>
           ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Station</TableHead>
-                  <TableHead>Department</TableHead>
-                  <TableHead>Location</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Verification</TableHead>
-                  <TableHead>Chargers</TableHead>
-                  <TableHead>Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredStations.map((station) => (
-                  <TableRow key={station.id}>
-                    <TableCell>
-                      <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 rounded-lg bg-primary/10 overflow-hidden">
-                          {station.images && station.images.length > 0 ? (
-                            <img
-                              src={station.images[0]}
-                              alt={station.stationName}
-                              className="w-full h-full object-cover"
-                            />
-                          ) : (
-                            <Building className="w-full h-full p-3 text-primary" />
-                          )}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="font-medium">{station.stationName}</div>
-                          <div className="text-sm text-muted-foreground">{station.stationType}</div>
-                          {station.isFeatured && (
-                            <Badge variant="secondary" className="mt-1">
-                              <Star className="w-3 h-3 mr-1" />
-                              Featured
+              <div className="responsive-table">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Station</TableHead>
+                      <TableHead>Department</TableHead>
+                      <TableHead>Location</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead>Verification</TableHead>
+                      <TableHead>Chargers</TableHead>
+                      <TableHead>Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {filteredStations.map((station) => (
+                      <TableRow key={station.id}>
+                        <TableCell>
+                          <div className="flex items-center gap-3">
+                            <div className="w-12 h-12 rounded-lg bg-primary/10 overflow-hidden">
+                              {station.images && station.images.length > 0 ? (
+                                <img
+                                  src={station.images[0]}
+                                  alt={station.stationName}
+                                  className="w-full h-full object-cover"
+                                />
+                              ) : (
+                                <Building className="w-full h-full p-3 text-primary" />
+                              )}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <div className="font-medium">{station.stationName}</div>
+                              <div className="text-sm text-muted-foreground">{station.stationType}</div>
+                              {station.isFeatured && (
+                                <Badge variant="secondary" className="mt-1">
+                                  <Star className="w-3 h-3 mr-1" />
+                                  Featured
+                                </Badge>
+                              )}
+                            </div>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div>
+                            <div className="font-medium">{station.governmentDepartment}</div>
+                            <div className="text-sm text-muted-foreground">{station.contact.phone}</div>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div>
+                            <div className="font-medium">{station.city}, {station.state}</div>
+                            <div className="text-sm text-muted-foreground">{station.address}</div>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-2">
+                            {(() => {
+                              const IconComponent = getStatusIcon(station.availabilityStatus);
+                              return <IconComponent className={`w-4 h-4 ${getStatusBadgeColor(station.availabilityStatus).split(' ')[0]}`} />;
+                            })()}
+                            <Badge className={getStatusBadgeColor(station.availabilityStatus)}>
+                              {station.availabilityStatus.charAt(0).toUpperCase() + station.availabilityStatus.slice(1).replace('_', ' ')}
                             </Badge>
-                          )}
-                        </div>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div>
-                        <div className="font-medium">{station.governmentDepartment}</div>
-                        <div className="text-sm text-muted-foreground">{station.contact.phone}</div>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div>
-                        <div className="font-medium">{station.city}, {station.state}</div>
-                        <div className="text-sm text-muted-foreground">{station.address}</div>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-2">
-                        {(() => {
-                          const IconComponent = getStatusIcon(station.availabilityStatus);
-                          return <IconComponent className={`w-4 h-4 ${getStatusBadgeColor(station.availabilityStatus).split(' ')[0]}`} />;
-                        })()}
-                        <Badge className={getStatusBadgeColor(station.availabilityStatus)}>
-                          {station.availabilityStatus.charAt(0).toUpperCase() + station.availabilityStatus.slice(1).replace('_', ' ')}
-                        </Badge>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <Badge className={getVerificationBadgeColor(station.verificationStatus)}>
-                        {station.verificationStatus.charAt(0).toUpperCase() + station.verificationStatus.slice(1)}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <div className="font-medium">{station.numberOfChargers}</div>
-                      <div className="text-sm text-muted-foreground">
-                        {station.chargerTypes.join(', ')}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" className="h-8 w-8 p-0">
-                            <span className="sr-only">Open menu</span>
-                            <MoreHorizontal className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem>
-                            <Eye className="w-4 h-4 mr-2" />
-                            View Details
-                          </DropdownMenuItem>
-                          {canEditSpots && (
-                            <>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <Badge className={getVerificationBadgeColor(station.verificationStatus)}>
+                            {station.verificationStatus.charAt(0).toUpperCase() + station.verificationStatus.slice(1)}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          <div className="font-medium">{station.numberOfChargers}</div>
+                          <div className="text-sm text-muted-foreground">
+                            {station.chargerTypes.join(', ')}
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button variant="ghost" className="h-8 w-8 p-0">
+                                <span className="sr-only">Open menu</span>
+                                <MoreHorizontal className="h-4 w-4" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
                               <DropdownMenuItem>
-                                <Edit className="w-4 h-4 mr-2" />
-                                Edit Station
+                                <Eye className="w-4 h-4 mr-2" />
+                                View Details
                               </DropdownMenuItem>
-                              <DropdownMenuSeparator />
-                              <DropdownMenuItem
-                                onClick={() => handleStatusChange(station.id, 'active')}
-                                disabled={station.availabilityStatus === 'active' || actionLoading}
-                              >
-                                <CheckCircle className="w-4 h-4 mr-2" />
-                                Set Active
-                              </DropdownMenuItem>
-                              <DropdownMenuItem
-                                onClick={() => handleStatusChange(station.id, 'maintenance')}
-                                disabled={station.availabilityStatus === 'maintenance' || actionLoading}
-                              >
-                                <AlertTriangle className="w-4 h-4 mr-2" />
-                                Set Maintenance
-                              </DropdownMenuItem>
-                              <DropdownMenuItem
-                                onClick={() => handleStatusChange(station.id, 'inactive')}
-                                disabled={station.availabilityStatus === 'inactive' || actionLoading}
-                              >
-                                <XCircle className="w-4 h-4 mr-2" />
-                                Set Inactive
-                              </DropdownMenuItem>
-                              <DropdownMenuSeparator />
-                              <DropdownMenuItem
-                                onClick={() => handleVerificationChange(station.id, 'verified')}
-                                disabled={station.verificationStatus === 'verified' || actionLoading}
-                              >
-                                <Shield className="w-4 h-4 mr-2" />
-                                Verify Station
-                              </DropdownMenuItem>
-                              <DropdownMenuItem
-                                onClick={() => handleVerificationChange(station.id, 'pending')}
-                                disabled={station.verificationStatus === 'pending' || actionLoading}
-                              >
-                                <Clock className="w-4 h-4 mr-2" />
-                                Set Pending
-                              </DropdownMenuItem>
-                              <DropdownMenuSeparator />
-                            </>
-                          )}
-                          {canDeleteSpots && (
-                            <DropdownMenuItem
-                              className="text-destructive"
-                              onClick={() => {
-                                setSelectedStation(station);
-                                setDeleteDialogOpen(true);
-                              }}
-                            >
-                              <Trash2 className="w-4 h-4 mr-2" />
-                              Delete Station
-                            </DropdownMenuItem>
-                          )}
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                              {canEditSpots && (
+                                <>
+                                  <DropdownMenuItem>
+                                    <Edit className="w-4 h-4 mr-2" />
+                                    Edit Station
+                                  </DropdownMenuItem>
+                                  <DropdownMenuSeparator />
+                                  <DropdownMenuItem
+                                    onClick={() => handleStatusChange(station.id, 'active')}
+                                    disabled={station.availabilityStatus === 'active' || actionLoading}
+                                  >
+                                    <CheckCircle className="w-4 h-4 mr-2" />
+                                    Set Active
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem
+                                    onClick={() => handleStatusChange(station.id, 'maintenance')}
+                                    disabled={station.availabilityStatus === 'maintenance' || actionLoading}
+                                  >
+                                    <AlertTriangle className="w-4 h-4 mr-2" />
+                                    Set Maintenance
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem
+                                    onClick={() => handleStatusChange(station.id, 'inactive')}
+                                    disabled={station.availabilityStatus === 'inactive' || actionLoading}
+                                  >
+                                    <XCircle className="w-4 h-4 mr-2" />
+                                    Set Inactive
+                                  </DropdownMenuItem>
+                                  <DropdownMenuSeparator />
+                                  <DropdownMenuItem
+                                    onClick={() => handleVerificationChange(station.id, 'verified')}
+                                    disabled={station.verificationStatus === 'verified' || actionLoading}
+                                  >
+                                    <Shield className="w-4 h-4 mr-2" />
+                                    Verify Station
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem
+                                    onClick={() => handleVerificationChange(station.id, 'pending')}
+                                    disabled={station.verificationStatus === 'pending' || actionLoading}
+                                  >
+                                    <Clock className="w-4 h-4 mr-2" />
+                                    Set Pending
+                                  </DropdownMenuItem>
+                                  <DropdownMenuSeparator />
+                                </>
+                              )}
+                              {canDeleteSpots && (
+                                <DropdownMenuItem
+                                  className="text-destructive"
+                                  onClick={() => {
+                                    setSelectedStation(station);
+                                    setDeleteDialogOpen(true);
+                                  }}
+                                >
+                                  <Trash2 className="w-4 h-4 mr-2" />
+                                  Delete Station
+                                </DropdownMenuItem>
+                              )}
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
           )}
         </CardContent>
       </Card>

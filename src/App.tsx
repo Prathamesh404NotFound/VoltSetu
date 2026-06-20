@@ -41,9 +41,12 @@ function ScrollToTop() {
 }
 
 function AppContent() {
+  const location = useLocation();
+  const isAdmin = location.pathname.startsWith("/admin");
+
   return (
     <>
-      <Navbar />
+      {!isAdmin && <Navbar />}
       <Routes>
         {/* Public Routes */}
         <Route path="/" element={<Index />} />
@@ -96,8 +99,8 @@ function AppContent() {
           </main>
         } />
       </Routes>
-      <Footer />
-      <FloatingButtons />
+      {!isAdmin && <Footer />}
+      {!isAdmin && <FloatingButtons />}
     </>
   );
 }

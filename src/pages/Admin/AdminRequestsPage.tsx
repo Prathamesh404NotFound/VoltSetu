@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import ResponsiveContainer from '@/components/ui/responsive-container';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -207,11 +208,12 @@ const AdminRequestsPage: React.FC = () => {
   }
 
   return (
-    <div className="space-y-6 p-6">
+    <ResponsiveContainer size="xl" className="py-6">
+      <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">Charging Requests</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-foreground">Charging Requests</h1>
           <p className="text-muted-foreground">Manage and respond to charging requests</p>
         </div>
       </div>
@@ -246,7 +248,7 @@ const AdminRequestsPage: React.FC = () => {
                 />
               </div>
             </div>
-            <div className="flex gap-2">
+            <div className="flex flex-wrap gap-2">
               <Button
                 variant={statusFilter === 'all' ? 'default' : 'outline'}
                 size="sm"
@@ -300,116 +302,118 @@ const AdminRequestsPage: React.FC = () => {
               </p>
             </div>
           ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>User</TableHead>
-                  <TableHead>Request Details</TableHead>
-                  <TableHead>Scheduled</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredRequests.map((request) => (
-                  <TableRow key={request.id}>
-                    <TableCell>
-                      <div className="space-y-1">
-                        <div className="font-medium">{request.userName}</div>
-                        <div className="text-sm text-muted-foreground">{request.userEmail}</div>
-                        <div className="text-sm text-muted-foreground">{request.userPhone}</div>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="space-y-1">
-                        <div className="flex items-center gap-1">
-                          <Clock className="w-3 h-3 text-muted-foreground" />
-                          <span className="text-sm">{request.duration} minutes</span>
-                        </div>
-                        {request.message && (
-                          <div className="text-sm text-muted-foreground max-w-xs truncate">
-                            {request.message}
+              <div className="responsive-table">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>User</TableHead>
+                      <TableHead>Request Details</TableHead>
+                      <TableHead>Scheduled</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead>Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {filteredRequests.map((request) => (
+                      <TableRow key={request.id}>
+                        <TableCell>
+                          <div className="space-y-1">
+                            <div className="font-medium">{request.userName}</div>
+                            <div className="text-sm text-muted-foreground">{request.userEmail}</div>
+                            <div className="text-sm text-muted-foreground">{request.userPhone}</div>
                           </div>
-                        )}
-                        {request.feedback && (
-                          <div className="flex items-center gap-1">
-                            <span className="text-xs text-muted-foreground">Rating: {request.feedback.rating}/5</span>
-                            <span className="text-xs text-green-600">+{request.feedback.wattsEarned} watts</span>
+                        </TableCell>
+                        <TableCell>
+                          <div className="space-y-1">
+                            <div className="flex items-center gap-1">
+                              <Clock className="w-3 h-3 text-muted-foreground" />
+                              <span className="text-sm">{request.duration} minutes</span>
+                            </div>
+                            {request.message && (
+                              <div className="text-sm text-muted-foreground max-w-xs truncate">
+                                {request.message}
+                              </div>
+                            )}
+                            {request.feedback && (
+                              <div className="flex items-center gap-1">
+                                <span className="text-xs text-muted-foreground">Rating: {request.feedback.rating}/5</span>
+                                <span className="text-xs text-green-600">+{request.feedback.wattsEarned} watts</span>
+                              </div>
+                            )}
                           </div>
-                        )}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="space-y-1">
-                        <div className="text-sm font-medium">
-                          {formatDateTime(request.requestedTime)}
-                        </div>
-                        <div className="text-xs text-muted-foreground">
-                          Requested: {formatDateTime(request.requestedAt)}
-                        </div>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-2">
-                        {React.createElement(getStatusIcon(request.status || 'pending'), {
-                          className: `w-4 h-4 ${getStatusBadgeColor(request.status || 'pending').split(' ')[0]}`
-                        })}
-                        <Badge className={getStatusBadgeColor(request.status || 'pending')}>
-                          {request.status ? request.status.charAt(0).toUpperCase() + request.status.slice(1).replace('_', ' ') : 'Unknown'}
-                        </Badge>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" className="h-8 w-8 p-0">
-                            <span className="sr-only">Open menu</span>
-                            <MoreHorizontal className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem>
-                            <Eye className="w-4 h-4 mr-2" />
-                            View Details
-                          </DropdownMenuItem>
-                          {request.status === 'pending' && (
-                            <>
-                              <DropdownMenuSeparator />
-                              {canApproveRequests && (
-                                <DropdownMenuItem
-                                  onClick={() => {
-                                    setSelectedRequest(request);
-                                    setSelectedAction('approve');
-                                    setActionMessage('Your request has been approved.');
-                                    setActionDialogOpen(true);
-                                  }}
-                                >
-                                  <CheckCircle className="w-4 h-4 mr-2" />
-                                  Approve
-                                </DropdownMenuItem>
+                        </TableCell>
+                        <TableCell>
+                          <div className="space-y-1">
+                            <div className="text-sm font-medium">
+                              {formatDateTime(request.requestedTime)}
+                            </div>
+                            <div className="text-xs text-muted-foreground">
+                              Requested: {formatDateTime(request.requestedAt)}
+                            </div>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-2">
+                            {React.createElement(getStatusIcon(request.status || 'pending'), {
+                              className: `w-4 h-4 ${getStatusBadgeColor(request.status || 'pending').split(' ')[0]}`
+                            })}
+                            <Badge className={getStatusBadgeColor(request.status || 'pending')}>
+                              {request.status ? request.status.charAt(0).toUpperCase() + request.status.slice(1).replace('_', ' ') : 'Unknown'}
+                            </Badge>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button variant="ghost" className="h-8 w-8 p-0">
+                                <span className="sr-only">Open menu</span>
+                                <MoreHorizontal className="h-4 w-4" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                              <DropdownMenuItem>
+                                <Eye className="w-4 h-4 mr-2" />
+                                View Details
+                              </DropdownMenuItem>
+                              {request.status === 'pending' && (
+                                <>
+                                  <DropdownMenuSeparator />
+                                  {canApproveRequests && (
+                                    <DropdownMenuItem
+                                      onClick={() => {
+                                        setSelectedRequest(request);
+                                        setSelectedAction('approve');
+                                        setActionMessage('Your request has been approved.');
+                                        setActionDialogOpen(true);
+                                      }}
+                                    >
+                                      <CheckCircle className="w-4 h-4 mr-2" />
+                                      Approve
+                                    </DropdownMenuItem>
+                                  )}
+                                  {canRejectRequests && (
+                                    <DropdownMenuItem
+                                      onClick={() => {
+                                        setSelectedRequest(request);
+                                        setSelectedAction('reject');
+                                        setActionMessage('Sorry, your request cannot be accommodated.');
+                                        setActionDialogOpen(true);
+                                      }}
+                                    >
+                                      <XCircle className="w-4 h-4 mr-2" />
+                                      Reject
+                                    </DropdownMenuItem>
+                                  )}
+                                </>
                               )}
-                              {canRejectRequests && (
-                                <DropdownMenuItem
-                                  onClick={() => {
-                                    setSelectedRequest(request);
-                                    setSelectedAction('reject');
-                                    setActionMessage('Sorry, your request cannot be accommodated.');
-                                    setActionDialogOpen(true);
-                                  }}
-                                >
-                                  <XCircle className="w-4 h-4 mr-2" />
-                                  Reject
-                                </DropdownMenuItem>
-                              )}
-                            </>
-                          )}
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
           )}
         </CardContent>
       </Card>
@@ -455,7 +459,8 @@ const AdminRequestsPage: React.FC = () => {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </div>
+      </div>
+    </ResponsiveContainer>
   );
 };
 

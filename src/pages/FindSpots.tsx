@@ -8,6 +8,7 @@ import CTABanner from "@/components/CTABanner";
 import spotsMapImg from "@/assets/spots-map.jpg";
 import { getAllChargingSpots } from "@/lib/hostRegistration";
 import { toast } from "sonner";
+import SpotsMap from "@/components/SpotsMap";
 
 const filters = ["All", "Open Now", "Verified", "Under Rs 50", "Top Rated", "Nearest"];
 
@@ -21,6 +22,7 @@ export default function FindSpots() {
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [locationLoading, setLocationLoading] = useState(true);
   const [locationError, setLocationError] = useState<string | null>(null);
+  const [viewMode, setViewMode] = useState<"list" | "map">("list");
 
   useEffect(() => {
     getAllChargingSpots()
@@ -171,21 +173,47 @@ export default function FindSpots() {
       {/* Filters & Results */}
       <section className="py-12 min-h-[50vh]">
         <div className="container mx-auto px-4">
-          {/* Filters */}
-          <div className="flex items-center gap-3 mb-8 overflow-x-auto pb-2 scrollbar-none">
-            <SlidersHorizontal className="w-5 h-5 text-muted-foreground flex-shrink-0" />
-            {filters.map((f) => (
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+            {/* Filters */}
+            <div className="flex items-center gap-3 overflow-x-auto pb-2 scrollbar-none flex-1">
+              <SlidersHorizontal className="w-5 h-5 text-muted-foreground flex-shrink-0" />
+              {filters.map((f) => (
+                <button
+                  key={f}
+                  onClick={() => setActiveFilter(f)}
+                  className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all ${activeFilter === f
+                    ? "bg-primary text-primary-foreground shadow-md"
+                    : "bg-card border border-border text-muted-foreground hover:bg-muted"
+                    }`}
+                >
+                  {f}
+                </button>
+              ))}
+            </div>
+
+            {/* View Mode Toggle */}
+            <div className="flex items-center bg-card border border-border p-1 rounded-full w-fit flex-shrink-0">
               <button
-                key={f}
-                onClick={() => setActiveFilter(f)}
-                className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all ${activeFilter === f
-                  ? "bg-primary text-primary-foreground shadow-md"
-                  : "bg-card border border-border text-muted-foreground hover:bg-muted"
-                  }`}
+                onClick={() => setViewMode("list")}
+                className={`px-4 py-2 rounded-full text-xs font-semibold transition-all ${
+                  viewMode === "list"
+                    ? "bg-primary text-primary-foreground shadow-sm"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
               >
-                {f}
+                List View
               </button>
-            ))}
+              <button
+                onClick={() => setViewMode("map")}
+                className={`px-4 py-2 rounded-full text-xs font-semibold transition-all ${
+                  viewMode === "map"
+                    ? "bg-primary text-primary-foreground shadow-sm"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                Map View
+              </button>
+            </div>
           </div>
 
           {!loading && (
@@ -208,35 +236,43 @@ export default function FindSpots() {
             </div>
           ) : (
             <>
-              {/* Grid */}
-              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {filteredSpots.map((spot, i) => (
-                  <div key={spot.id || i} className="reveal" style={{ transitionDelay: `${Math.min(i, 10) * 0.05}s` }}>
-                    <SpotCard
-                      id={spot.id}
-                      name={spot.name}
-                      host={spot.hostName}
-                      hostPhone={spot.hostPhone}
-                      distance={spot.distance ? `${spot.distance.toFixed(1)} km` : undefined}
-                      pricePerHour={spot.pricePerHour}
-                      rating={(!spot.reviews?.length && !spot.totalCharges) ? null : spot.rating}
-                      reviews={spot.reviews?.length || spot.totalCharges || 0}
-                      isOpen={isSpotOpen(spot.availableHours)}
-                      isVerified={spot.isVerified}
-                      outletType={spot.outletType}
-                      availableHours={spot.availableHours}
-                      image={spot.photos?.[0]}
-                      onBook={() => setSelectedSpot(spot)}
-                    />
+              {viewMode === "list" ? (
+                <>
+                  {/* Grid */}
+                  <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {filteredSpots.map((spot, i) => (
+                      <div key={spot.id || i} className="reveal" style={{ transitionDelay: `${Math.min(i, 10) * 0.05}s` }}>
+                        <SpotCard
+                          id={spot.id}
+                          name={spot.name}
+                          host={spot.hostName}
+                          hostPhone={spot.hostPhone}
+                          distance={spot.distance ? `${spot.distance.toFixed(1)} km` : undefined}
+                          pricePerHour={spot.pricePerHour}
+                          rating={(!spot.reviews?.length && !spot.totalCharges) ? null : spot.rating}
+                          reviews={spot.reviews?.length || spot.totalCharges || 0}
+                          isOpen={isSpotOpen(spot.availableHours)}
+                          isVerified={spot.isVerified}
+                          outletType={spot.outletType}
+                          availableHours={spot.availableHours}
+                          image={spot.photos?.[0]}
+                          onBook={() => setSelectedSpot(spot)}
+                        />
+                      </div>
+                    ))}
                   </div>
-                ))}
-              </div>
 
-              {filteredSpots.length === 0 && (
-                <div className="text-center py-20">
-                  <Filter className="w-16 h-16 text-muted mx-auto mb-4 opacity-50" />
-                  <h3 className="font-display font-semibold text-xl text-foreground mb-2">No spots found</h3>
-                  <p className="text-muted-foreground">Try adjusting your filters or search in a different area.</p>
+                  {filteredSpots.length === 0 && (
+                    <div className="text-center py-20">
+                      <Filter className="w-16 h-16 text-muted mx-auto mb-4 opacity-50" />
+                      <h3 className="font-display font-semibold text-xl text-foreground mb-2">No spots found</h3>
+                      <p className="text-muted-foreground">Try adjusting your filters or search in a different area.</p>
+                    </div>
+                  )}
+                </>
+              ) : (
+                <div className="reveal">
+                  <SpotsMap spots={filteredSpots} onBookSpot={(spot) => setSelectedSpot(spot)} />
                 </div>
               )}
             </>

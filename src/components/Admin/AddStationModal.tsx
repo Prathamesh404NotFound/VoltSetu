@@ -276,7 +276,7 @@ export default function AddStationModal({ isOpen, onClose, onSuccess }: AddStati
           <div className="space-y-4">
             <h3 className="text-lg font-semibold">Basic Information</h3>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <Label htmlFor="stationName">Station Name *</Label>
                 <Input
@@ -372,7 +372,7 @@ export default function AddStationModal({ isOpen, onClose, onSuccess }: AddStati
               {errors.address && <p className="text-sm text-destructive">{errors.address}</p>}
             </div>
 
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div>
                 <Label htmlFor="city">City *</Label>
                 <Input
@@ -408,7 +408,7 @@ export default function AddStationModal({ isOpen, onClose, onSuccess }: AddStati
 
             <div>
               <Label>Coordinates *</Label>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <Input
                     value={formData.coordinates.lat}
@@ -436,7 +436,7 @@ export default function AddStationModal({ isOpen, onClose, onSuccess }: AddStati
           <div className="space-y-4">
             <h3 className="text-lg font-semibold">Technical Specifications</h3>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <Label htmlFor="numberOfChargers">Number of Chargers *</Label>
                 <Input
@@ -491,7 +491,7 @@ export default function AddStationModal({ isOpen, onClose, onSuccess }: AddStati
           <div className="space-y-4">
             <h3 className="text-lg font-semibold">Pricing</h3>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <Label htmlFor="pricePerHour">Price per Hour (Rs) *</Label>
                 <Input
@@ -538,7 +538,7 @@ export default function AddStationModal({ isOpen, onClose, onSuccess }: AddStati
           <div className="space-y-4">
             <h3 className="text-lg font-semibold">Working Hours</h3>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <Label htmlFor="weekdays">Weekdays</Label>
                 <Input
@@ -564,7 +564,7 @@ export default function AddStationModal({ isOpen, onClose, onSuccess }: AddStati
           <div className="space-y-4">
             <h3 className="text-lg font-semibold">Contact Information</h3>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <Label htmlFor="phone">Phone *</Label>
                 <Input

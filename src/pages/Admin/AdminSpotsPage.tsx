@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import ResponsiveContainer from '@/components/ui/responsive-container';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -228,11 +229,12 @@ const AdminSpotsPage: React.FC = () => {
   }
 
   return (
-    <div className="space-y-6 p-6">
+    <ResponsiveContainer size="xl" className="py-6">
+      <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">Charging Spots</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-foreground">Charging Spots</h1>
           <p className="text-muted-foreground">Manage charging locations and availability</p>
         </div>
         <Button onClick={() => setAddSpotModalOpen(true)}>
@@ -271,7 +273,7 @@ const AdminSpotsPage: React.FC = () => {
                 />
               </div>
             </div>
-            <div className="flex gap-2">
+            <div className="flex flex-wrap gap-2">
               <Button
                 variant={statusFilter === 'all' ? 'default' : 'outline'}
                 size="sm"
@@ -325,137 +327,139 @@ const AdminSpotsPage: React.FC = () => {
               </p>
             </div>
           ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Spot</TableHead>
-                  <TableHead>Host</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Price</TableHead>
-                  <TableHead>Rating</TableHead>
-                  <TableHead>Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredSpots.map((spot) => (
-                  <TableRow key={spot.id}>
-                    <TableCell>
-                      <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 rounded-lg bg-primary/10 overflow-hidden">
-                          {spot.photos && spot.photos.length > 0 ? (
-                            <img
-                              src={spot.photos[0]}
-                              alt={spot.name}
-                              className="w-full h-full object-cover"
-                            />
-                          ) : (
-                            <MapPin className="w-full h-full p-3 text-primary" />
-                          )}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="font-medium">{spot.name}</div>
-                          <div className="text-sm text-muted-foreground truncate">
-                            {spot.address}, {spot.city}
+              <div className="responsive-table">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Spot</TableHead>
+                      <TableHead>Host</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead>Price</TableHead>
+                      <TableHead>Rating</TableHead>
+                      <TableHead>Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {filteredSpots.map((spot) => (
+                      <TableRow key={spot.id}>
+                        <TableCell>
+                          <div className="flex items-center gap-3">
+                            <div className="w-12 h-12 rounded-lg bg-primary/10 overflow-hidden">
+                              {spot.photos && spot.photos.length > 0 ? (
+                                <img
+                                  src={spot.photos[0]}
+                                  alt={spot.name}
+                                  className="w-full h-full object-cover"
+                                />
+                              ) : (
+                                <MapPin className="w-full h-full p-3 text-primary" />
+                              )}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <div className="font-medium">{spot.name}</div>
+                              <div className="text-sm text-muted-foreground truncate">
+                                {spot.address}, {spot.city}
+                              </div>
+                            </div>
                           </div>
-                        </div>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div>
-                        <div className="font-medium">{spot.hostName}</div>
-                        <div className="text-sm text-muted-foreground">{spot.hostEmail}</div>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-2">
-                        {React.createElement(getStatusIcon(spot.status), {
-                          className: `w-4 h-4 ${getStatusBadgeColor(spot.status).split(' ')[0]}`
-                        })}
-                        <Badge className={getStatusBadgeColor(spot.status)}>
-                          {spot.status.charAt(0).toUpperCase() + spot.status.slice(1)}
-                        </Badge>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="font-medium">{formatCurrency(spot.pricePerHour)}/hr</div>
-                      {spot.pricePerMinute && (
-                        <div className="text-sm text-muted-foreground">
-                          {formatCurrency(spot.pricePerMinute)}/min
-                        </div>
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-1">
-                        <Star className="w-4 h-4 text-yellow-500 fill-current" />
-                        <span className="font-medium">{spot.rating.toFixed(1)}</span>
-                        <span className="text-sm text-muted-foreground">
-                          ({spot.reviews ? spot.reviews.length : 0} reviews)
-                        </span>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" className="h-8 w-8 p-0">
-                            <span className="sr-only">Open menu</span>
-                            <MoreHorizontal className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem>
-                            <Eye className="w-4 h-4 mr-2" />
-                            View Details
-                          </DropdownMenuItem>
-                          {canEditSpots && (
-                            <>
+                        </TableCell>
+                        <TableCell>
+                          <div>
+                            <div className="font-medium">{spot.hostName}</div>
+                            <div className="text-sm text-muted-foreground">{spot.hostEmail}</div>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-2">
+                            {React.createElement(getStatusIcon(spot.status), {
+                              className: `w-4 h-4 ${getStatusBadgeColor(spot.status).split(' ')[0]}`
+                            })}
+                            <Badge className={getStatusBadgeColor(spot.status)}>
+                              {spot.status.charAt(0).toUpperCase() + spot.status.slice(1)}
+                            </Badge>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="font-medium">{formatCurrency(spot.pricePerHour)}/hr</div>
+                          {spot.pricePerMinute && (
+                            <div className="text-sm text-muted-foreground">
+                              {formatCurrency(spot.pricePerMinute)}/min
+                            </div>
+                          )}
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-1">
+                            <Star className="w-4 h-4 text-yellow-500 fill-current" />
+                            <span className="font-medium">{spot.rating.toFixed(1)}</span>
+                            <span className="text-sm text-muted-foreground">
+                              ({spot.reviews ? spot.reviews.length : 0} reviews)
+                            </span>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button variant="ghost" className="h-8 w-8 p-0">
+                                <span className="sr-only">Open menu</span>
+                                <MoreHorizontal className="h-4 w-4" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
                               <DropdownMenuItem>
-                                <Edit className="w-4 h-4 mr-2" />
-                                Edit Spot
+                                <Eye className="w-4 h-4 mr-2" />
+                                View Details
                               </DropdownMenuItem>
-                              <DropdownMenuSeparator />
-                              <DropdownMenuItem
-                                onClick={() => handleStatusChange(spot.id, 'active')}
-                                disabled={spot.status === 'active' || actionLoading}
-                              >
-                                <CheckCircle className="w-4 h-4 mr-2" />
-                                Make Active
-                              </DropdownMenuItem>
-                              <DropdownMenuItem
-                                onClick={() => handleStatusChange(spot.id, 'inactive')}
-                                disabled={spot.status === 'inactive' || actionLoading}
-                              >
-                                <XCircle className="w-4 h-4 mr-2" />
-                                Make Inactive
-                              </DropdownMenuItem>
-                              <DropdownMenuItem
-                                onClick={() => handleStatusChange(spot.id, 'suspended')}
-                                disabled={spot.status === 'suspended' || actionLoading}
-                              >
-                                <Ban className="w-4 h-4 mr-2" />
-                                Suspend
-                              </DropdownMenuItem>
-                              <DropdownMenuSeparator />
-                            </>
-                          )}
-                          {canDeleteSpots && (
-                            <DropdownMenuItem
-                              className="text-destructive"
-                              onClick={() => {
-                                setSelectedSpot(spot);
-                                setDeleteDialogOpen(true);
-                              }}
-                            >
-                              <Trash2 className="w-4 h-4 mr-2" />
-                              Delete Spot
-                            </DropdownMenuItem>
-                          )}
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                              {canEditSpots && (
+                                <>
+                                  <DropdownMenuItem>
+                                    <Edit className="w-4 h-4 mr-2" />
+                                    Edit Spot
+                                  </DropdownMenuItem>
+                                  <DropdownMenuSeparator />
+                                  <DropdownMenuItem
+                                    onClick={() => handleStatusChange(spot.id, 'active')}
+                                    disabled={spot.status === 'active' || actionLoading}
+                                  >
+                                    <CheckCircle className="w-4 h-4 mr-2" />
+                                    Make Active
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem
+                                    onClick={() => handleStatusChange(spot.id, 'inactive')}
+                                    disabled={spot.status === 'inactive' || actionLoading}
+                                  >
+                                    <XCircle className="w-4 h-4 mr-2" />
+                                    Make Inactive
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem
+                                    onClick={() => handleStatusChange(spot.id, 'suspended')}
+                                    disabled={spot.status === 'suspended' || actionLoading}
+                                  >
+                                    <Ban className="w-4 h-4 mr-2" />
+                                    Suspend
+                                  </DropdownMenuItem>
+                                  <DropdownMenuSeparator />
+                                </>
+                              )}
+                              {canDeleteSpots && (
+                                <DropdownMenuItem
+                                  className="text-destructive"
+                                  onClick={() => {
+                                    setSelectedSpot(spot);
+                                    setDeleteDialogOpen(true);
+                                  }}
+                                >
+                                  <Trash2 className="w-4 h-4 mr-2" />
+                                  Delete Spot
+                                </DropdownMenuItem>
+                              )}
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
           )}
         </CardContent>
       </Card>
@@ -488,7 +492,8 @@ const AdminSpotsPage: React.FC = () => {
         onClose={() => setAddSpotModalOpen(false)}
         onSuccess={handleSpotCreated}
       />
-    </div>
+      </div>
+    </ResponsiveContainer>
   );
 };
 

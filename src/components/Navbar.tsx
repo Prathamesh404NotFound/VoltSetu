@@ -54,13 +54,13 @@ export default function Navbar() {
         </Link>
 
         {/* Desktop Nav */}
-        <nav className="hidden xl:flex items-center gap-1">
+        <nav className="hidden lg:flex items-center gap-1">
           {navLinks.map((link) => (
             <Link
               key={link.to}
               to={link.to}
               className={cn(
-                "px-3 sm:px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 hover:bg-primary/10 hover:text-primary",
+                "px-3 lg:px-2.5 xl:px-4 py-2 rounded-lg text-sm lg:text-[13px] xl:text-sm font-medium transition-all duration-200 hover:bg-primary/10 hover:text-primary",
                 location.pathname === link.to
                   ? "text-primary bg-primary/10"
                   : "text-muted-foreground"
@@ -71,16 +71,15 @@ export default function Navbar() {
           ))}
         </nav>
 
-        <div className="hidden xl:flex items-center gap-2 sm:gap-3">
+        <div className="hidden lg:flex items-center gap-1.5 xl:gap-3">
           {user ? (
             <>
               <UserMenu />
               <Link
                 to="/spots"
-                className="px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl bg-primary text-primary-foreground font-semibold text-sm hover:bg-primary/90 transition-all shadow-lg hover:shadow-primary/30 hover:-translate-y-0.5"
+                className="px-3 xl:px-5 py-2 rounded-xl bg-primary text-primary-foreground font-semibold text-xs lg:text-sm hover:bg-primary/90 transition-all shadow-lg hover:shadow-primary/30 hover:-translate-y-0.5 animate-glow"
               >
-                <span className="hidden sm:inline">Find a Spot</span>
-                <span className="sm:hidden">Spots</span>
+                Find a Spot
               </Link>
             </>
           ) : (
@@ -88,13 +87,13 @@ export default function Navbar() {
               <Button
                 variant="ghost"
                 onClick={() => setLoginModalOpen(true)}
-                className="font-semibold text-sm sm:text-base px-3 sm:px-4"
+                className="font-semibold text-xs lg:text-sm xl:text-base px-2.5 xl:px-4"
               >
                 Sign In
               </Button>
               <Button
                 onClick={() => setLoginModalOpen(true)}
-                className="px-3 sm:px-5 py-2 sm:py-2.5 rounded-xl bg-primary text-primary-foreground font-semibold text-sm hover:bg-primary/90 transition-all shadow-lg hover:shadow-primary/30 hover:-translate-y-0.5"
+                className="px-3 xl:px-5 py-2 rounded-xl bg-primary text-primary-foreground font-semibold text-xs lg:text-sm hover:bg-primary/90 transition-all shadow-lg hover:shadow-primary/30 hover:-translate-y-0.5"
               >
                 Get Started
               </Button>
@@ -105,7 +104,7 @@ export default function Navbar() {
         {/* Tablet & Mobile Toggle */}
         <button
           onClick={() => setMobileOpen(!mobileOpen)}
-          className="xl:hidden p-2 rounded-lg hover:bg-muted transition-colors"
+          className="lg:hidden p-2 rounded-lg hover:bg-muted transition-colors"
           aria-label="Toggle menu"
         >
           {mobileOpen ? <X className="w-5 h-5 sm:w-6 sm:h-6" /> : <Menu className="w-5 h-5 sm:w-6 sm:h-6" />}
@@ -114,7 +113,7 @@ export default function Navbar() {
 
       {/* Mobile Drawer */}
       {mobileOpen && (
-        <div className="xl:hidden absolute top-full left-0 right-0 glass border-t border-border animate-slide-down">
+        <div className="lg:hidden absolute top-full left-0 right-0 glass border-t border-border animate-slide-down">
           <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 flex flex-col gap-1">
             {navLinks.map((link) => (
               <Link
