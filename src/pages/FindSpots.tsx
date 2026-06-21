@@ -9,6 +9,8 @@ import spotsMapImg from "@/assets/spots-map.jpg";
 import { getAllChargingSpots } from "@/lib/hostRegistration";
 import { toast } from "sonner";
 import SpotsMap from "@/components/SpotsMap";
+import { Capacitor } from "@capacitor/core";
+import { Geolocation } from "@capacitor/geolocation";
 
 const filters = ["All", "Open Now", "Verified", "Under Rs 50", "Top Rated", "Nearest"];
 
@@ -40,22 +42,50 @@ export default function FindSpots() {
 
   // Fetch user location on mount
   useEffect(() => {
-    if (!navigator.geolocation) {
-      setLocationError("Geolocation not supported");
+    const applyPosition = (pos: { coords: { latitude: number; longitude: number } }) => {
+      setUserLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude });
       setLocationLoading(false);
-      return;
-    }
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        setUserLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude });
+    };
+
+    const handleWebLocation = () => {
+      if (!navigator.geolocation) {
+        setLocationError("Geolocation not supported");
         setLocationLoading(false);
-      },
-      (err) => {
+        return;
+      }
+      navigator.geolocation.getCurrentPosition(
+        applyPosition,
+        (err) => {
+          console.error(err);
+          setLocationError(err.message);
+          setLocationLoading(false);
+        }
+      );
+    };
+
+    const handleNativeLocation = async () => {
+      try {
+        const permission = await Geolocation.requestPermissions();
+        if (permission.location !== 'granted' && permission.coarseLocation !== 'granted') {
+          throw new Error("Location permission denied");
+        }
+        const position = await Geolocation.getCurrentPosition({
+          enableHighAccuracy: true,
+          timeout: 10000
+        });
+        applyPosition(position);
+      } catch (err: any) {
         console.error(err);
-        setLocationError(err.message);
+        setLocationError(err.message || "Native location error");
         setLocationLoading(false);
       }
-    );
+    };
+
+    if (Capacitor.isNativePlatform()) {
+      handleNativeLocation();
+    } else {
+      handleWebLocation();
+    }
   }, []);
   // Helper to parse time strings like "8:00 AM - 11:00 PM"
   function parseTimeRange(range: string): { start: number; end: number } | null {

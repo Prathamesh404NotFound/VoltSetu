@@ -10,11 +10,24 @@
  * Cloud Messaging (FCM).
  */
 
+import { Capacitor } from "@capacitor/core";
+import { LocalNotifications } from "@capacitor/local-notifications";
+
 /**
  * Checks if browser support exists and requests permission from the user.
  * Returns true if permission is granted, false otherwise.
  */
 export async function requestNotificationPermission(): Promise<boolean> {
+  if (Capacitor.isNativePlatform()) {
+    try {
+      const permission = await LocalNotifications.requestPermissions();
+      return permission.display === 'granted';
+    } catch (error) {
+      console.error("Native notification permission error:", error);
+      return false;
+    }
+  }
+
   if (!("Notification" in window)) {
     console.warn("This browser does not support desktop notifications");
     return false;
@@ -41,6 +54,25 @@ export function showBrowserNotification(
   body: string,
   onClick?: () => void
 ) {
+  if (Capacitor.isNativePlatform()) {
+    LocalNotifications.schedule({
+      notifications: [
+        {
+          title,
+          body,
+          id: Math.floor(Math.random() * 1000000),
+          schedule: { at: new Date(Date.now() + 100) }, // basically immediate
+          extra: { onClick }
+        }
+      ]
+    });
+
+    // Handle standard capacitor click listener globally or just let it fire
+    // Note: LocalNotifications.addListener('localNotificationActionPerformed', ...)
+    // would be needed in a central place like App.tsx to handle the 'extra' onClick.
+    return;
+  }
+
   if (!("Notification" in window)) return;
 
   if (Notification.permission === "granted") {

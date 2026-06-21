@@ -11,6 +11,8 @@ import { Badge } from "@/components/ui/badge";
 import { submitHostRegistration } from "@/lib/hostRegistration";
 import { toast } from "sonner";
 import LocationPickerMap from "../LocationPickerMap";
+import { Capacitor } from "@capacitor/core";
+import { Geolocation } from "@capacitor/geolocation";
 
 // ─────────────────────────────────────────────────────────
 // Types
@@ -253,7 +255,7 @@ const HostRegistrationModal = ({ isOpen, onClose }: HostRegistrationModalProps) 
     setLocationAccuracy(null);
     setGpsQuality(null);
 
-    const applyGpsResult = async (pos: GeolocationPosition) => {
+    const applyGpsResult = async (pos: { coords: { latitude: number; longitude: number; accuracy: number } }) => {
       const lat      = pos.coords.latitude;
       const lng      = pos.coords.longitude;
       const accuracy = Math.round(pos.coords.accuracy); // metres, 95% confidence
@@ -266,8 +268,6 @@ const HostRegistrationModal = ({ isOpen, onClose }: HostRegistrationModalProps) 
         accuracy <= 1000 ? "approximate" : "imprecise";
       setGpsQuality(quality);
 
-      // Only reverse-geocode if accuracy is below 1000m — don't trust a wildly
-      // imprecise fix to name the right address.
       if (quality !== "imprecise") {
         let detectedAddress = "";
         let detectedCity    = "";
@@ -309,7 +309,6 @@ const HostRegistrationModal = ({ isOpen, onClose }: HostRegistrationModalProps) 
           };
         });
       } else {
-        // Imprecise: just set the raw coords, don't overwrite address fields
         setForm(prev => ({
           ...prev,
           gpsCoords:     gps,
@@ -323,36 +322,60 @@ const HostRegistrationModal = ({ isOpen, onClose }: HostRegistrationModalProps) 
       setGpsSuccess(true);
     };
 
-    const onError = (highAccuracy: boolean) => (err: GeolocationPositionError) => {
-      if (highAccuracy && err.code !== 1) {
-        // Retry once with network-based (low-accuracy) positioning
-        navigator.geolocation.getCurrentPosition(
-          applyGpsResult,
-          (err2) => {
-            setGpsLoading(false);
-            setGpsError(
-              err2.code === 1
-                ? "Location access denied. Please allow location permissions and try again."
-                : "Could not detect location. Please try again or enter your address manually."
-            );
-          },
-          { enableHighAccuracy: false, timeout: 15000, maximumAge: 0 }
-        );
-      } else {
+    const runNativeGeolocation = async () => {
+      try {
+        const permission = await Geolocation.requestPermissions();
+        if (permission.location !== 'granted' && permission.coarseLocation !== 'granted') {
+          throw new Error("Location permission denied");
+        }
+        const position = await Geolocation.getCurrentPosition({
+          enableHighAccuracy: true,
+          timeout: 10000
+        });
+        applyGpsResult(position);
+      } catch (err: any) {
         setGpsLoading(false);
-        setGpsError(
-          err.code === 1
-            ? "Location access denied. Please allow location permissions and try again."
-            : "Could not detect location. Please try again or enter your address manually."
-        );
+        setGpsError(err.message || "Could not detect location.");
       }
     };
 
-    navigator.geolocation.getCurrentPosition(
-      applyGpsResult,
-      onError(true),
-      { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
-    );
+    const runWebGeolocation = () => {
+      const onError = (highAccuracy: boolean) => (err: GeolocationPositionError) => {
+        if (highAccuracy && err.code !== 1) {
+          navigator.geolocation.getCurrentPosition(
+            applyGpsResult,
+            (err2) => {
+              setGpsLoading(false);
+              setGpsError(
+                err2.code === 1
+                  ? "Location access denied. Please allow location permissions and try again."
+                  : "Could not detect location. Please try again or enter your address manually."
+              );
+            },
+            { enableHighAccuracy: false, timeout: 15000, maximumAge: 0 }
+          );
+        } else {
+          setGpsLoading(false);
+          setGpsError(
+            err.code === 1
+              ? "Location access denied. Please allow location permissions and try again."
+              : "Could not detect location. Please try again or enter your address manually."
+          );
+        }
+      };
+
+      navigator.geolocation.getCurrentPosition(
+        applyGpsResult,
+        onError(true),
+        { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
+      );
+    };
+
+    if (Capacitor.isNativePlatform()) {
+      runNativeGeolocation();
+    } else {
+      runWebGeolocation();
+    }
   };
 
   // ── Mismatch flag ──

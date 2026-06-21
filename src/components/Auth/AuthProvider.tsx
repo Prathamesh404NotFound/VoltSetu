@@ -8,6 +8,8 @@ import {
 } from "firebase/auth";
 import { ref, get, update } from "firebase/database";
 import { User } from "@/types";
+import { Capacitor } from "@capacitor/core";
+import { FirebaseAuthentication } from "@capacitor-firebase/authentication";
 
 interface AuthContextType {
   user: User | null;
@@ -161,14 +163,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const loginWithGoogle = async () => {
     try {
-      await signInWithPopup(auth, googleProvider);
-    } catch (error) {
-      throw new Error("Google sign-in failed. Please try again.");
+      if (Capacitor.isNativePlatform()) {
+        await FirebaseAuthentication.signInWithGoogle();
+      } else {
+        await signInWithPopup(auth, googleProvider);
+      }
+    } catch (error: any) {
+      console.error("Sign-in error:", error);
+      throw new Error(error.message || "Google sign-in failed. Please try again.");
     }
   };
 
   const logout = async () => {
     try {
+      if (Capacitor.isNativePlatform()) {
+        await FirebaseAuthentication.signOut();
+      }
       await signOut(auth);
     } catch (error) {
       throw new Error("Logout failed.");

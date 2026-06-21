@@ -1,6 +1,8 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
 import { useEffect } from "react";
+import { Capacitor } from "@capacitor/core";
+import { LocalNotifications } from "@capacitor/local-notifications";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -43,6 +45,29 @@ function ScrollToTop() {
 function AppContent() {
   const location = useLocation();
   const isAdmin = location.pathname.startsWith("/admin");
+
+  // native notification listener
+  useEffect(() => {
+    if (!Capacitor.isNativePlatform()) return;
+
+    let handle: any;
+
+    const setupListener = async () => {
+      handle = await LocalNotifications.addListener('localNotificationActionPerformed', (notification) => {
+        console.log('Notification action performed', notification);
+        const { onClick } = notification.notification.extra || {};
+        if (typeof onClick === 'function') {
+          onClick();
+        }
+      });
+    };
+
+    setupListener();
+
+    return () => {
+      if (handle) handle.remove();
+    };
+  }, []);
 
   return (
     <>
