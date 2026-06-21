@@ -7,6 +7,8 @@ import GoogleLoginModal from "./Auth/GoogleLoginModal";
 import UserMenu from "./Auth/UserMenu";
 import NotificationBell from "./NotificationBell";
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
+import { requestNotificationPermission } from "@/lib/browserNotifications";
 
 const navLinks = [
   { to: "/", label: "Home" },
@@ -34,6 +36,31 @@ export default function Navbar() {
   useEffect(() => {
     setMobileOpen(false);
   }, [location]);
+
+  // ── Browser Notification Permission Prompt ──────────────────────────────
+  useEffect(() => {
+    if (!user) return; // Only prompt logged-in users
+    if (!("Notification" in window)) return; // Browser doesn't support it
+
+    if (Notification.permission === "default") {
+      const toastId = toast("Get notified about your booking status", {
+        description: "Enable native browser notifications to receive updates even when you're away from the tab.",
+        action: {
+          label: "Enable",
+          onClick: async (e) => {
+            e.preventDefault();
+            const granted = await requestNotificationPermission();
+            if (granted) {
+              toast.success("Notifications enabled!", { id: toastId });
+            } else {
+              toast.error("Permission denied", { id: toastId });
+            }
+          },
+        },
+        duration: Infinity, // Keep it visible until dismissed or user clicks Enable
+      });
+    }
+  }, [user]);
 
   return (
     <header

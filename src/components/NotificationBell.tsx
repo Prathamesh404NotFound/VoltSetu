@@ -25,6 +25,7 @@ import {
   AppNotification,
 } from "@/lib/notificationService";
 import { getUserProfile } from "@/lib/userService";
+import { showBrowserNotification } from "@/lib/browserNotifications";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Helpers
@@ -132,6 +133,8 @@ export default function NotificationBell() {
         if (!toastedIds.current.has(n.requestId)) {
           toastedIds.current.add(n.requestId);
           const msg = notifMessage(n);
+          
+          // In-app toast
           if (kind === "rider") {
             toast(msg, {
               icon:
@@ -141,10 +144,22 @@ export default function NotificationBell() {
           } else {
             toast(msg, { icon: "🔔", duration: 6000 });
           }
+
+          // Browser Notification (only if user is away from tab)
+          if (document.hidden) {
+            const title = kind === "rider" ? "Booking Update" : "New Booking Request";
+            showBrowserNotification(title, msg, () => {
+              if (kind === "rider") {
+                navigate("/dashboard/bookings");
+              } else {
+                navigate("/dashboard/earnings");
+              }
+            });
+          }
         }
       });
     },
-    []
+    [navigate]
   );
 
   // ── Rider listener ───────────────────────────────────────────────────────
