@@ -12,6 +12,7 @@ import { getHostEarnings, EarningsSummary } from "@/lib/earningsService";
 import { toast } from "sonner";
 import GoogleLoginModal from "@/components/Auth/GoogleLoginModal";
 import HostRegistrationModal from "@/components/HostRegistration/HostRegistrationModal";
+import SEO from "@/components/SEO";
 import type { User } from "@/types";
 
 export default function Earnings() {
@@ -89,6 +90,11 @@ export default function Earnings() {
 
   return (
     <div className="pt-24 pb-16">
+      <SEO 
+        title="Host Earnings | ChargeNest"
+        description="Track your earnings from every charging session. View per-spot performance and weekly revenue summaries."
+        noindex={true}
+      />
       <div className="container mx-auto px-4 max-w-4xl">
         {/* Header */}
         <div className="flex items-center gap-4 mb-8">

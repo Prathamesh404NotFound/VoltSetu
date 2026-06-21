@@ -19,6 +19,7 @@ import {
   SpotAvailability 
 } from "@/lib/availabilityService";
 import { toast } from "sonner";
+import SEO from "@/components/SEO";
 
 export default function Dashboard() {
   const { user } = useAuth();
@@ -75,6 +76,11 @@ export default function Dashboard() {
 
   return (
     <div className="container mx-auto px-4">
+      <SEO 
+        title="My Dashboard | ChargeNest"
+        description="Manage your EV charging sessions, track your carbon footprint, and monitor your host earnings in one place."
+        noindex={true}
+      />
       {/* Header */}
       <div className="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>

@@ -3,20 +3,73 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <!-- TODO: Set the document title to the name of your application -->
-    <title>Charge Nest</title>
-    <meta name="description" content="Lovable Generated Project" />
-    <meta name="author" content="Lovable" />
+    <title>ChargeNest — Find EV Charging Spots Near You in Kolhapur | Host & Earn</title>
 
-    <!-- TODO: Update og:title to match your application name -->
-    <meta property="og:title" content="Lovable App" />
-    <meta property="og:description" content="Lovable Generated Project" />
+    <!-- Resource Hints -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://basemaps.cartocdn.com" />
+    <link rel="preconnect" href="https://nominatim.openstreetmap.org" />
+    <link rel="dns-prefetch" href="https://charge-nest-default-rtdb.asia-southeast1.firebasedatabase.app" />
+    <link rel="dns-prefetch" href="https://www.openstreetmap.org" />
+
+    <meta name="description" content="Find and book nearby EV two-wheeler charging spots in Kolhapur, or list your own outlet and start earning. ChargeNest connects riders with verified hosts for fast, affordable charging — no installation needed." />
+    <meta name="author" content="Code Catalyst" />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://charge-nest.netlify.app/" />
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#3b82f6" />
+
+    <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
-    <meta property="og:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
+    <meta property="og:url" content="https://charge-nest.netlify.app/" />
+    <meta property="og:title" content="ChargeNest — Find EV Charging Spots Near You" />
+    <meta property="og:description" content="Book nearby EV charging spots instantly, or list your outlet and earn ₹3,000–₹5,000/month as a host." />
+    <meta property="og:image" content="https://charge-nest.netlify.app/og-image.png" />
+    <meta property="og:site_name" content="ChargeNest" />
+    <meta property="og:locale" content="en_IN" />
 
+    <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:site" content="@Lovable" />
-    <meta name="twitter:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
+    <meta name="twitter:url" content="https://charge-nest.netlify.app/" />
+    <meta name="twitter:title" content="ChargeNest — Find EV Charging Spots Near You" />
+    <meta name="twitter:description" content="Book nearby EV charging spots instantly, or list your outlet and earn as a host." />
+    <meta name="twitter:image" content="https://charge-nest.netlify.app/og-image.png" />
+
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "ChargeNest",
+      "url": "https://charge-nest.netlify.app/"
+    }
+    </script>
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "ChargeNest",
+      "url": "https://charge-nest.netlify.app/",
+      "logo": "https://charge-nest.netlify.app/og-image.png",
+      "description": "ChargeNest is a marketplace connecting EV riders with nearby charging spot hosts in Kolhapur."
+    }
+    </script>
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Service",
+      "name": "EV Charging Spot Marketplace",
+      "provider": {
+        "@type": "Organization",
+        "name": "ChargeNest"
+      },
+      "areaServed": "Kolhapur, Maharashtra, India",
+      "serviceType": "EV Charging Spot Booking"
+    }
+    </script>
   </head>
 
   <body>

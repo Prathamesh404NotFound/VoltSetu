@@ -81,6 +81,7 @@ import {
 import { toast } from 'sonner';
 import ResponsiveContainer from '@/components/ui/responsive-container';
 import ResponsiveGrid from '@/components/ui/responsive-grid';
+import SEO from "@/components/SEO";
 
 const AdminGovernmentStationsPage: React.FC = () => {
   const { canManageSpots, canEditSpots, canDeleteSpots } = useAdminPermissions();
@@ -490,6 +491,11 @@ const AdminGovernmentStationsPage: React.FC = () => {
 
   return (
     <div className="space-y-6 p-6">
+      <SEO 
+        title="Manage Government Stations | Admin | ChargeNest"
+        description="Monitor and manage government-owned EV charging infrastructure and verification status."
+        noindex={true}
+      />
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>

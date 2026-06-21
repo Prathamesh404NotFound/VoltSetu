@@ -14,6 +14,7 @@ import { getAllChargingSpots } from "@/lib/hostRegistration";
 import BookingModal from "@/components/BookingModal";
 import { useAuth } from "@/components/Auth/AuthProvider";
 import GoogleLoginModal from "@/components/Auth/GoogleLoginModal";
+import SEO from "@/components/SEO";
 
 const Index = () => {
   useScrollReveal();
@@ -22,6 +23,45 @@ const Index = () => {
   const [loadingSpots, setLoadingSpots] = useState(true);
   const [selectedSpot, setSelectedSpot] = useState<any | null>(null);
   const [showLoginModal, setShowLoginModal] = useState(false);
+
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "How does ChargeNest work?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "ChargeNest connects EV two-wheeler riders with nearby home charging spots. Riders search for a spot, navigate to it, plug in, and pay based on charging time. Homeowners list their outlet and earn money each time a rider charges."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How much does it cost to charge?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Pricing is set by individual hosts, typically ranging from Rs 5 to Rs 15 per 10 minutes. You can see the exact price on each charging spot listing before you book."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Is it safe to charge at someone's home?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. All hosts go through a verification process. We verify identity, outlet safety, and location details. Riders and hosts both have rating systems to maintain community trust."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How much can I earn as a host?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Earnings depend on your area's demand and pricing. On average, hosts earn Rs 2,000 to Rs 5,000 per month with minimal effort. You set your own rates and availability."
+        }
+      }
+    ]
+  };
 
   useEffect(() => {
     getAllChargingSpots().then(spots => {
@@ -106,6 +146,7 @@ const Index = () => {
               src={heroImg}
               alt="EV scooter charging at a home outlet"
               className="relative rounded-3xl shadow-2xl w-full animate-float object-cover h-[500px]"
+              fetchPriority="high"
             />
             <div className="absolute -bottom-6 -left-6 glass rounded-2xl p-4 shadow-xl animate-float-delayed">
               <div className="flex items-center gap-3">
@@ -362,6 +403,11 @@ const Index = () => {
 
   return (
     <div className="overflow-hidden">
+      <SEO 
+        title="ChargeNest — Find EV Charging Spots Near You in Kolhapur"
+        description="Book nearby EV two-wheeler charging spots instantly in Kolhapur, or list your outlet and earn passive income as a host. Join India's hyperlocal charging network."
+        schema={faqSchema}
+      />
       {heroSection}
 
       {user ? (

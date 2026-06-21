@@ -14,9 +14,9 @@
       }
     },
     "chargingSpots": {
-      ".read": "auth != null",
+      ".read": true,
       "$spotId": {
-        ".read": "auth != null",
+        ".read": true,
         ".write": "auth != null && (auth.uid === data.child('hostId').val() || auth.uid === newData.child('hostId').val())",
         ".validate": "newData.hasChildren(['hostId', 'hostName', 'address', 'city', 'state', 'pincode', 'outletType', 'pricePerHour'])"
       }

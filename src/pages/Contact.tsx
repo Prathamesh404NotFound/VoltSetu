@@ -8,6 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import ResponsiveContainer from '@/components/ui/responsive-container';
+import SEO from "@/components/SEO";
 import { database, auth } from '@/lib/firebase-services';
 import { ref, push, set as firebaseSet, serverTimestamp } from 'firebase/database';
 
@@ -131,6 +132,10 @@ export default function Contact() {
 
   return (
     <div className="pt-24">
+      <SEO 
+        title="Contact ChargeNest — We're Here to Help"
+        description="Have questions about charging, hosting, or technical support? Our team is available via WhatsApp, phone, and email to assist you 6 days a week."
+      />
       {/* Hero */}
       <section className="py-20 gradient-hero relative overflow-hidden">
         <div className="absolute bottom-0 right-0 w-96 h-96 bg-ev-green/15 rounded-full blur-3xl animate-blob" />

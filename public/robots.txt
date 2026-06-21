@@ -1,14 +1,18 @@
-User-agent: Googlebot
-Allow: /
-
-User-agent: Bingbot
-Allow: /
-
-User-agent: Twitterbot
-Allow: /
-
-User-agent: facebookexternalhit
-Allow: /
-
+# https://www.robotstxt.org/robotstxt.html
 User-agent: *
 Allow: /
+
+# Private areas - protected by noindex tags in React as well
+Disallow: /dashboard/
+Disallow: /admin/
+Disallow: /settings
+Disallow: /bookings
+Disallow: /earnings
+
+# Avoid indexing search results if implemented as query params
+Disallow: /spots?*
+
+# Host registration flow if sensitive
+Disallow: /host/registration
+
+Sitemap: https://charge-nest.netlify.app/sitemap.xml

@@ -25,6 +25,7 @@ import {
   adminGetTopSpots,
   adminGetRecentActivity
 } from '@/services/adminService';
+import SEO from "@/components/SEO";
 
 const AdminDashboardPage: React.FC = () => {
   const { canViewAdminDashboard } = useAdminPermissions();
@@ -152,6 +153,11 @@ const AdminDashboardPage: React.FC = () => {
 
   return (
     <ResponsiveContainer size="xl" className="py-6">
+      <SEO 
+        title="Admin Dashboard | ChargeNest"
+        description="System overview, user analytics, and platform performance metrics for ChargeNest administrators."
+        noindex={true}
+      />
       <div className="space-y-6">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">

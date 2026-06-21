@@ -1,6 +1,7 @@
 import { MapPin, Search, Navigation, QrCode, Zap, CreditCard, Star, Home, DollarSign, BadgeCheck, Users, TrendingUp, Wallet } from "lucide-react";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
 import CTABanner from "@/components/CTABanner";
+import SEO from "@/components/SEO";
 
 const riderSteps = [
   { icon: Search, title: "Search", desc: "Open ChargeNest and search for charging spots near your current location." },
@@ -53,6 +54,10 @@ export default function HowItWorks() {
 
   return (
     <div className="pt-24">
+      <SEO 
+        title="How ChargeNest Works — Step-by-Step Guide for Riders & Hosts"
+        description="Learn how to find charging spots, book sessions, and earn passive income. Our step-by-step guide explains everything you need to know about India's hyperlocal EV charging network."
+      />
       {/* Hero */}
       <section className="py-20 gradient-hero relative overflow-hidden">
         <div className="absolute top-10 left-10 w-72 h-72 bg-primary/15 rounded-full blur-3xl animate-blob" />

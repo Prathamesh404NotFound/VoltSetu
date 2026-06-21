@@ -2,12 +2,17 @@ import { Target, Eye, Leaf, Users, Heart, Lightbulb, Globe, TrendingUp } from "l
 import { useScrollReveal } from "@/hooks/useScrollReveal";
 import aboutImg from "@/assets/about-community.jpg";
 import CTABanner from "@/components/CTABanner";
+import SEO from "@/components/SEO";
 
 export default function About() {
   useScrollReveal();
 
   return (
     <div className="pt-24">
+      <SEO 
+        title="About ChargeNest — Our Mission to Power India's EV Future"
+        description="Learn how ChargeNest is building a hyperlocal EV charging network by connecting riders with unused home outlets across India's neighborhoods."
+      />
       {/* Hero */}
       <section className="py-20 gradient-hero relative overflow-hidden">
         <div className="absolute top-20 right-20 w-64 h-64 bg-primary/10 rounded-full blur-3xl animate-blob" />

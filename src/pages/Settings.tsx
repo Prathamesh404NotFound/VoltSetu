@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import {
-  ArrowLeft, User, Bell, LogOut, Save, Loader2,
+  ArrowLeft, User as UserIcon, Bell, LogOut, Save, Loader2,
   Phone, Mail, Shield, Trash2, CheckCircle2
 } from "lucide-react";
 import { useAuth } from "@/components/Auth/AuthProvider";
@@ -13,6 +13,7 @@ import { toast } from "sonner";
 import { updateProfile } from "firebase/auth";
 import { auth } from "@/lib/firebase-services";
 import GoogleLoginModal from "@/components/Auth/GoogleLoginModal";
+import SEO from "@/components/SEO";
 import type { User } from "@/types";
 
 export default function Settings() {
@@ -102,6 +103,11 @@ export default function Settings() {
 
   return (
     <div className="pt-24 pb-16">
+      <SEO 
+        title="Account Settings | ChargeNest"
+        description="Update your profile, phone number, and notification preferences. Manage your security and account details."
+        noindex={true}
+      />
       <div className="container mx-auto px-4 max-w-2xl">
         {/* Header */}
         <div className="flex items-center gap-4 mb-8">
@@ -126,7 +132,7 @@ export default function Settings() {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <User className="w-5 h-5 text-primary" />Profile Information
+                  <UserIcon className="w-5 h-5 text-primary" />Profile Information
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-5">
@@ -151,7 +157,7 @@ export default function Settings() {
                 <div>
                   <label className="block text-sm font-medium mb-2">Display Name</label>
                   <div className="relative">
-                    <User className="absolute left-3 top-3 w-4 h-4 text-muted-foreground" />
+                    <UserIcon className="absolute left-3 top-3 w-4 h-4 text-muted-foreground" />
                     <input type="text" value={displayName} onChange={e => setDisplayName(e.target.value)}
                       className="w-full pl-10 pr-4 py-3 border border-border rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all bg-background text-foreground text-sm"
                       placeholder="Your name" />

@@ -17,8 +17,10 @@ import {
   Calendar,
   MapPin,
   Phone,
-  Mail
+  Mail,
+  X
 } from 'lucide-react';
+import SEO from "@/components/SEO";
 import { useAdminPermissions } from '@/hooks/useAdminAuth';
 import { ChargingRequest } from '@/types';
 import {
@@ -61,7 +63,7 @@ const AdminRequestsPage: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedRequest, setSelectedRequest] = useState<ChargingRequest | null>(null);
   const [actionDialogOpen, setActionDialogOpen] = useState(false);
-  const [selectedAction, setSelectedAction] = useState<'approve' | 'reject' | null>(null);
+  const [selectedAction, setSelectedAction] = useState<'approved' | 'rejected' | null>(null);
   const [actionMessage, setActionMessage] = useState('');
   const [statusFilter, setStatusFilter] = useState<'all' | ChargingRequest['status']>('all');
   const [error, setError] = useState<string>('');
@@ -214,6 +216,11 @@ const AdminRequestsPage: React.FC = () => {
 
   return (
     <ResponsiveContainer size="xl" className="py-6">
+      <SEO 
+        title="Manage Requests | Admin | ChargeNest"
+        description="Process and respond to EV charging session requests from users across the platform."
+        noindex={true}
+      />
       <div className="space-y-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -387,7 +394,7 @@ const AdminRequestsPage: React.FC = () => {
                                     <DropdownMenuItem
                                       onClick={() => {
                                         setSelectedRequest(request);
-                                        setSelectedAction('approve');
+                                        setSelectedAction('approved');
                                         setActionMessage('Your request has been approved.');
                                         setActionDialogOpen(true);
                                       }}
@@ -400,7 +407,7 @@ const AdminRequestsPage: React.FC = () => {
                                     <DropdownMenuItem
                                       onClick={() => {
                                         setSelectedRequest(request);
-                                        setSelectedAction('reject');
+                                        setSelectedAction('rejected');
                                         setActionMessage('Sorry, your request cannot be accommodated.');
                                         setActionDialogOpen(true);
                                       }}
@@ -428,10 +435,10 @@ const AdminRequestsPage: React.FC = () => {
         <AlertDialogContent className="max-w-md">
           <AlertDialogHeader>
             <AlertDialogTitle>
-              {selectedAction === 'approve' ? 'Approve Request' : 'Reject Request'}
+              {selectedAction === 'approved' ? 'Approve Request' : 'Reject Request'}
             </AlertDialogTitle>
             <AlertDialogDescription>
-              {selectedAction === 'approve'
+              {selectedAction === 'approved'
                 ? 'Approve this charging request. You can add a message for the user.'
                 : 'Reject this charging request. Please provide a reason for the rejection.'
               }
@@ -459,7 +466,7 @@ const AdminRequestsPage: React.FC = () => {
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction onClick={handleRequestAction} disabled={actionLoading}>
-              {actionLoading ? 'Processing...' : (selectedAction === 'approve' ? 'Approve' : 'Reject')}
+              {actionLoading ? 'Processing...' : (selectedAction === 'approved' ? 'Approve' : 'Reject')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

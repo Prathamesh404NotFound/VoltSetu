@@ -11,6 +11,7 @@ import { toast } from "sonner";
 import SpotsMap from "@/components/SpotsMap";
 import { Capacitor } from "@capacitor/core";
 import { Geolocation } from "@capacitor/geolocation";
+import SEO from "@/components/SEO";
 
 const filters = ["All", "Open Now", "Verified", "Under Rs 50", "Top Rated", "Nearest"];
 
@@ -169,6 +170,10 @@ export default function FindSpots() {
 
   return (
     <div className="pt-24">
+      <SEO 
+        title="Find EV Charging Spots Near You | ChargeNest"
+        description="Search our real-time map for verified EV charging spots in your neighborhood. Check availability, book instantly, and charge your vehicle with ease."
+      />
       {/* Hero */}
       <section className="relative py-16 gradient-hero overflow-hidden">
         <div className="absolute inset-0 opacity-20">

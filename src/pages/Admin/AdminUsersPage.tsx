@@ -23,6 +23,7 @@ import { useAdminPermissions } from '@/hooks/useAdminAuth';
 import { User } from '@/types';
 import ResponsiveContainer from '@/components/ui/responsive-container';
 import ResponsiveGrid from '@/components/ui/responsive-grid';
+import SEO from "@/components/SEO";
 import {
   Table,
   TableBody,
@@ -189,6 +190,11 @@ const AdminUsersPage: React.FC = () => {
 
   return (
     <ResponsiveContainer size="xl" className="py-6">
+      <SEO 
+        title="Manage Users | Admin | ChargeNest"
+        description="Monitor user accounts, manage roles, and review platform activity for members and hosts."
+        noindex={true}
+      />
       <div className="space-y-6">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">

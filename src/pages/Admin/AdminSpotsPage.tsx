@@ -64,6 +64,7 @@ import {
 } from '@/services/adminService';
 import { toast } from 'sonner';
 import ResponsiveGrid from '@/components/ui/responsive-grid';
+import SEO from "@/components/SEO";
 
 const AdminSpotsPage: React.FC = () => {
   const { canManageSpots, canEditSpots, canDeleteSpots } = useAdminPermissions();
@@ -229,6 +230,11 @@ const AdminSpotsPage: React.FC = () => {
 
   return (
     <ResponsiveContainer size="xl" className="py-6">
+      <SEO 
+        title="Manage Charging Spots | Admin | ChargeNest"
+        description="Oversee all charging spots across the network, manage their status, and review performance."
+        noindex={true}
+      />
       <div className="space-y-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">

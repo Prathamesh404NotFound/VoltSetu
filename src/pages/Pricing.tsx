@@ -3,6 +3,7 @@ import { useScrollReveal } from "@/hooks/useScrollReveal";
 import FAQAccordion from "@/components/FAQAccordion";
 import CTABanner from "@/components/CTABanner";
 import { cn } from "@/lib/utils";
+import SEO from "@/components/SEO";
 
 const plans = [
   {
@@ -43,6 +44,10 @@ export default function Pricing() {
 
   return (
     <div className="pt-24">
+      <SEO 
+        title="ChargeNest Pricing — Transparent & Affordable EV Charging"
+        description="Pay-per-use EV charging starting at just ₹5 for 10 minutes. No subscriptions, no hidden fees. Understand our fair pricing model for both riders and hosts."
+      />
       {/* Hero */}
       <section className="py-20 gradient-hero relative overflow-hidden">
         <div className="absolute bottom-0 right-0 w-96 h-96 bg-ev-green/10 rounded-full blur-3xl" />

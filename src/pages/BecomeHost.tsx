@@ -10,6 +10,7 @@ import CTABanner from "@/components/CTABanner";
 import HostRegistrationModal from "@/components/HostRegistration/HostRegistrationModal";
 import { Button } from "@/components/ui/button";
 import GoogleLoginModal from "@/components/Auth/GoogleLoginModal";
+import SEO from "@/components/SEO";
 
 const steps = [
   { icon: Home, title: "Register Your Home", desc: "Sign up and add your address, outlet type, and photos." },
@@ -42,6 +43,10 @@ export default function BecomeHost() {
 
   return (
     <div className="pt-24">
+      <SEO 
+        title="Become a ChargeNest Host — Earn ₹3,000–5,000/month"
+        description="Turn your home electricity outlet into a revenue-generating charging point. Set your own prices, choose your availability, and earn money while helping EV riders."
+      />
       {/* Hero */}
       <section className="relative py-20 gradient-hero overflow-hidden">
         <div className="absolute top-10 right-10 w-72 h-72 bg-ev-green/15 rounded-full blur-3xl animate-blob" />

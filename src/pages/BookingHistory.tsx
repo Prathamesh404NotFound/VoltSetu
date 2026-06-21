@@ -11,6 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { getUserBookings, cancelBooking, BookingRequest } from "@/lib/bookingService";
 import { toast } from "sonner";
 import GoogleLoginModal from "@/components/Auth/GoogleLoginModal";
+import SEO from "@/components/SEO";
 import type { User } from "@/types";
 
 const STATUS_CONFIG = {
@@ -78,6 +79,11 @@ export default function BookingHistory() {
 
   return (
     <div className="pt-24 pb-16">
+      <SEO 
+        title="My Bookings | ChargeNest"
+        description="Review your past and upcoming EV charging sessions. Track approval status and session costs."
+        noindex={true}
+      />
       <div className="container mx-auto px-4 max-w-4xl">
         {/* Header */}
         <div className="flex items-center gap-4 mb-8">

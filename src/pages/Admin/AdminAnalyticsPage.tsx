@@ -26,6 +26,7 @@ import {
   adminGetTopSpots,
   adminGetRecentActivity
 } from '@/services/adminService';
+import SEO from "@/components/SEO";
 
 interface AnalyticsData {
   totalUsers: number;
@@ -201,6 +202,11 @@ const AdminAnalyticsPage: React.FC = () => {
 
   return (
     <div className="space-y-6 p-6">
+      <SEO 
+        title="Admin Analytics | ChargeNest"
+        description="Detailed system performance metrics and analytics for ChargeNest administrators."
+        noindex={true}
+      />
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
