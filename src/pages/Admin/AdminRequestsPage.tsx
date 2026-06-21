@@ -128,7 +128,12 @@ const AdminRequestsPage: React.FC = () => {
     try {
       setActionLoading(true);
       setError('');
-      await adminUpdateRequestStatus(selectedRequest.id, selectedAction, actionMessage);
+      await adminUpdateRequestStatus(
+        selectedRequest.userId,
+        selectedRequest.id,
+        selectedAction,
+        actionMessage
+      );
       setRequests(requests.map(req =>
         req.id === selectedRequest.id
           ? {

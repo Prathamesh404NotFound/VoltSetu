@@ -80,19 +80,8 @@ export const adminDeleteUser = async (userId: string): Promise<void> => {
       }
     }
 
-    // Delete all user's requests
-    const requestsRef = ref(database, 'chargingRequests');
-    const requestsSnapshot = await get(requestsRef);
-
-    if (requestsSnapshot.exists()) {
-      const requests = requestsSnapshot.val();
-      const userRequests = Object.keys(requests).filter(key => requests[key].userId === userId);
-
-      // Delete each request
-      for (const requestId of userRequests) {
-        await remove(ref(database, `chargingRequests/${requestId}`));
-      }
-    }
+    // Delete all user's requests (nested: chargingRequests/{userId}/{requestId})
+    await remove(ref(database, `chargingRequests/${userId}`));
 
     // Delete user's host registrations
     const hostRegistrationsRef = ref(database, 'hostRegistrations');
@@ -154,21 +143,28 @@ export const adminUpdateSpotStatus = async (spotId: string, status: ChargingSpot
 
 export const adminDeleteSpot = async (spotId: string): Promise<void> => {
   try {
-    // First delete all requests for this spot
+    // Delete all requests for this spot (nested: chargingRequests/{userId}/{requestId})
     const requestsRef = ref(database, 'chargingRequests');
     const requestsSnapshot = await get(requestsRef);
 
     if (requestsSnapshot.exists()) {
-      const requests = requestsSnapshot.val();
-      const requestsToDelete = Object.keys(requests).filter(key =>
-        requests[key].spotId === spotId
-      );
+      const all = requestsSnapshot.val();
+      const deletions: Promise<void>[] = [];
 
-      await Promise.all(
-        requestsToDelete.map(requestId =>
-          remove(ref(database, `chargingRequests/${requestId}`))
-        )
-      );
+      for (const userId of Object.keys(all)) {
+        const userRequests = all[userId];
+        if (!userRequests || typeof userRequests !== 'object') continue;
+
+        for (const requestId of Object.keys(userRequests)) {
+          if (userRequests[requestId]?.spotId === spotId) {
+            deletions.push(
+              remove(ref(database, `chargingRequests/${userId}/${requestId}`))
+            );
+          }
+        }
+      }
+
+      await Promise.all(deletions);
     }
 
     // Delete the spot
@@ -231,23 +227,40 @@ export const adminUploadStationImages = async (stationId: string, files: File[])
   }
 };
 
-// Requests Management
+// Requests Management — data lives at chargingRequests/{userId}/{requestId}
+const flattenNestedRequests = (
+  all: Record<string, Record<string, Record<string, unknown>>> | null
+): ChargingRequest[] => {
+  if (!all) return [];
+
+  const requests: ChargingRequest[] = [];
+
+  for (const userId of Object.keys(all)) {
+    const userRequests = all[userId];
+    if (!userRequests || typeof userRequests !== 'object') continue;
+
+    for (const requestId of Object.keys(userRequests)) {
+      const req = userRequests[requestId];
+      if (!req || typeof req !== 'object' || !('spotId' in req)) continue;
+
+      requests.push({
+        id: requestId,
+        userId: (req.userId as string) ?? userId,
+        ...req,
+        requestedAt: req.requestedAt ? new Date(req.requestedAt as number) : new Date(),
+        requestedTime: req.requestedTime ? new Date(req.requestedTime as number) : new Date(),
+      } as ChargingRequest);
+    }
+  }
+
+  return requests;
+};
+
 export const adminGetAllRequests = async (): Promise<ChargingRequest[]> => {
   try {
     const requestsRef = ref(database, 'chargingRequests');
     const snapshot = await get(requestsRef);
-
-    if (!snapshot.exists()) {
-      return [];
-    }
-
-    const requests = snapshot.val();
-    return Object.keys(requests).map(key => ({
-      id: key,
-      ...requests[key],
-      requestedAt: requests[key].requestedAt ? new Date(requests[key].requestedAt) : new Date(),
-      requestedTime: requests[key].requestedTime ? new Date(requests[key].requestedTime) : new Date(),
-    }));
+    return flattenNestedRequests(snapshot.exists() ? snapshot.val() : null);
   } catch (error) {
     console.error('Error fetching requests:', error);
     throw new Error('Failed to fetch charging requests');
@@ -255,13 +268,14 @@ export const adminGetAllRequests = async (): Promise<ChargingRequest[]> => {
 };
 
 export const adminUpdateRequestStatus = async (
+  userId: string,
   requestId: string,
   status: ChargingRequest['status'],
   responseText?: string
 ): Promise<void> => {
   try {
-    const requestRef = ref(database, `chargingRequests/${requestId}`);
-    const updateData: any = {
+    const requestRef = ref(database, `chargingRequests/${userId}/${requestId}`);
+    const updateData: Record<string, unknown> = {
       status,
       updatedAt: serverTimestamp(),
     };
@@ -281,9 +295,9 @@ export const adminUpdateRequestStatus = async (
   }
 };
 
-export const adminDeleteRequest = async (requestId: string): Promise<void> => {
+export const adminDeleteRequest = async (userId: string, requestId: string): Promise<void> => {
   try {
-    await remove(ref(database, `chargingRequests/${requestId}`));
+    await remove(ref(database, `chargingRequests/${userId}/${requestId}`));
   } catch (error) {
     console.error('Error deleting request:', error);
     throw new Error('Failed to delete charging request');
@@ -588,13 +602,7 @@ export const adminGetRequestsPaginated = async (
       return { requests: [], total: 0 };
     }
 
-    const requests = snapshot.val();
-    const requestArray = Object.keys(requests).map(key => ({
-      id: key,
-      ...requests[key],
-      requestedAt: requests[key].requestedAt ? new Date(requests[key].requestedAt) : new Date(),
-      requestedTime: requests[key].requestedTime ? new Date(requests[key].requestedTime) : new Date(),
-    }));
+    const requestArray = flattenNestedRequests(snapshot.exists() ? snapshot.val() : null);
 
     const total = requestArray.length;
     const startIndex = (page - 1) * limit;

@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 import { useAuth } from "./Auth/AuthProvider";
 import GoogleLoginModal from "./Auth/GoogleLoginModal";
 import UserMenu from "./Auth/UserMenu";
+import NotificationBell from "./NotificationBell";
 import { Button } from "@/components/ui/button";
 
 const navLinks = [
@@ -74,6 +75,7 @@ export default function Navbar() {
         <div className="hidden lg:flex items-center gap-1.5 xl:gap-3">
           {user ? (
             <>
+              <NotificationBell />
               <UserMenu />
               <Link
                 to="/spots"
@@ -131,7 +133,10 @@ export default function Navbar() {
             ))}
             {user ? (
               <div className="mt-4 sm:mt-6 flex flex-col sm:flex-row items-center gap-3 px-4">
-                <UserMenu />
+                <div className="flex items-center gap-2">
+                  <NotificationBell />
+                  <UserMenu />
+                </div>
                 <Link
                   to="/spots"
                   className="flex-1 px-5 py-3 rounded-xl bg-primary text-primary-foreground font-semibold text-sm text-center"

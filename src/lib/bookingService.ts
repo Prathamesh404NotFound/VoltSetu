@@ -69,7 +69,10 @@ export async function cancelBooking(uid: string, bookingId: string): Promise<voi
 
 /** Get all requests for a given spot (host view) */
 export async function getSpotRequests(spotId: string): Promise<BookingRequest[]> {
-  // Scan all requests — in production use an index query
+  // KNOWN LIMITATION (pre-production): full-table scan of chargingRequests across all
+  // users. Does not scale and exposes cross-user data to any client that can call this.
+  // Proper fix requires Firebase security rules plus a denormalized index (e.g.
+  // spotRequests/{spotId}/{requestId}) — track as a separate task before launch.
   const allRef = ref(database, "chargingRequests");
   const snap = await get(allRef);
   if (!snap.exists()) return [];
