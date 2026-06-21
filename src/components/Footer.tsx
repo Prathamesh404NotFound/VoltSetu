@@ -28,7 +28,7 @@ export default function Footer() {
               <div className="w-9 h-9 rounded-xl gradient-primary flex items-center justify-center shadow-lg">
                 <Zap className="w-4 h-4 text-white" />
               </div>
-              <span className="font-display font-bold text-xl">ChargeNest</span>
+              <span className="font-display font-bold text-xl">VoltSetu</span>
             </Link>
             <p className="text-white/55 text-sm leading-relaxed">
               India's hyperlocal EV charging marketplace — find nearby charging spots
@@ -44,7 +44,7 @@ export default function Footer() {
             </div>
             <div className="flex items-center gap-2.5">
               <Mail className="w-4 h-4 text-primary flex-shrink-0" />
-              <span>hello@chargenest.in</span>
+              <span>hello@voltsetu.in</span>
             </div>
             <div className="flex items-center gap-2.5">
               <Phone className="w-4 h-4 text-primary flex-shrink-0" />
@@ -71,7 +71,7 @@ export default function Footer() {
         {/* Bottom bar */}
         <div className="border-t border-white/10 pt-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <p className="text-xs text-white/35 flex items-center gap-1.5">
-            © 2024 ChargeNest. Made with{" "}
+            © 2024 VoltSetu. Made with{" "}
             <Heart className="w-3 h-3 text-primary inline" fill="currentColor" /> in India.
           </p>
           <div className="flex flex-wrap gap-x-4 gap-y-2">

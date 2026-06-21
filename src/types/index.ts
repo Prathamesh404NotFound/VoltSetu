@@ -1,4 +1,4 @@
-// Core data models for Charge Nest application
+// Core data models for VoltSetu application
 
 export interface User {
   id: string;

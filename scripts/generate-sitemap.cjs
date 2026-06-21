@@ -1,3 +1,4 @@
+// TODO: Update BASE_URL to the new VoltSetu domain once the Netlify site is renamed (domain migration deferred).
 const fs = require('fs');
 const https = require('https');
 const path = require('path');

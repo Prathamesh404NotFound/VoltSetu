@@ -22,7 +22,7 @@ const steps = [
 
 const hostFaqs = [
   { q: "What kind of outlet do I need?", a: "A standard 3-pin or 5-amp socket is sufficient for most EV two-wheelers. We verify the outlet safety during onboarding." },
-  { q: "Is my property insured?", a: "ChargeNest provides basic coverage for any damage during charging sessions. Hosts are protected through our trust and safety program." },
+  { q: "Is my property insured?", a: "VoltSetu provides basic coverage for any damage during charging sessions. Hosts are protected through our trust and safety program." },
   { q: "Can I pause my listing?", a: "Yes, you can toggle your availability anytime. You have full control over your schedule and pricing." },
   { q: "How do I receive payments?", a: "Earnings are deposited directly to your bank account weekly. You can track all transactions in the host dashboard." },
 ];
@@ -44,7 +44,7 @@ export default function BecomeHost() {
   return (
     <div className="pt-24">
       <SEO 
-        title="Become a ChargeNest Host — Earn ₹3,000–5,000/month"
+        title="Become a VoltSetu Host — Earn ₹3,000–5,000/month"
         description="Turn your home electricity outlet into a revenue-generating charging point. Set your own prices, choose your availability, and earn money while helping EV riders."
       />
       {/* Hero */}
@@ -61,7 +61,7 @@ export default function BecomeHost() {
                 <span className="text-ev-green">Charging Business</span>
               </h1>
               <p className="text-lg text-white/70 max-w-lg mb-8 leading-relaxed">
-                List your electricity outlet on ChargeNest and earn money every time an EV rider charges at your location. Simple setup, zero investment.
+                List your electricity outlet on VoltSetu and earn money every time an EV rider charges at your location. Simple setup, zero investment.
               </p>
               <div className="flex flex-wrap gap-4">
                 <Button

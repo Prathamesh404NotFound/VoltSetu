@@ -21,7 +21,7 @@ const AdminFooter: React.FC = () => {
                   <Zap className="w-4 h-4 text-primary-foreground" />
                 </div>
                 <span className="font-display font-bold text-lg text-foreground">
-                  ChargeNest Admin
+                  VoltSetu Admin
                 </span>
               </div>
               <p className="text-sm text-muted-foreground max-w-md">
@@ -79,7 +79,7 @@ const AdminFooter: React.FC = () => {
                     Settings
                   </Link>
                   <a
-                    href="mailto:admin@chargenest.in"
+                    href="mailto:admin@voltsetu.in"
                     className="text-sm text-muted-foreground hover:text-primary transition-colors flex items-center gap-2"
                   >
                     <Mail className="w-3 h-3" />
@@ -120,7 +120,7 @@ const AdminFooter: React.FC = () => {
           <div className="border-t border-border pt-4">
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
               <div className="text-xs text-muted-foreground">
-                © 2024 ChargeNest. All rights reserved. Admin Portal.
+                © 2024 VoltSetu. All rights reserved. Admin Portal.
               </div>
               <div className="flex items-center gap-4 text-xs text-muted-foreground">
                 <span>Version 2.0.1</span>

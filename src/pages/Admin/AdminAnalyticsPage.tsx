@@ -203,8 +203,8 @@ const AdminAnalyticsPage: React.FC = () => {
   return (
     <div className="space-y-6 p-6">
       <SEO 
-        title="Admin Analytics | ChargeNest"
-        description="Detailed system performance metrics and analytics for ChargeNest administrators."
+        title="Admin Analytics | VoltSetu"
+        description="Detailed system performance metrics and analytics for VoltSetu administrators."
         noindex={true}
       />
       {/* Header */}

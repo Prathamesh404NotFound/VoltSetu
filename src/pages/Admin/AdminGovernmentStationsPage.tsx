@@ -492,7 +492,7 @@ const AdminGovernmentStationsPage: React.FC = () => {
   return (
     <div className="space-y-6 p-6">
       <SEO 
-        title="Manage Government Stations | Admin | ChargeNest"
+        title="Manage Government Stations | Admin | VoltSetu"
         description="Monitor and manage government-owned EV charging infrastructure and verification status."
         noindex={true}
       />

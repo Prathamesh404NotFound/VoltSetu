@@ -33,8 +33,8 @@ const plans = [
 ];
 
 const pricingFaqs = [
-  { q: "Who sets the charging price?", a: "Hosts set their own prices based on their electricity costs and local demand. ChargeNest provides recommended pricing guidelines." },
-  { q: "What is ChargeNest's commission?", a: "ChargeNest charges a small platform fee of 15% on each transaction. This covers payment processing, insurance, support, and platform operations." },
+  { q: "Who sets the charging price?", a: "Hosts set their own prices based on their electricity costs and local demand. VoltSetu provides recommended pricing guidelines." },
+  { q: "What is VoltSetu's commission?", a: "VoltSetu charges a small platform fee of 15% on each transaction. This covers payment processing, insurance, support, and platform operations." },
   { q: "Are there any hidden fees?", a: "Absolutely not. The price shown on the spot listing is the exact price you pay per 10 minutes. No registration fee, no membership charges." },
   { q: "How does the host receive payment?", a: "Hosts receive 85% of each transaction, deposited weekly to their registered bank account." },
 ];
@@ -45,7 +45,7 @@ export default function Pricing() {
   return (
     <div className="pt-24">
       <SEO 
-        title="ChargeNest Pricing — Transparent & Affordable EV Charging"
+        title="VoltSetu Pricing — Transparent & Affordable EV Charging"
         description="Pay-per-use EV charging starting at just ₹5 for 10 minutes. No subscriptions, no hidden fees. Understand our fair pricing model for both riders and hosts."
       />
       {/* Hero */}

@@ -51,7 +51,7 @@ export default function GoogleLoginModal({ isOpen, onClose }: LoginModalProps) {
               </svg>
             </div>
             <h2 className="font-display font-bold text-2xl text-card-foreground mb-2">
-              Welcome to ChargeNest
+              Welcome to VoltSetu
             </h2>
             <p className="text-muted-foreground">
               Sign in with Google to book charging spots

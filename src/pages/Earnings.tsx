@@ -91,7 +91,7 @@ export default function Earnings() {
   return (
     <div className="pt-24 pb-16">
       <SEO 
-        title="Host Earnings | ChargeNest"
+        title="Host Earnings | VoltSetu"
         description="Track your earnings from every charging session. View per-spot performance and weekly revenue summaries."
         noindex={true}
       />

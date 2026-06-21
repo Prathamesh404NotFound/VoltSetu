@@ -217,7 +217,7 @@ const AdminRequestsPage: React.FC = () => {
   return (
     <ResponsiveContainer size="xl" className="py-6">
       <SEO 
-        title="Manage Requests | Admin | ChargeNest"
+        title="Manage Requests | Admin | VoltSetu"
         description="Process and respond to EV charging session requests from users across the platform."
         noindex={true}
       />

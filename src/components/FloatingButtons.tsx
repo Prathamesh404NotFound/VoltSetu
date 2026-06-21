@@ -19,7 +19,7 @@ export default function FloatingButtons() {
         </div>
       )}
       <a
-        href="https://wa.me/919876543210?text=Hi%2C%20I%20want%20to%20know%20about%20ChargeNest"
+        href="https://wa.me/919876543210?text=Hi%2C%20I%20want%20to%20know%20about%20VoltSetu"
         target="_blank"
         rel="noopener noreferrer"
         className="w-14 h-14 rounded-full gradient-green flex items-center justify-center shadow-xl hover:shadow-ev-green/40 hover:scale-110 transition-all duration-300"

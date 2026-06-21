@@ -77,7 +77,7 @@ export default function Dashboard() {
   return (
     <div className="container mx-auto px-4">
       <SEO 
-        title="My Dashboard | ChargeNest"
+        title="My Dashboard | VoltSetu"
         description="Manage your EV charging sessions, track your carbon footprint, and monitor your host earnings in one place."
         noindex={true}
       />
@@ -196,7 +196,7 @@ export default function Dashboard() {
               <div className="w-16 h-16 gradient-green rounded-2xl flex items-center justify-center mx-auto shadow-lg mb-5">
                 <Zap className="w-8 h-8 text-white" />
               </div>
-              <h3 className="font-display font-bold text-2xl text-foreground mb-2">Want to earn with ChargeNest?</h3>
+              <h3 className="font-display font-bold text-2xl text-foreground mb-2">Want to earn with VoltSetu?</h3>
               <p className="text-muted-foreground max-w-sm mx-auto mb-6 text-sm">
                 Register your home outlet to start earning ₹3,000–5,000+ per month. Registration is free and takes 5 minutes.
               </p>

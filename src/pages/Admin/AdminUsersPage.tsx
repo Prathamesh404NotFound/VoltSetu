@@ -191,7 +191,7 @@ const AdminUsersPage: React.FC = () => {
   return (
     <ResponsiveContainer size="xl" className="py-6">
       <SEO 
-        title="Manage Users | Admin | ChargeNest"
+        title="Manage Users | Admin | VoltSetu"
         description="Monitor user accounts, manage roles, and review platform activity for members and hosts."
         noindex={true}
       />

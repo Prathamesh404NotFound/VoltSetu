@@ -1,4 +1,4 @@
-# Firebase Database Setup Instructions
+# VoltSetu — Firebase Database Setup Instructions
 
 ## 🔧 Fixing Permission Denied Error
 
@@ -7,7 +7,7 @@ The `PERMISSION_DENIED` error occurs because Firebase Realtime Database has defa
 ### Option 1: Quick Fix (Development Only)
 
 1. Go to [Firebase Console](https://console.firebase.google.com/)
-2. Select your project: `charge-nest`
+2. Select your project: `charge-nest` (Firebase project ID — unchanged)
 3. Navigate to **Realtime Database** from the left menu
 4. Click on **Rules** tab
 5. Replace the existing rules with:

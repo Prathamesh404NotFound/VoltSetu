@@ -4,7 +4,7 @@
  * Provides wrappers for the native browser Notification API.
  *
  * CRITICAL LIMITATION:
- * This ONLY works while the ChargeNest tab is open (either active or backgrounded).
+ * This ONLY works while the VoltSetu tab is open (either active or backgrounded).
  * If the user closes the tab or the entire browser process, no notification will
  * fire. This is a lightweight, zero-infrastructure alternative to Firebase
  * Cloud Messaging (FCM).

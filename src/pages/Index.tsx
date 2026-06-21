@@ -30,10 +30,10 @@ const Index = () => {
     "mainEntity": [
       {
         "@type": "Question",
-        "name": "How does ChargeNest work?",
+        "name": "How does VoltSetu work?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "ChargeNest connects EV two-wheeler riders with nearby home charging spots. Riders search for a spot, navigate to it, plug in, and pay based on charging time. Homeowners list their outlet and earn money each time a rider charges."
+          "text": "VoltSetu connects EV two-wheeler riders with nearby home charging spots. Riders search for a spot, navigate to it, plug in, and pay based on charging time. Homeowners list their outlet and earn money each time a rider charges."
         }
       },
       {
@@ -172,7 +172,7 @@ const Index = () => {
       <div className="container mx-auto px-4">
         <div className="text-center mb-12 lg:mb-16 reveal">
           <h2 className="font-display font-bold text-3xl md:text-4xl text-foreground mb-4">
-            How ChargeNest Works
+            How VoltSetu Works
           </h2>
           <p className="text-muted-foreground text-lg max-w-lg mx-auto">
             Simple, transparent, and built for India's neighborhoods.
@@ -225,7 +225,7 @@ const Index = () => {
       <div className="container mx-auto px-4">
         <div className="text-center mb-12 lg:mb-16 reveal">
           <h2 className="font-display font-bold text-3xl md:text-4xl text-foreground mb-4">
-            Why Riders Love ChargeNest
+            Why Riders Love VoltSetu
           </h2>
           <p className="text-muted-foreground text-lg max-w-lg mx-auto">Everything you need for a stress-free EV life.</p>
         </div>
@@ -253,14 +253,14 @@ const Index = () => {
             <div className="absolute inset-0 bg-gradient-to-tr from-ev-green/20 to-transparent rounded-3xl blur-2xl animate-pulse" />
             <img
               src={riderImg}
-              alt="Rider using ChargeNest app"
+              alt="Rider using VoltSetu app"
               className="relative rounded-3xl shadow-2xl object-cover w-full max-h-[600px]"
               loading="lazy"
             />
           </div>
           <div className="reveal-right order-1 lg:order-2">
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-ev-green/10 text-ev-green text-sm font-semibold mb-6">
-              <DollarSign className="w-4 h-4" /> Earn with ChargeNest
+              <DollarSign className="w-4 h-4" /> Earn with VoltSetu
             </div>
             <h2 className="font-display font-bold text-3xl md:text-4xl lg:text-5xl text-foreground mb-6 leading-tight">
               Turn your outlet into <br className="hidden lg:block" /> a revenue stream
@@ -357,7 +357,7 @@ const Index = () => {
       <div className="container mx-auto px-4">
         <div className="text-center mb-12 lg:mb-16 reveal">
           <h2 className="font-display font-bold text-3xl md:text-4xl text-foreground mb-4">
-            Why Choose ChargeNest
+            Why Choose VoltSetu
           </h2>
           <p className="text-muted-foreground text-lg max-w-lg mx-auto">Building the foundation for India's EV future.</p>
         </div>
@@ -390,7 +390,7 @@ const Index = () => {
           <h2 className="font-display font-bold text-3xl md:text-4xl text-foreground mb-4">
             Frequently Asked Questions
           </h2>
-          <p className="text-muted-foreground text-lg">Everything you need to know about charging and hosting on ChargeNest.</p>
+          <p className="text-muted-foreground text-lg">Everything you need to know about charging and hosting on VoltSetu.</p>
         </div>
         <div className="reveal bg-card rounded-3xl p-6 md:p-8 shadow-sm border border-border">
           <FAQAccordion />
@@ -404,7 +404,7 @@ const Index = () => {
   return (
     <div className="overflow-hidden">
       <SEO 
-        title="ChargeNest — Find EV Charging Spots Near You in Kolhapur"
+        title="VoltSetu — Find EV Charging Spots Near You in Kolhapur"
         description="Book nearby EV two-wheeler charging spots instantly in Kolhapur, or list your outlet and earn passive income as a host. Join India's hyperlocal charging network."
         schema={faqSchema}
       />

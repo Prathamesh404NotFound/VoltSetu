@@ -4,7 +4,7 @@ import CTABanner from "@/components/CTABanner";
 import SEO from "@/components/SEO";
 
 const riderSteps = [
-  { icon: Search, title: "Search", desc: "Open ChargeNest and search for charging spots near your current location." },
+  { icon: Search, title: "Search", desc: "Open VoltSetu and search for charging spots near your current location." },
   { icon: MapPin, title: "Choose a Spot", desc: "Browse nearby options, compare prices, ratings, and availability." },
   { icon: Navigation, title: "Navigate", desc: "Get directions to the selected charging spot in your neighborhood." },
   { icon: QrCode, title: "Scan QR Code", desc: "Scan the host's QR code to start your charging session instantly." },
@@ -55,7 +55,7 @@ export default function HowItWorks() {
   return (
     <div className="pt-24">
       <SEO 
-        title="How ChargeNest Works — Step-by-Step Guide for Riders & Hosts"
+        title="How VoltSetu Works — Step-by-Step Guide for Riders & Hosts"
         description="Learn how to find charging spots, book sessions, and earn passive income. Our step-by-step guide explains everything you need to know about India's hyperlocal EV charging network."
       />
       {/* Hero */}
@@ -63,7 +63,7 @@ export default function HowItWorks() {
         <div className="absolute top-10 left-10 w-72 h-72 bg-primary/15 rounded-full blur-3xl animate-blob" />
         <div className="container mx-auto px-4 relative z-10 text-center">
           <h1 className="font-display font-bold text-3xl md:text-5xl text-white mb-4">
-            How ChargeNest Works
+            How VoltSetu Works
           </h1>
           <p className="text-lg text-white/70 max-w-xl mx-auto">
             Whether you are a rider looking to charge or a homeowner looking to earn, the process is simple, transparent, and built for trust.
@@ -111,7 +111,7 @@ export default function HowItWorks() {
             Built on Trust
           </h2>
           <p className="text-muted-foreground max-w-lg mx-auto mb-12 reveal">
-            Every interaction on ChargeNest is designed to be safe, fair, and transparent.
+            Every interaction on VoltSetu is designed to be safe, fair, and transparent.
           </p>
           <div className="grid sm:grid-cols-3 gap-6 max-w-3xl mx-auto">
             {[

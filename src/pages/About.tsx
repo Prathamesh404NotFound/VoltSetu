@@ -10,8 +10,8 @@ export default function About() {
   return (
     <div className="pt-24">
       <SEO 
-        title="About ChargeNest — Our Mission to Power India's EV Future"
-        description="Learn how ChargeNest is building a hyperlocal EV charging network by connecting riders with unused home outlets across India's neighborhoods."
+        title="About VoltSetu — Our Mission to Power India's EV Future"
+        description="Learn how VoltSetu is building a hyperlocal EV charging network by connecting riders with unused home outlets across India's neighborhoods."
       />
       {/* Hero */}
       <section className="py-20 gradient-hero relative overflow-hidden">
@@ -24,7 +24,7 @@ export default function About() {
                 <span className="text-gradient">One Neighborhood at a Time</span>
               </h1>
               <p className="text-lg text-white/70 leading-relaxed">
-                ChargeNest was born from a simple observation: millions of EV two-wheeler riders in India struggle to find convenient charging points, while millions of homeowners have unused electricity outlets. We connect them.
+                VoltSetu was born from a simple observation: millions of EV two-wheeler riders in India struggle to find convenient charging points, while millions of homeowners have unused electricity outlets. We connect them.
               </p>
             </div>
             <div className="hidden lg:block">
@@ -47,7 +47,7 @@ export default function About() {
                 We realized that the solution was already hiding in plain sight: every home, shop, and apartment building has electricity outlets that sit unused for hours each day. What if we could turn those outlets into a distributed charging network?
               </p>
               <p>
-                That is how ChargeNest was born. A hyperlocal marketplace where riders find nearby charging spots and homeowners earn passive income from their existing outlets. No heavy equipment, no special installation, just community-powered charging.
+                That is how VoltSetu was born. A hyperlocal marketplace where riders find nearby charging spots and homeowners earn passive income from their existing outlets. No heavy equipment, no special installation, just community-powered charging.
               </p>
             </div>
           </div>
@@ -93,7 +93,7 @@ export default function About() {
               { icon: Globe, title: "Access Gap", desc: "Most Tier 2 and Tier 3 cities lack public EV charging infrastructure." },
               { icon: TrendingUp, title: "Growing Demand", desc: "EV two-wheeler sales are growing 50%+ year-on-year in India." },
               { icon: Users, title: "Community Power", desc: "Decentralized charging builds stronger, connected neighborhoods." },
-              { icon: Leaf, title: "Green Impact", desc: "Every charge on ChargeNest reduces emissions and fossil fuel dependence." },
+              { icon: Leaf, title: "Green Impact", desc: "Every charge on VoltSetu reduces emissions and fossil fuel dependence." },
             ].map((item, i) => {
               const Icon = item.icon;
               return (
@@ -142,7 +142,7 @@ export default function About() {
         </div>
       </section>
 
-      <CTABanner variant="dark" title="Join the ChargeNest Movement" subtitle="Be part of India's community-powered EV charging revolution." />
+      <CTABanner variant="dark" title="Join the VoltSetu Movement" subtitle="Be part of India's community-powered EV charging revolution." />
     </div>
   );
 }

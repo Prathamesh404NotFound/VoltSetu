@@ -68,7 +68,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
               <User className="w-6 h-6 text-primary-foreground" />
             </div>
             <h2 className="font-display font-bold text-2xl text-card-foreground">
-              Welcome to ChargeNest
+              Welcome to VoltSetu
             </h2>
             <p className="text-muted-foreground mt-2">
               Sign in to book charging spots

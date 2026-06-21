@@ -133,7 +133,7 @@ export default function Contact() {
   return (
     <div className="pt-24">
       <SEO 
-        title="Contact ChargeNest — We're Here to Help"
+        title="Contact VoltSetu — We're Here to Help"
         description="Have questions about charging, hosting, or technical support? Our team is available via WhatsApp, phone, and email to assist you 6 days a week."
       />
       {/* Hero */}
@@ -156,7 +156,7 @@ export default function Contact() {
             {[
               { icon: Phone, label: "Call Us", value: "+91 98765 43210", href: "tel:+919876543210", color: "primary" },
               { icon: MessageCircle, label: "WhatsApp", value: "Chat Now", href: "https://wa.me/919876543210", color: "green" },
-              { icon: Mail, label: "Email", value: "hello@chargenest.in", href: "mailto:hello@chargenest.in", color: "primary" },
+              { icon: Mail, label: "Email", value: "hello@voltsetu.in", href: "mailto:hello@voltsetu.in", color: "primary" },
               { icon: Clock, label: "Hours", value: "Mon-Sat, 9am-7pm", href: "#", color: "primary" },
             ].map((item, i) => {
               const Icon = item.icon;
