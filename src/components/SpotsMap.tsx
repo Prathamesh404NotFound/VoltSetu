@@ -4,6 +4,10 @@ import type { Map as LeafletMap } from "leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { BadgeCheck, Loader2 } from "lucide-react";
+import {
+  subscribeToAllAvailability,
+  SpotAvailability,
+} from "@/lib/availabilityService";
 
 // ──────────────────────────────────────────
 // Helper: re-centre the map when centre/zoom changes.
@@ -41,6 +45,34 @@ const spotMarkerIcon = L.divIcon({
   popupAnchor: [0, -42],
 });
 
+// ──────────────────────────────────────────
+// Dynamic marker icon factory — colour depends on occupancy
+// ──────────────────────────────────────────
+function makeSpotIcon(availability: SpotAvailability | undefined): L.DivIcon {
+  // No record yet → default blue
+  const fill =
+    availability === undefined
+      ? "hsl(217,91%,60%)"
+      : availability.isOccupied
+      ? "hsl(38,92%,50%)"   // amber for occupied
+      : "hsl(142,71%,45%)"; // green for free
+
+  return L.divIcon({
+    className: "custom-spot-marker",
+    html: `
+      <svg xmlns="http://www.w3.org/2000/svg" width="32" height="40" viewBox="0 0 30 38" fill="none"
+           style="filter: drop-shadow(0px 4px 6px rgba(0,0,0,.15));">
+        <path d="M15 0C6.71 0 0 6.71 0 15C0 26.25 15 38 15 38C15 38 30 26.25 30 15C30 6.71 23.29 0 15 0Z
+                 M15 20.5C11.96 20.5 9.5 18.04 9.5 15C9.5 11.96 11.96 9.5 15 9.5C18.04 9.5 20.5 11.96 20.5 15C20.5 18.04 18.04 20.5 15 20.5Z"
+            fill="${fill}" stroke="white" stroke-width="2"/>
+      </svg>
+    `,
+    iconSize: [32, 40],
+    iconAnchor: [16, 40],
+    popupAnchor: [0, -42],
+  });
+}
+
 const userMarkerIcon = L.divIcon({
   className: "custom-user-marker",
   html: `
@@ -74,8 +106,19 @@ export default function SpotsMap({ spots, onBookSpot }: SpotsMapProps) {
     lng: number;
   } | null>(null);
   const [locationLoading, setLocationLoading] = useState(true);
-  // Keep a ref to the Leaflet map instance (optional, for future imperative use)
   const mapRef = useRef<LeafletMap | null>(null);
+  // Live availability map: spotId → SpotAvailability
+  const [availabilityMap, setAvailabilityMap] = useState<
+    Record<string, SpotAvailability>
+  >({});
+
+  // ── Single listener for all spots' availability ──
+  useEffect(() => {
+    const unsub = subscribeToAllAvailability((avMap) => {
+      setAvailabilityMap(avMap);
+    });
+    return unsub;
+  }, []);
 
   // ── Geolocation ──
   useEffect(() => {
@@ -161,42 +204,63 @@ export default function SpotsMap({ spots, onBookSpot }: SpotsMapProps) {
         {/* Charging spot markers */}
         {spots
           .filter((s) => s.coordinates?.lat && s.coordinates?.lng)
-          .map((spot) => (
-            <Marker
-              key={spot.id}
-              position={[spot.coordinates.lat, spot.coordinates.lng]}
-              icon={spotMarkerIcon}
-            >
-              <Popup>
-                <div className="p-1 space-y-2 min-w-[180px]">
-                  <div className="flex items-center gap-1.5 font-bold text-foreground leading-tight text-sm">
-                    {spot.name}
-                    {spot.isVerified && (
-                      <BadgeCheck className="w-4 h-4 text-ev-green flex-shrink-0" />
-                    )}
-                  </div>
-                  <div className="text-xs text-muted-foreground font-medium">
-                    {spot.city || "Nearby Spot"}
-                  </div>
-                  <div className="flex items-baseline justify-between pt-1">
-                    <div className="text-xs text-muted-foreground">
-                      Price:{" "}
-                      <span className="font-bold text-foreground text-sm">
-                        ₹{spot.pricePerHour}
-                      </span>
-                      /hr
+          .map((spot) => {
+            const av = availabilityMap[spot.id];
+            const icon = makeSpotIcon(av);
+            return (
+              <Marker
+                key={spot.id}
+                position={[spot.coordinates.lat, spot.coordinates.lng]}
+                icon={icon}
+              >
+                <Popup>
+                  <div className="p-1 space-y-2 min-w-[180px]">
+                    <div className="flex items-center gap-1.5 font-bold text-foreground leading-tight text-sm">
+                      {spot.name}
+                      {spot.isVerified && (
+                        <BadgeCheck className="w-4 h-4 text-ev-green flex-shrink-0" />
+                      )}
                     </div>
+                    <div className="text-xs text-muted-foreground font-medium">
+                      {spot.city || "Nearby Spot"}
+                    </div>
+                    {/* Live occupancy indicator in popup */}
+                    {av !== undefined && (
+                      <div
+                        className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold ${
+                          av.isOccupied
+                            ? "bg-amber-100 text-amber-700"
+                            : "bg-green-100 text-green-700"
+                        }`}
+                      >
+                        <span
+                          className={`w-1.5 h-1.5 rounded-full ${
+                            av.isOccupied ? "bg-amber-500" : "bg-green-500"
+                          }`}
+                        />
+                        {av.isOccupied ? "Occupied" : "Free"}
+                      </div>
+                    )}
+                    <div className="flex items-baseline justify-between pt-1">
+                      <div className="text-xs text-muted-foreground">
+                        Price:{" "}
+                        <span className="font-bold text-foreground text-sm">
+                          ₹{spot.pricePerHour}
+                        </span>
+                        /hr
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => onBookSpot(spot)}
+                      className="w-full py-2 px-3 bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg text-xs font-semibold transition-colors flex items-center justify-center gap-1.5 shadow-md shadow-primary/20 cursor-pointer min-h-[44px]"
+                    >
+                      Book Now
+                    </button>
                   </div>
-                  <button
-                    onClick={() => onBookSpot(spot)}
-                    className="w-full py-2 px-3 bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg text-xs font-semibold transition-colors flex items-center justify-center gap-1.5 shadow-md shadow-primary/20 cursor-pointer min-h-[44px]"
-                  >
-                    Book Now
-                  </button>
-                </div>
-              </Popup>
-            </Marker>
-          ))}
+                </Popup>
+              </Marker>
+            );
+          })}
       </MapContainer>
     </div>
   );

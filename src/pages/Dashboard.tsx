@@ -9,25 +9,55 @@ import HostRegistrationModal from "@/components/HostRegistration/HostRegistratio
 import { getUserProfile, UserProfile } from "@/lib/userService";
 import { getUserBookings, BookingRequest } from "@/lib/bookingService";
 import { Loader2 } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
+import { getHostSpots } from "@/lib/hostRegistration";
+import { 
+  setSpotOccupied, 
+  subscribeToAllAvailability, 
+  formatRelativeTime,
+  SpotAvailability 
+} from "@/lib/availabilityService";
+import { toast } from "sonner";
 
 export default function Dashboard() {
   const { user } = useAuth();
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [bookings, setBookings] = useState<BookingRequest[]>([]);
+  const [hostSpots, setHostSpots] = useState<any[]>([]);
+  const [availabilities, setAvailabilities] = useState<Record<string, SpotAvailability>>({});
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (!user) return;
     Promise.all([
       getUserProfile(user.id),
-      getUserBookings(user.id)
-    ]).then(([p, b]) => {
+      getUserBookings(user.id),
+      getHostSpots(user.id)
+    ]).then(([p, b, s]) => {
       setProfile(p);
       setBookings(b);
+      setHostSpots(s);
     }).finally(() => {
       setLoading(false);
     });
   }, [user]);
+
+  useEffect(() => {
+    const unsub = subscribeToAllAvailability((map) => {
+      setAvailabilities(map);
+    });
+    return unsub;
+  }, []);
+
+  const handleToggleOccupancy = async (spotId: string, current: boolean) => {
+    try {
+      await setSpotOccupied(spotId, !current);
+      toast.success(`Spot marked as ${!current ? "occupied" : "free"}`);
+    } catch (err: any) {
+      toast.error(err.message || "Failed to update status");
+    }
+  };
 
   const totalSpent = bookings
     .filter(b => b.status === "completed")
@@ -174,25 +204,66 @@ export default function Dashboard() {
         )}
 
         {(profile?.role === "host" || profile?.role === "admin") && (
-          <Card className="flex flex-col rounded-2xl hover:-translate-y-1 hover:shadow-xl transition-all duration-300">
-            <CardHeader className="flex flex-row items-center justify-between">
-              <CardTitle>Host Actions</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <Button variant="outline" className="w-full justify-start h-14 text-base gap-3" asChild>
-                <Link to="/dashboard/earnings">
-                  <DollarSign className="w-5 h-5 text-green-600" />
-                  View Host Earnings
-                </Link>
-              </Button>
-              <Button variant="outline" className="w-full justify-start h-14 text-base gap-3" asChild>
-                <Link to="/spots">
-                  <MapPin className="w-5 h-5 text-primary" />
-                  View My Spots
-                </Link>
-              </Button>
-            </CardContent>
-          </Card>
+          <div className="space-y-6">
+            <Card className="flex flex-col rounded-2xl hover:-translate-y-1 hover:shadow-xl transition-all duration-300">
+              <CardHeader className="flex flex-row items-center justify-between">
+                <CardTitle>Host Actions</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <Button variant="outline" className="w-full justify-start h-14 text-base gap-3" asChild>
+                  <Link to="/dashboard/earnings">
+                    <DollarSign className="w-5 h-5 text-green-600" />
+                    View Host Earnings
+                  </Link>
+                </Button>
+                <Button variant="outline" className="w-full justify-start h-14 text-base gap-3" asChild>
+                  <Link to="/spots">
+                    <MapPin className="w-5 h-5 text-primary" />
+                    View My Spots
+                  </Link>
+                </Button>
+              </CardContent>
+            </Card>
+
+            <Card className="flex flex-col rounded-2xl hover:-translate-y-1 hover:shadow-xl transition-all duration-300 overflow-hidden">
+              <CardHeader className="bg-primary/5">
+                <CardTitle className="text-lg">Manage Spot Occupancy</CardTitle>
+                <p className="text-xs text-muted-foreground mt-1">Set your spots as free or occupied in real-time</p>
+              </CardHeader>
+              <CardContent className="p-4 space-y-4">
+                {hostSpots.length === 0 ? (
+                  <p className="text-sm text-muted-foreground text-center py-4">No spots registered yet.</p>
+                ) : (
+                  hostSpots.map((spot) => {
+                    const status = availabilities[spot.id];
+                    const isOccupied = status?.isOccupied || false;
+                    return (
+                      <div key={spot.id} className="flex flex-col gap-3 p-3 rounded-xl border border-border bg-card shadow-sm">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="font-semibold text-sm">{spot.name}</p>
+                            <p className="text-[10px] text-muted-foreground flex items-center gap-1">
+                              <Clock className="w-3 h-3" />
+                              Last updated: {status?.updatedAt ? formatRelativeTime(status.updatedAt) : "Never"}
+                            </p>
+                          </div>
+                          <div className="flex items-center gap-2">
+                             <span className={`text-[10px] font-bold uppercase ${isOccupied ? "text-amber-500" : "text-ev-green"}`}>
+                              {isOccupied ? "Occupied" : "Free"}
+                            </span>
+                            <Switch 
+                              checked={isOccupied} 
+                              onCheckedChange={() => handleToggleOccupancy(spot.id, isOccupied)}
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })
+                )}
+              </CardContent>
+            </Card>
+          </div>
         )}
       </div>
     </div>

@@ -1,9 +1,13 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Star, MapPin, Clock, BadgeCheck, Phone, MessageCircle, Zap, IndianRupee } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "./Auth/AuthProvider";
 import { Button } from "@/components/ui/button";
 import GoogleLoginModal from "./Auth/GoogleLoginModal";
+import {
+  subscribeToSpotAvailability,
+  SpotAvailability,
+} from "@/lib/availabilityService";
 
 interface SpotCardProps {
   id?: string;
@@ -29,6 +33,16 @@ export default function SpotCard({
 }: SpotCardProps) {
   const { user } = useAuth();
   const [showLoginModal, setShowLoginModal] = useState(false);
+  // null = no record yet (omit badge), non-null = live data
+  const [availability, setAvailability] = useState<SpotAvailability | null | undefined>(undefined);
+
+  useEffect(() => {
+    if (!id) return;
+    const unsub = subscribeToSpotAvailability(id, (av) => {
+      setAvailability(av);
+    });
+    return unsub;
+  }, [id]);
 
   const handleBookNow = () => {
     if (!user) {
@@ -105,6 +119,30 @@ export default function SpotCard({
             </span>
           )}
         </div>
+
+        {/* Live occupancy badge — only shown once the listener resolves */}
+        {availability !== undefined && (
+          <div className="mb-2">
+            {availability === null ? null : (
+              <span
+                className={cn(
+                  "inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold",
+                  availability.isOccupied
+                    ? "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400"
+                    : "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
+                )}
+              >
+                <span
+                  className={cn(
+                    "w-1.5 h-1.5 rounded-full",
+                    availability.isOccupied ? "bg-amber-500" : "bg-green-500"
+                  )}
+                />
+                {availability.isOccupied ? "Currently occupied" : "Available now"}
+              </span>
+            )}
+          </div>
+        )}
 
         <p className="text-sm text-muted-foreground mb-4">Hosted by {host}</p>
 
