@@ -18,6 +18,7 @@ interface HostRegistrationData {
   agreeToTerms: boolean;
   status: "pending" | "approved" | "rejected";
   createdAt: any;
+  googleMapsLink?: string;
 }
 
 export interface HostRegistrationInput {
@@ -34,6 +35,7 @@ export interface HostRegistrationInput {
   pricePerHour: string;
   coordinates: { lat: number; lng: number } | null;
   agreeToTerms: boolean;
+  googleMapsLink?: string;
 }
 
 export async function submitHostRegistration(data: HostRegistrationInput) {
@@ -62,6 +64,7 @@ export async function submitHostRegistration(data: HostRegistrationInput) {
     agreeToTerms: data.agreeToTerms,
     status: "approved", // auto-approve for MVP
     createdAt: serverTimestamp(),
+    googleMapsLink: data.googleMapsLink || "",
   };
 
   // Save under hostRegistrations/{uid}/
@@ -100,6 +103,7 @@ export async function submitHostRegistration(data: HostRegistrationInput) {
     isFeatured: false,
     createdAt: serverTimestamp(),
     updatedAt: serverTimestamp(),
+    googleMapsLink: data.googleMapsLink || "",
   };
 
   const spotsRef = ref(database, "chargingSpots");
@@ -121,7 +125,7 @@ export async function submitHostRegistration(data: HostRegistrationInput) {
 }
 
 // Fallback coordinates for major Indian cities when GPS is unavailable
-function getCityFallbackCoordinates(city: string): { lat: number; lng: number } {
+export function getCityFallbackCoordinates(city: string): { lat: number; lng: number } {
   const cityMap: Record<string, { lat: number; lng: number }> = {
     mumbai: { lat: 19.076, lng: 72.8777 },
     delhi: { lat: 28.7041, lng: 77.1025 },

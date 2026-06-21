@@ -63,7 +63,6 @@ import {
   adminSearchSpots,
 } from '@/services/adminService';
 import { toast } from 'sonner';
-import ResponsiveContainer from '@/components/ui/responsive-container';
 import ResponsiveGrid from '@/components/ui/responsive-grid';
 
 const AdminSpotsPage: React.FC = () => {

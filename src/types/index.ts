@@ -77,6 +77,7 @@ export interface ChargingSpot {
   isFeatured: boolean;
   createdAt: Date;
   updatedAt: Date;
+  googleMapsLink?: string;
 }
 
 export type SpotCategory =
@@ -306,6 +307,7 @@ export interface CreateSpotData {
   pricePerMinute?: number;
   amenities: Amenity[];
   photos: string[];
+  googleMapsLink?: string;
 }
 
 export interface UpdateSpotData extends Partial<CreateSpotData> {
