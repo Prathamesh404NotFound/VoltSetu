@@ -6,8 +6,7 @@ import {
 } from "lucide-react";
 import { useAuth } from "../Auth/AuthProvider";
 import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
-import { Badge } from "@/components/ui/badge";
+import StepIndicator from "@/components/StepIndicator";
 import { submitHostRegistration } from "@/lib/hostRegistration";
 import { toast } from "sonner";
 import LocationPickerMap from "../LocationPickerMap";
@@ -140,8 +139,6 @@ const HostRegistrationModal = ({ isOpen, onClose }: HostRegistrationModalProps) 
   const [gmapsLinkLoading,  setGmapsLinkLoading]  = useState(false);
   // Flag: after GPS resolves, auto-generate the maps link
   const generateLinkOnGpsRef = useRef(false);
-
-  const progress = (step / TOTAL_STEPS) * 100;
 
   const update = useCallback(<K extends keyof FormData>(field: K, value: FormData[K]) => {
     setForm(prev => ({ ...prev, [field]: value }));
@@ -1094,20 +1091,12 @@ const HostRegistrationModal = ({ isOpen, onClose }: HostRegistrationModalProps) 
             <button onClick={onClose} className="p-2 rounded-lg hover:bg-muted transition-colors">
               <X className="w-5 h-5" />
             </button>
-            <div className="flex items-center gap-2">
-              <Badge variant="secondary">Step {step} of {TOTAL_STEPS}</Badge>
-              <span className="text-sm text-muted-foreground">{STEPS[step - 1].label}</span>
-            </div>
           </div>
-          <Progress value={progress} className="h-2" />
-          {/* Step dots */}
-          <div className="flex justify-center gap-2 mt-3">
-            {STEPS.map((_, i) => (
-              <div key={i} className={`h-2 rounded-full transition-all ${
-                i + 1 === step ? "w-6 bg-primary" : i + 1 < step ? "w-2 bg-primary/60" : "w-2 bg-border"
-              }`} />
-            ))}
-          </div>
+          <StepIndicator
+            currentStep={step}
+            totalSteps={TOTAL_STEPS}
+            stepLabels={STEPS.map((s) => s.label)}
+          />
         </div>
 
         {/* Content */}
