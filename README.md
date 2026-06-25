@@ -1,4 +1,6 @@
 # VoltSetu
+voltsetu.netlify.app
+
 
 VoltSetu is a marketplace connecting EV riders with nearby charging spot hosts in Kolhapur, Maharashtra.
 
