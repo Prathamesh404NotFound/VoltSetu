@@ -1,18 +1,31 @@
-# https://www.robotstxt.org/robotstxt.html
-User-agent: *
+# Allow major web crawlers explicitly
+User-agent: Googlebot
 Allow: /
-
-# Private areas - protected by noindex tags in React as well
 Disallow: /dashboard/
 Disallow: /admin/
-Disallow: /settings
-Disallow: /bookings
-Disallow: /earnings
-
-# Avoid indexing search results if implemented as query params
 Disallow: /spots?*
-
-# Host registration flow if sensitive
 Disallow: /host/registration
 
-Sitemap: https://charge-nest.netlify.app/sitemap.xml
+User-agent: Bingbot
+Allow: /
+Disallow: /dashboard/
+Disallow: /admin/
+Disallow: /spots?*
+Disallow: /host/registration
+
+User-agent: DuckDuckBot
+Allow: /
+Disallow: /dashboard/
+Disallow: /admin/
+Disallow: /spots?*
+Disallow: /host/registration
+
+# Fallback for all other crawlers
+User-agent: *
+Allow: /
+Disallow: /dashboard/
+Disallow: /admin/
+Disallow: /spots?*
+Disallow: /host/registration
+
+Sitemap: https://voltsetu.netlify.app/sitemap.xml

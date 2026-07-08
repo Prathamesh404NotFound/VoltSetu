@@ -313,8 +313,16 @@ export default function FindSpots() {
   return (
     <div className="pt-24">
       <SEO
-        title="Find EV Charging Spots Near You | VoltSetu"
-        description="Search our real-time map for verified EV charging spots in your neighborhood. Check availability, book instantly, and charge your vehicle with ease."
+        title={
+          selectedSpot
+            ? `${selectedSpot.name} - EV Charging Spot in ${selectedSpot.area || selectedSpot.city || "Kolhapur"} | VoltSetu`
+            : "Find EV Charging Spots Near You | VoltSetu"
+        }
+        description={
+          selectedSpot
+            ? `Book charging at ${selectedSpot.name}. Located in ${selectedSpot.address || selectedSpot.city}. Outlet: ${selectedSpot.outletType || "Standard"}. Charging rate: Rs ${selectedSpot.pricePerHour || 10}/hr. Verified host.`
+            : "Search our real-time map for verified EV charging spots in your neighborhood. Check availability, book instantly, and charge your vehicle with ease."
+        }
       />
 
       <section className="relative py-16 gradient-hero overflow-hidden">

@@ -3,7 +3,7 @@ const fs = require('fs');
 const https = require('https');
 const path = require('path');
 
-const BASE_URL = 'https://charge-nest.netlify.app';
+const BASE_URL = 'https://voltsetu.netlify.app';
 const FIREBASE_DB_URL = 'https://charge-nest-default-rtdb.asia-southeast1.firebasedatabase.app/chargingSpots.json';
 
 const staticPages = [
