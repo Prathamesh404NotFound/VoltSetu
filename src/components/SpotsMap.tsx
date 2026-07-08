@@ -1,13 +1,14 @@
 import { useEffect, useRef, useState } from "react";
-import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup, Polyline, useMap } from "react-leaflet";
 import type { Map as LeafletMap } from "leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
-import { BadgeCheck, Loader2 } from "lucide-react";
+import { BadgeCheck, Loader2, Flag } from "lucide-react";
 import {
   subscribeToAllAvailability,
   SpotAvailability,
 } from "@/lib/availabilityService";
+import type { GeoJSONLineString } from "@/lib/routeUtils";
 
 // ──────────────────────────────────────────
 // Helper: re-centre the map when centre/zoom changes.
@@ -24,6 +25,30 @@ function ChangeMapView({
   useEffect(() => {
     map.setView(center, zoom);
   }, [center, zoom, map]);
+  return null;
+}
+
+function FitRouteBounds({
+  routeGeometry,
+  userLocation,
+  destination,
+}: {
+  routeGeometry?: GeoJSONLineString | null;
+  userLocation?: { lat: number; lng: number } | null;
+  destination?: { lat: number; lng: number } | null;
+}) {
+  const map = useMap();
+  useEffect(() => {
+    const points: L.LatLngExpression[] = [];
+    if (routeGeometry?.coordinates.length) {
+      routeGeometry.coordinates.forEach(([lng, lat]) => points.push([lat, lng]));
+    }
+    if (userLocation) points.push([userLocation.lat, userLocation.lng]);
+    if (destination) points.push([destination.lat, destination.lng]);
+    if (points.length >= 2) {
+      map.fitBounds(L.latLngBounds(points), { padding: [48, 48] });
+    }
+  }, [routeGeometry, userLocation, destination, map]);
   return null;
 }
 
@@ -92,15 +117,38 @@ const userMarkerIcon = L.divIcon({
   popupAnchor: [0, -14],
 });
 
+const destinationMarkerIcon = L.divIcon({
+  className: "custom-destination-marker",
+  html: `
+    <div style="position:relative;width:32px;height:32px;">
+      <div style="position:absolute;top:4px;left:4px;width:24px;height:24px;background:hsl(0,84%,60%);
+                  border:2px solid white;border-radius:50% 50% 50% 0;transform:rotate(-45deg);
+                  box-shadow:0 2px 6px rgba(0,0,0,.25);"></div>
+    </div>
+  `,
+  iconSize: [32, 32],
+  iconAnchor: [16, 32],
+  popupAnchor: [0, -32],
+});
+
 // ──────────────────────────────────────────
 // Main component
 // ──────────────────────────────────────────
 interface SpotsMapProps {
   spots: any[];
   onBookSpot: (spot: any) => void;
+  routeGeometry?: GeoJSONLineString | null;
+  destination?: { lat: number; lng: number; label: string } | null;
+  userLocationOverride?: { lat: number; lng: number } | null;
 }
 
-export default function SpotsMap({ spots, onBookSpot }: SpotsMapProps) {
+export default function SpotsMap({
+  spots,
+  onBookSpot,
+  routeGeometry = null,
+  destination = null,
+  userLocationOverride = null,
+}: SpotsMapProps) {
   const [userLocation, setUserLocation] = useState<{
     lat: number;
     lng: number;
@@ -120,8 +168,12 @@ export default function SpotsMap({ spots, onBookSpot }: SpotsMapProps) {
     return unsub;
   }, []);
 
-  // ── Geolocation ──
+  // ── Geolocation (skip when parent provides location) ──
   useEffect(() => {
+    if (userLocationOverride) {
+      setLocationLoading(false);
+      return;
+    }
     if (!navigator.geolocation) {
       setLocationLoading(false);
       return;
@@ -137,12 +189,24 @@ export default function SpotsMap({ spots, onBookSpot }: SpotsMapProps) {
       },
       { enableHighAccuracy: true, timeout: 8000 }
     );
-  }, []);
+  }, [userLocationOverride]);
+
+  const effectiveUserLocation = userLocationOverride ?? userLocation;
+  const hasRoute = Boolean(routeGeometry?.coordinates?.length);
 
   // ── Map centre / zoom ──
   const getMapConfig = (): { center: [number, number]; zoom: number } => {
-    if (userLocation) {
-      return { center: [userLocation.lat, userLocation.lng], zoom: 14 };
+    if (hasRoute && destination && effectiveUserLocation) {
+      return {
+        center: [
+          (effectiveUserLocation.lat + destination.lat) / 2,
+          (effectiveUserLocation.lng + destination.lng) / 2,
+        ],
+        zoom: 11,
+      };
+    }
+    if (effectiveUserLocation) {
+      return { center: [effectiveUserLocation.lat, effectiveUserLocation.lng], zoom: 14 };
     }
     const valid = spots.filter((s) => s.coordinates?.lat && s.coordinates?.lng);
     if (valid.length > 0) {
@@ -174,11 +238,17 @@ export default function SpotsMap({ spots, onBookSpot }: SpotsMapProps) {
         center={center}
         zoom={zoom}
         className="w-full h-full z-10"
-        // Expose the internal Leaflet map instance
         ref={mapRef}
       >
-        {/* Recentre when userLocation resolves */}
-        <ChangeMapView center={center} zoom={zoom} />
+        {hasRoute ? (
+          <FitRouteBounds
+            routeGeometry={routeGeometry}
+            userLocation={effectiveUserLocation}
+            destination={destination}
+          />
+        ) : (
+          <ChangeMapView center={center} zoom={zoom} />
+        )}
 
         <TileLayer
           url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
@@ -187,15 +257,41 @@ export default function SpotsMap({ spots, onBookSpot }: SpotsMapProps) {
           maxZoom={20}
         />
 
-        {/* User location marker */}
-        {userLocation && (
+        {routeGeometry && routeGeometry.coordinates.length > 1 && (
+          <Polyline
+            positions={routeGeometry.coordinates.map(
+              ([lng, lat]) => [lat, lng] as [number, number]
+            )}
+            pathOptions={{
+              color: "hsl(217,91%,60%)",
+              weight: 5,
+              opacity: 0.85,
+              lineCap: "round",
+              lineJoin: "round",
+            }}
+          />
+        )}
+
+        {effectiveUserLocation && (
           <Marker
-            position={[userLocation.lat, userLocation.lng]}
+            position={[effectiveUserLocation.lat, effectiveUserLocation.lng]}
             icon={userMarkerIcon}
           >
             <Popup>
-              <div className="text-center font-semibold text-xs p-1">
-                Your Location
+              <div className="text-center font-semibold text-xs p-1">Your Location</div>
+            </Popup>
+          </Marker>
+        )}
+
+        {destination && (
+          <Marker
+            position={[destination.lat, destination.lng]}
+            icon={destinationMarkerIcon}
+          >
+            <Popup>
+              <div className="p-1 text-xs font-semibold max-w-[180px]">
+                <Flag className="w-3 h-3 inline mr-1 text-destructive" />
+                {destination.label.split(",").slice(0, 2).join(",")}
               </div>
             </Popup>
           </Marker>

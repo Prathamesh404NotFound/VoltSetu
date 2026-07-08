@@ -24,6 +24,7 @@ interface SpotCardProps {
   image?: string;
   outletType?: string;
   availableHours?: string;
+  suggestedStop?: boolean;
   onBook?: () => void;
 }
 
@@ -65,7 +66,7 @@ const overlayBadgeClass =
 
 export default function SpotCard({
   id, name, host, hostPhone, distance, pricePerHour, rating, reviews,
-  isOpen, isVerified, isFeatured, image, outletType, availableHours, onBook
+  isOpen, isVerified, isFeatured, image, outletType, availableHours, suggestedStop, onBook
 }: SpotCardProps) {
   const { user } = useAuth();
   const [showLoginModal, setShowLoginModal] = useState(false);
@@ -99,6 +100,17 @@ export default function SpotCard({
         node: (
           <span className={cn(overlayBadgeClass, "bg-primary text-primary-foreground")}>
             Recommended
+          </span>
+        ),
+      });
+    }
+
+    if (suggestedStop) {
+      badges.push({
+        key: "suggested",
+        node: (
+          <span className={cn(overlayBadgeClass, "bg-ev-green text-white")}>
+            Suggested stop
           </span>
         ),
       });
@@ -176,7 +188,7 @@ export default function SpotCard({
     }
 
     return badges;
-  }, [isFeatured, isVerified, availability, isOpen, isNew, outletType]);
+  }, [isFeatured, suggestedStop, isVerified, availability, isOpen, isNew, outletType]);
 
   const handleBookNow = () => {
     if (!user) {
