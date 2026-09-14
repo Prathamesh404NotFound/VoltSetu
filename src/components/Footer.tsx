@@ -45,7 +45,7 @@ export default function Footer() {
               <li><Link to="/host" className="hover:text-primary transition-colors">Become a Host</Link></li>
               <li><Link to="/how-it-works" className="hover:text-primary transition-colors">How It Works</Link></li>
               <li><Link to="/dashboard/earnings" className="hover:text-primary transition-colors">Host Earnings</Link></li>
-              <li><Link to="/about" className="hover:text-primary transition-colors">About Us</Link></li>
+              <li><Link to="/about-contact" className="hover:text-primary transition-colors">About Us</Link></li>
             </ul>
           </div>
 
@@ -53,7 +53,7 @@ export default function Footer() {
           <div className="space-y-3">
             <h4 className="font-display font-bold text-sm uppercase tracking-wider text-slate-200">Support & Legal</h4>
             <ul className="space-y-2 text-sm text-slate-400">
-              <li><Link to="/contact" className="hover:text-primary transition-colors">Contact</Link></li>
+              <li><Link to="/about-contact" className="hover:text-primary transition-colors">Contact</Link></li>
               <li><a href="mailto:hello@chargepush.com" className="hover:text-primary transition-colors flex items-center gap-1.5"><Mail className="w-3.5 h-3.5 text-primary" /> hello@chargepush.com</a></li>
               <li><Link to="/privacy" className="hover:text-primary transition-colors">Privacy Policy</Link></li>
               <li><Link to="/terms" className="hover:text-primary transition-colors">Terms of Service</Link></li>

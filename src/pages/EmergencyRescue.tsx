@@ -343,12 +343,12 @@ export default function EmergencyRescue() {
                   ? "No open spot fits within your battery range. Raise the battery level or widen your search."
                   : "Every open outlet is booked or closed for the hour. Call a host directly — hosts on ChargePush often make exceptions for stranded riders."}
               </p>
-              <a
-                href="/spots"
+              <Link
+                to="/spots"
                 className="inline-flex items-center gap-2 rounded-xl bg-red-600 px-5 py-3 font-semibold text-white transition-transform hover:scale-[1.02]"
               >
                 <Zap className="h-4 w-4" /> View all spots
-              </a>
+              </Link>
             </div>
           )}
 
@@ -482,9 +482,9 @@ export default function EmergencyRescue() {
           {allSpots.length > 3 && (
             <p className="mt-2 mb-4 text-center text-sm text-neutral-500">
               +{Math.max(0, allSpots.length - 3)} more open spots —{" "}
-              <a href="/spots" className="font-semibold text-red-400 underline underline-offset-2">
+              <Link to="/spots" className="font-semibold text-red-400 underline underline-offset-2">
                 see all
-              </a>
+              </Link>
             </p>
           )}
 
@@ -517,9 +517,9 @@ export default function EmergencyRescue() {
                 <li>Pay at the spot when charging begins — the request is already reserved under your account.</li>
                 <li>
                   Check your request in{" "}
-                  <a href="/dashboard/bookings" className="font-semibold text-emerald-400 underline underline-offset-2">
+                  <Link to="/dashboard/bookings" className="font-semibold text-emerald-400 underline underline-offset-2">
                     Dashboard → Bookings
-                  </a>
+                  </Link>
                   .
                 </li>
               </ol>
