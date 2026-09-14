@@ -31,8 +31,8 @@ export default function Footer() {
             <h4 className="font-display font-bold text-sm uppercase tracking-wider text-slate-200">Rider</h4>
             <ul className="space-y-2 text-sm text-slate-400">
               <li><Link to="/spots" className="hover:text-primary transition-colors">Find a Charge</Link></li>
-              <li><Link to="/trip-planner" className="hover:text-primary transition-colors">ChargePush Route</Link></li>
-              <li><Link to="/emergency" className="hover:text-primary transition-colors">ChargePush Rescue</Link></li>
+              <li><Link to="/route" className="hover:text-primary transition-colors">ChargePush Route</Link></li>
+              <li><Link to="/rescue" className="hover:text-primary transition-colors">ChargePush Rescue</Link></li>
               <li><Link to="/pricing" className="hover:text-primary transition-colors">Pricing</Link></li>
               <li><Link to="/loyalty" className="hover:text-primary transition-colors">Rewards</Link></li>
             </ul>
@@ -55,9 +55,9 @@ export default function Footer() {
             <ul className="space-y-2 text-sm text-slate-400">
               <li><Link to="/contact" className="hover:text-primary transition-colors">Contact</Link></li>
               <li><a href="mailto:hello@chargepush.com" className="hover:text-primary transition-colors flex items-center gap-1.5"><Mail className="w-3.5 h-3.5 text-primary" /> hello@chargepush.com</a></li>
-              <li><span className="text-slate-500 text-xs hover:text-slate-400 cursor-pointer">Privacy Policy</span></li>
-              <li><span className="text-slate-500 text-xs hover:text-slate-400 cursor-pointer">Terms of Service</span></li>
-              <li><span className="text-slate-500 text-xs hover:text-slate-400 cursor-pointer">Help & Safety</span></li>
+              <li><Link to="/privacy" className="hover:text-primary transition-colors">Privacy Policy</Link></li>
+              <li><Link to="/terms" className="hover:text-primary transition-colors">Terms of Service</Link></li>
+              <li><Link to="/help" className="hover:text-primary transition-colors">Help &amp; Safety</Link></li>
             </ul>
           </div>
         </div>

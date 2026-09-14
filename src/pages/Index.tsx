@@ -399,7 +399,7 @@ const Index = () => {
 
             <div className="pt-4">
               <Link
-                to="/trip-planner"
+                to="/route"
                 className="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl gradient-primary text-white font-bold text-base hover:opacity-90 transition-all shadow-lg btn-forward"
               >
                 Plan Your Charge <ArrowRight className="w-5 h-5" />
@@ -590,7 +590,7 @@ const Index = () => {
           </div>
 
           <Link
-            to="/emergency"
+            to="/rescue"
             className="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-bold text-base transition-all shadow-md shrink-0 btn-forward"
           >
             Get Emergency Charge <ArrowRight className="w-5 h-5" />

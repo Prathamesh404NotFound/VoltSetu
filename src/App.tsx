@@ -55,6 +55,9 @@ const lazyAdminCityWaitlist = () => import("./pages/Admin/AdminCityWaitlistPage"
 const lazyLoyalty = () => import("./pages/Loyalty");
 const lazyTripPlanner = () => import("./pages/TripPlannerPage");
 const lazyHostProfile = () => import("./pages/HostProfile");
+const lazyPrivacy = () => import("./pages/Privacy");
+const lazyTerms = () => import("./pages/Terms");
+const lazyHelp = () => import("./pages/Help");
 
 const queryClient = new QueryClient();
 
@@ -109,10 +112,16 @@ function AppContent() {
         <Route path="/rescue" element={<LazyPage load={lazyEmergencyRescue} />} />
 
         <Route path="/route" element={<LazyPage load={lazyTripPlanner} />} />
-        {/* Trip Planner moved into the profile menu to keep the nav lean */}
+        {/* Legacy URL backward-compatibility redirects */}
+        <Route path="/trip-planner" element={<Navigate to="/route" replace />} />
+        <Route path="/emergency" element={<Navigate to="/rescue" replace />} />
         <Route path="/about-contact" element={<LazyPage load={lazyAboutContact} />} />
         <Route path="/about" element={<Navigate to="/about-contact" replace />} />
         <Route path="/contact" element={<Navigate to="/about-contact" replace />} />
+        {/* Legal pages */}
+        <Route path="/privacy" element={<LazyPage load={lazyPrivacy} />} />
+        <Route path="/terms" element={<LazyPage load={lazyTerms} />} />
+        <Route path="/help" element={<LazyPage load={lazyHelp} />} />
         <Route path="/dashboard" element={
           <AuthenticatedRoute>
             <main className="min-h-screen pt-24 responsive-container container-lg">
