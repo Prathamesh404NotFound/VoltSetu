@@ -11,26 +11,68 @@
 
 @layer base {
   :root {
-    --background: 220 14% 96%;
-    --foreground: 220 24% 10%;
+    /* ── CHARGEPUSH BRAND & COLOR TOKENS ── */
+    --cp-electric:       #0066FF;   /* Electric blue — primary brand accent */
+    --cp-electric-light: #E8F0FF;   /* Tinted blue surface */
+    --cp-electric-dim:   #004DCC;   /* Pressed/hover state */
+
+    --cp-ink:            #1A1A2E;   /* Deep graphite — primary text */
+    --cp-ink-secondary:  #4A4A65;   /* Secondary text */
+    --cp-ink-tertiary:   #7A7A99;   /* Captions */
+
+    --cp-white:          #FFFFFF;   /* Card surfaces */
+    --cp-canvas:         #F7F6F3;   /* Warm off-white page background */
+    --cp-grey-100:       #F0EFF0;   /* Light dividers */
+    --cp-grey-200:       #E0DFE2;   /* Input borders */
+    --cp-grey-300:       #C8C7CB;   /* Disabled state */
+
+    --cp-success:        #16A34A;   /* Available / confirmed */
+    --cp-warning:        #D97706;   /* Pending / limited */
+    --cp-error:          #DC2626;   /* Error / unavailable */
+
+    /* ── SPACING TOKENS ── */
+    --space-1: 4px;
+    --space-2: 8px;
+    --space-3: 12px;
+    --space-4: 16px;
+    --space-5: 24px;
+    --space-6: 32px;
+    --space-7: 48px;
+    --space-8: 64px;
+    --space-9: 96px;
+    --space-10: 128px;
+
+    /* ── RADIUS TOKENS ── */
+    --radius-sm: 6px;
+    --radius-md: 12px;
+    --radius-lg: 20px;
+    --radius-full: 9999px;
+
+    /* ── SHADOW TOKENS ── */
+    --shadow-sm: 0 1px 3px rgba(26,26,46,0.08);
+    --shadow-md: 0 4px 16px rgba(26,26,46,0.10);
+    --shadow-lg: 0 12px 40px rgba(26,26,46,0.14);
+
+    --background: 40 14% 96%;
+    --foreground: 240 28% 15%;
 
     --card: 0 0% 100%;
-    --card-foreground: 220 24% 10%;
+    --card-foreground: 240 28% 15%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 220 24% 10%;
+    --popover-foreground: 240 28% 15%;
 
     --primary: 215 100% 50%;
     --primary-foreground: 0 0% 100%;
 
     --secondary: 220 14% 92%;
-    --secondary-foreground: 220 24% 10%;
+    --secondary-foreground: 240 28% 15%;
 
     --muted: 220 14% 92%;
-    --muted-foreground: 220 10% 46%;
+    --muted-foreground: 240 15% 35%;
 
-    --accent: 190 100% 46%;
-    --accent-foreground: 220 24% 10%;
+    --accent: 215 100% 50%;
+    --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
@@ -41,7 +83,7 @@
 
     --radius: 0.75rem;
 
-    --graphite: 220 24% 10%;
+    --graphite: 240 28% 15%;
     --graphite-foreground: 0 0% 100%;
 
     --electric: 215 100% 50%;
@@ -54,7 +96,7 @@
     --warning-foreground: 0 0% 100%;
 
     --silver: 220 10% 75%;
-    --soft-gray: 220 15% 96%;
+    --soft-gray: 40 14% 96%;
 
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;

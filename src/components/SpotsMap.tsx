@@ -356,7 +356,7 @@ export default function SpotsMap({
                       onClick={() => onBookSpot(spot)}
                       className="w-full py-2 px-3 bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg text-xs font-semibold transition-colors flex items-center justify-center gap-1.5 shadow-md shadow-primary/20 cursor-pointer min-h-[44px]"
                     >
-                      Book Now
+                      Request Access
                     </button>
                   </div>
                 </Popup>
