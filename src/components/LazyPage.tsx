@@ -22,21 +22,34 @@ function recoverFromStaleChunk() {
   window.location.reload();
 }
 
+const lazyCache = new Map<() => Promise<any>, React.LazyExoticComponent<React.ComponentType<any>>>();
+
+function getOrCreateLazyComponent(load: () => Promise<{ default: React.ComponentType<any> }>) {
+  let cached = lazyCache.get(load);
+  if (!cached) {
+    cached = React.lazy(() =>
+      load().catch((err) => {
+        // Chunk load failure (stale bundle / network glitch): auto-heal once.
+        console.error("Lazy chunk failed to load", err);
+        recoverFromStaleChunk();
+        throw err;
+      })
+    );
+    lazyCache.set(load, cached);
+  }
+  return cached;
+}
+
 export function LazyPage({ load, fullScreen = false }: { load: () => Promise<{ default: React.ComponentType<any> }>; fullScreen?: boolean }) {
-  const LazyComponent = React.lazy(() =>
-    load().catch((err) => {
-      // Chunk load failure (stale bundle / network glitch): auto-heal once.
-      console.error("Lazy chunk failed to load", err);
-      recoverFromStaleChunk();
-      throw err;
-    })
-  );
+  const LazyComponent = getOrCreateLazyComponent(load);
+
   const fallback = (
     <div className={`flex flex-col items-center justify-center ${fullScreen ? "min-h-screen" : "min-h-[50vh]"}`} aria-live="polite">
       <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mb-4" />
       <p className="text-sm text-muted-foreground">Loading…</p>
     </div>
   );
+
   return (
     <Suspense fallback={fallback}>
       <LazyComponent />
