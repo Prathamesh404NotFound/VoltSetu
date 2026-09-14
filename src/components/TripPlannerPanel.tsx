@@ -199,7 +199,7 @@ export function TripPlannerPanel({ spots, onPickSpot }: TripPlannerPanelProps) {
                   onClick={() => onPickSpot(rs.spot as TripSpot)}
                   className="text-[11px] font-semibold text-primary hover:underline whitespace-nowrap"
                 >
-                  {t("spot.bookNow")}
+                  Book / Request
                 </button>
               </li>
             ))}

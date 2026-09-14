@@ -1253,12 +1253,12 @@ const HostRegistrationModal = ({ isOpen, onClose }: HostRegistrationModalProps) 
             </div>
 
             <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-xl p-4">
-              <h4 className="font-medium text-amber-900 dark:text-amber-300 mb-2 text-sm">What happens next?</h4>
+              <h4 className="font-medium text-amber-900 dark:text-amber-300 mb-2 text-sm">Verification Process</h4>
               <ul className="text-xs text-amber-800 dark:text-amber-400 space-y-1">
-                <li>• Our team reviews your identity documents within 24–48 hours</li>
-                <li>• Once verified, you earn the <strong>Verified Host</strong> badge and your spot goes live</li>
-                <li>• You'll receive a confirmation email once approved</li>
-                <li>• Your charging spot will start attracting riders</li>
+                <li>• <strong>Verification required:</strong> Your listing is reviewed before it is shown as verified.</li>
+                <li>• Our operations team reviews submitted identity documents within 24–48 hours.</li>
+                <li>• You will receive a notification once your listing review is complete.</li>
+                <li>• Your charging spot will start attracting riders upon approval.</li>
               </ul>
             </div>
 

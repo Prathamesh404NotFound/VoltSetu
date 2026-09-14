@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Home, DollarSign, Shield, Users, Clock, CheckCircle, ArrowRight, Phone, MessageCircle, QrCode, BadgeCheck, Zap, TrendingUp } from "lucide-react";
+import { Home, DollarSign, Shield, Eye, Clock, CheckCircle, ArrowRight, BadgeCheck, Zap, Sliders, ShieldCheck } from "lucide-react";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
 import { useAuth } from "@/components/Auth/AuthProvider";
 import hostImg from "@/assets/host-homeowner.jpg";
@@ -14,18 +14,24 @@ import GoogleLoginModal from "@/components/Auth/GoogleLoginModal";
 import SEO from "@/components/SEO";
 
 const steps = [
-  { icon: Home, title: "Register Your Home", desc: "Sign up and add your address, outlet type, and photos." },
-  { icon: DollarSign, title: "Set Your Pricing", desc: "Choose your rate per 10 minutes and set availability hours." },
-  { icon: BadgeCheck, title: "Get Verified", desc: "Our team verifies your identity and outlet safety." },
-  { icon: QrCode, title: "Receive Your QR Code", desc: "Get a unique QR code for riders to scan and start sessions." },
-  { icon: TrendingUp, title: "Start Earning", desc: "Riders discover your spot and you earn with every charge." },
+  { icon: Home, title: "LIST", desc: "Set up your charging spot." },
+  { icon: ShieldCheck, title: "VERIFY", desc: "Complete required verification." },
+  { icon: Sliders, title: "HOST", desc: "Choose availability and pricing." },
+  { icon: DollarSign, title: "EARN", desc: "Receive earnings from eligible charging sessions." },
+];
+
+const pillars = [
+  { icon: Sliders, title: "Control", description: "Choose availability on your terms." },
+  { icon: Eye, title: "Visibility", description: "Get discovered by riders looking for nearby charging." },
+  { icon: Shield, title: "Trust", description: "Use verification and marketplace controls to manage access." },
+  { icon: DollarSign, title: "Earnings", description: "Earn from eligible sessions based on actual usage." },
 ];
 
 const hostFaqs = [
-  { q: "What kind of outlet do I need?", a: "A standard 3-pin or 5-amp socket is sufficient for most EV two-wheelers. We verify the outlet safety during onboarding." },
-  { q: "Is my property insured?", a: "ChargePush provides basic coverage for any damage during charging sessions. Hosts are protected through our trust and safety program." },
-  { q: "Can I pause my listing?", a: "Yes, you can toggle your availability anytime. You have full control over your schedule and pricing." },
-  { q: "How do I receive payments?", a: "Earnings are deposited directly to your bank account weekly. You can track all transactions in the host dashboard." },
+  { q: "What kind of outlet do I need?", a: "A standard 3-pin socket or dedicated charger is suitable for EV two-wheelers and vehicles. We review your setup during verification." },
+  { q: "How does verification work?", a: "Your listing is reviewed before it is shown as verified to ensure safety and accuracy for riders." },
+  { q: "Can I pause my listing?", a: "Yes. You can pause your listing at any time or set specific available hours so riders only request when you are open." },
+  { q: "How do payouts work?", a: "Earnings from completed, eligible charging sessions are processed directly to your payout account." },
 ];
 
 export default function BecomeHost() {
@@ -42,11 +48,18 @@ export default function BecomeHost() {
     }
   };
 
+  const scrollToHowItWorks = () => {
+    const el = document.getElementById("how-it-works");
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
   return (
     <div className="pt-24">
       <SEO 
-        title="ChargePush Host — Power Your Neighborhood"
-        description="List your charging access on The ChargePush Network. Set your own rates, control availability, and earn revenue while providing charging access to nearby EV riders."
+        title="ChargePush Host — Your Power Can Keep Someone Moving"
+        description="Turn suitable charging access at your property into part of the ChargePush network. Control availability, set pricing, and earn from eligible charging sessions."
       />
       {/* Hero */}
       <section className="relative py-20 gradient-hero overflow-hidden">
@@ -55,82 +68,78 @@ export default function BecomeHost() {
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div>
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/20 text-primary text-sm font-bold mb-6">
-                <Zap className="w-4 h-4" /> ChargePush Host
+                <Zap className="w-4 h-4" /> Power Your Neighborhood
               </div>
               <h1 className="font-display font-black text-3xl md:text-5xl text-white leading-tight mb-6">
-                Power Your Neighborhood with <span className="text-gradient">ChargePush Host</span>
+                Your power can keep someone moving.
               </h1>
               <p className="text-lg text-white/70 max-w-lg mb-8 leading-relaxed font-medium">
-                List your charging access on The ChargePush Network and earn revenue when EV riders charge at your spot. Simple setup, full control over availability.
+                Turn suitable charging access at your property into part of the ChargePush network. List suitable charging access, control when it is available, and earn from eligible charging sessions.
               </p>
               <div className="flex flex-wrap gap-4">
                 <Button
                   onClick={handleRegisterNow}
                   className="px-8 py-4 rounded-xl gradient-primary text-white font-bold text-lg shadow-xl hover:opacity-90 transition-all flex items-center gap-2 btn-forward"
                 >
-                  Power Your Neighborhood <ArrowRight className="w-5 h-5" />
+                  Become a Host <ArrowRight className="w-5 h-5" />
+                </Button>
+                <Button
+                  onClick={scrollToHowItWorks}
+                  variant="outline"
+                  className="px-8 py-4 rounded-xl border-white/20 text-white font-semibold text-lg hover:bg-white/10 transition-all"
+                >
+                  See How It Works
                 </Button>
               </div>
             </div>
             <div className="relative hidden lg:block">
-              <img src={hostImg} alt="ChargePush host" className="rounded-3xl shadow-2xl w-full animate-float object-cover" loading="lazy" width={1280} height={720} />
+              <img src={hostImg} alt="ChargePush Host Spot" className="rounded-3xl shadow-2xl w-full animate-float object-cover" loading="lazy" width={1280} height={720} />
             </div>
           </div>
         </div>
       </section>
 
-      {/* Benefits */}
+      {/* 4 Pillars */}
       <section className="py-20">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12 reveal">
             <h2 className="font-display font-black text-3xl md:text-4xl text-foreground mb-4">
-              Why Become a ChargePush Host
+              Host Value Proposition
             </h2>
+            <p className="text-muted-foreground max-w-lg mx-auto font-medium">
+              Join a host community building essential neighborhood EV charging access.
+            </p>
           </div>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[
-              { icon: DollarSign, title: "Earn Revenue", description: "Turn spare electrical capacity into regular usage earnings." },
-              { icon: Shield, title: "Safe & Verified", description: "Identity checks and rating system protect hosts and riders." },
-              { icon: Users, title: "Local Riders", description: "Connect with local EV riders who need charging access." },
-              { icon: Clock, title: "Flexible Schedule", description: "Control exactly when your charging access is available." },
-              { icon: Zap, title: "Zero Hardware Lock-in", description: "Standard sockets and charging outlets work effortlessly." },
-              { icon: CheckCircle, title: "Complete Control", description: "Set your pricing per session and accept requests on your terms." },
-            ].map((f, i) => (
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {pillars.map((f, i) => (
               <div key={i} className="reveal" style={{ transitionDelay: `${i * 0.1}s` }}>
-                <FeatureCard {...f} variant="gradient" />
+                <FeatureCard icon={f.icon} title={f.title} description={f.description} variant="gradient" />
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* 5-Step Onboarding */}
-      <section className="py-20 bg-soft-gray">
+      {/* 4-Step Onboarding */}
+      <section id="how-it-works" className="py-20 bg-soft-gray">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16 reveal">
+            <span className="text-xs font-bold uppercase tracking-[0.2em] text-primary block mb-2">Simple Process</span>
             <h2 className="font-display font-black text-3xl md:text-4xl text-foreground mb-4">
-              Join The Network in 5 Simple Steps
+              How Hosting Works
             </h2>
           </div>
-          <div className="max-w-3xl mx-auto space-y-0">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
             {steps.map((step, i) => {
               const Icon = step.icon;
               return (
-                <div key={i} className="reveal flex gap-6 relative group" style={{ transitionDelay: `${i * 0.15}s` }}>
-                  {i < steps.length - 1 && (
-                    <div className="absolute left-6 top-16 w-0.5 h-full bg-border" />
-                  )}
-                  <div className="w-12 h-12 rounded-xl gradient-primary flex items-center justify-center flex-shrink-0 relative z-10 shadow-md group-hover:scale-110 transition-transform duration-300">
-                    <Icon className="w-6 h-6 text-white" />
+                <div key={i} className="reveal bg-card rounded-2xl border border-border p-6 shadow-sm flex flex-col items-start relative group hover:border-primary/40 transition-colors" style={{ transitionDelay: `${i * 0.12}s` }}>
+                  <div className="w-12 h-12 rounded-xl gradient-primary flex items-center justify-center text-white mb-4 font-bold shadow-md">
+                    <Icon className="w-6 h-6" />
                   </div>
-                  <div className="pb-12 flex-1 p-4 -ml-4 rounded-2xl group-hover:bg-card/60 transition-colors duration-300">
-                    <div className="flex items-center gap-3 mb-1">
-                      <span className="text-xs font-bold uppercase tracking-[0.16em] text-primary">Step {i + 1}</span>
-                      <span className="h-px flex-1 bg-border/60" />
-                    </div>
-                    <h3 className="font-display font-semibold text-lg text-foreground mb-1 group-hover:text-primary transition-colors duration-300">{step.title}</h3>
-                    <p className="text-sm text-muted-foreground leading-relaxed font-medium">{step.desc}</p>
-                  </div>
+                  <span className="text-xs font-bold uppercase tracking-widest text-primary mb-1">Step {i + 1}</span>
+                  <h3 className="font-display font-bold text-xl text-foreground mb-2">{step.title}</h3>
+                  <p className="text-sm text-muted-foreground font-medium leading-relaxed">{step.desc}</p>
                 </div>
               );
             })}
@@ -143,9 +152,9 @@ export default function BecomeHost() {
         <div className="container mx-auto px-4">
           <div className="text-center mb-12 reveal">
             <h2 className="font-display font-black text-3xl md:text-4xl text-foreground mb-4">
-              Estimated Usage Calculator
+              Estimated Session Calculator
             </h2>
-            <p className="text-muted-foreground max-w-lg mx-auto font-medium">Estimate your potential earnings based on custom rates and session volume.</p>
+            <p className="text-muted-foreground max-w-lg mx-auto font-medium">Estimate potential revenue based on your chosen hourly/session rate and charging volume.</p>
           </div>
           <div className="max-w-3xl mx-auto reveal">
             <EarningsEstimator />
@@ -166,7 +175,7 @@ export default function BecomeHost() {
                 Power Your Neighborhood
               </h2>
               <p className="text-muted-foreground max-w-md mx-auto leading-relaxed font-medium">
-                Complete host registration — share your location, socket setup, and pricing rules. It takes less than 5 minutes to submit your listing.
+                List suitable charging access, control when it is available, and earn from eligible charging sessions.
               </p>
             </div>
 
@@ -174,7 +183,7 @@ export default function BecomeHost() {
               onClick={handleRegisterNow}
               className="px-10 py-4 rounded-xl gradient-primary text-white font-bold text-lg shadow-xl hover:opacity-90 transition-all flex items-center gap-2 mx-auto btn-forward"
             >
-              Power Your Neighborhood <ArrowRight className="w-5 h-5" />
+              Become a Host <ArrowRight className="w-5 h-5" />
             </Button>
           </div>
         </div>
@@ -192,7 +201,7 @@ export default function BecomeHost() {
         </div>
       </section>
 
-      <CTABanner variant="dark" title="Ready to Power Your Neighborhood?" subtitle="Join verified hosts offering charging access on The ChargePush Network." />
+      <CTABanner variant="dark" title="Your power can keep someone moving." subtitle="Join verified hosts offering charging access on The ChargePush Network." />
 
       {/* Modals */}
       <HostRegistrationModal
@@ -206,3 +215,4 @@ export default function BecomeHost() {
     </div>
   );
 }
+

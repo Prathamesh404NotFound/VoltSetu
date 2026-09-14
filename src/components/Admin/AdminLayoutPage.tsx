@@ -138,8 +138,64 @@ const adminNavigation = [
   },
 ];
 
-/** Optional per-item unread count badge (set by consumers). */
-const navBadges: Record<string, number> = {};
+interface NavGroup {
+  groupTitle: string;
+  items: typeof adminNavigation;
+}
+
+const navGroups: NavGroup[] = [
+  {
+    groupTitle: "OVERVIEW",
+    items: [
+      adminNavigation[0] // Dashboard
+    ]
+  },
+  {
+    groupTitle: "NETWORK",
+    items: [
+      adminNavigation[2], // Spots
+      adminNavigation[3], // Network Stations
+      adminNavigation[7], // Listing Reviews
+      adminNavigation[14], // City Waitlist
+    ]
+  },
+  {
+    groupTitle: "PEOPLE",
+    items: [
+      adminNavigation[1], // Users
+      adminNavigation[8], // Verifications
+      adminNavigation[12], // Moderation
+    ]
+  },
+  {
+    groupTitle: "TRANSACTIONS",
+    items: [
+      adminNavigation[4], // Requests
+      adminNavigation[6], // Payouts
+      adminNavigation[9], // Referrals
+    ]
+  },
+  {
+    groupTitle: "INSIGHTS",
+    items: [
+      adminNavigation[5], // Analytics
+      adminNavigation[11], // Heatmap
+      adminNavigation[15], // Anomaly
+    ]
+  },
+  {
+    groupTitle: "COMMUNICATIONS",
+    items: [
+      adminNavigation[13], // Notifications
+    ]
+  },
+  {
+    groupTitle: "SETTINGS",
+    items: [
+      adminNavigation[10], // Settings
+    ]
+  }
+];
 
 const AdminLayoutPage: React.FC = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -185,12 +241,17 @@ const AdminLayoutPage: React.FC = () => {
           {/* Sidebar Header */}
           <div className="flex items-center justify-between p-4 border-b border-border">
             <Link to="/admin" className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
-                <Shield className="w-4 h-4 text-primary-foreground" />
+              <div className="w-8 h-8 rounded-lg gradient-primary flex items-center justify-center">
+                <Shield className="w-4 h-4 text-white" />
               </div>
-              <span className="font-display font-bold text-lg text-foreground">
-                Admin
-              </span>
+              <div>
+                <span className="font-display font-bold text-base text-foreground block leading-none">
+                  ChargePush
+                </span>
+                <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest block mt-0.5">
+                  Operations
+                </span>
+              </div>
             </Link>
             <Button
               variant="ghost"
@@ -202,23 +263,30 @@ const AdminLayoutPage: React.FC = () => {
             </Button>
           </div>
 
-          {/* Navigation */}
-          <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
-            {adminNavigation.map((item) => (
-              <Link
-                key={item.href}
-                to={item.href}
-                className={cn(
-                  "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 hover:bg-muted",
-                  isActiveRoute(item.href)
-                    ? "bg-primary text-primary-foreground shadow-md shadow-primary/20"
-                    : "text-muted-foreground hover:text-foreground"
-                )}
-                aria-current={isActiveRoute(item.href) ? 'page' : undefined}
-              >
-                <item.icon className="w-4 h-4" />
-                <span>{item.title}</span>
-              </Link>
+          {/* Grouped Navigation */}
+          <nav className="flex-1 p-3 space-y-4 overflow-y-auto">
+            {navGroups.map((group) => (
+              <div key={group.groupTitle} className="space-y-1">
+                <p className="px-3 text-[10px] font-bold tracking-[0.15em] text-muted-foreground uppercase">
+                  {group.groupTitle}
+                </p>
+                {group.items.map((item) => (
+                  <Link
+                    key={item.href}
+                    to={item.href}
+                    className={cn(
+                      "flex items-center gap-2.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 hover:bg-muted",
+                      isActiveRoute(item.href)
+                        ? "bg-primary text-primary-foreground shadow-sm font-bold"
+                        : "text-muted-foreground hover:text-foreground"
+                    )}
+                    aria-current={isActiveRoute(item.href) ? 'page' : undefined}
+                  >
+                    <item.icon className="w-3.5 h-3.5 flex-shrink-0" />
+                    <span className="truncate">{item.title}</span>
+                  </Link>
+                ))}
+              </div>
             ))}
           </nav>
 
