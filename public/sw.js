@@ -163,7 +163,8 @@ self.addEventListener("fetch", (event) => {
       fetch(request)
         .then((response) => {
           if (response.ok && !isViteDevRequest(request) && request.url.startsWith(self.location.origin) && !isEntryBundle(request.url)) {
-            caches.open(CACHE_SHELL).then((cache) => cache.put(request, response.clone()));
+            const copy = response.clone();
+            caches.open(CACHE_SHELL).then((cache) => cache.put(request, copy));
           }
           return response;
         })
@@ -212,7 +213,8 @@ self.addEventListener("fetch", (event) => {
         const freshen = fetch(request)
           .then((response) => {
             if (response.ok && request.url.startsWith(self.location.origin) && !isEntryBundle(request.url)) {
-              caches.open(CACHE_SHELL).then((cache) => cache.put(request, response.clone()));
+              const copy = response.clone();
+              caches.open(CACHE_SHELL).then((cache) => cache.put(request, copy));
             }
             return response;
           })
@@ -230,7 +232,10 @@ self.addEventListener("fetch", (event) => {
         cache.match(request).then((cached) => {
           const networked = fetch(request)
             .then((response) => {
-              if (response.ok) cache.put(request, response.clone());
+              if (response.ok) {
+                const copy = response.clone();
+                cache.put(request, copy);
+              }
               trimImageCache();
               return response;
             })
@@ -248,7 +253,8 @@ self.addEventListener("fetch", (event) => {
       const networked = fetch(request)
         .then((response) => {
           if (response.ok && request.url.startsWith(self.location.origin) && !isEntryBundle(request.url)) {
-            caches.open(CACHE_SHELL).then((cache) => cache.put(request, response.clone()));
+            const copy = response.clone();
+            caches.open(CACHE_SHELL).then((cache) => cache.put(request, copy));
           }
           return response;
         })

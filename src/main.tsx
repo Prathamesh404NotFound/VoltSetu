@@ -10,7 +10,7 @@ if ("serviceWorker" in navigator && window.isSecureContext) {
     navigator.serviceWorker
       .register("/sw.js", { scope: "/" })
       .then((registration) => {
-        console.log("VoltSetu SW registered:", registration.scope);
+        console.log("ChargePush SW registered:", registration.scope);
         // When a new deploy replaces the cached shell, force a full reload so
         // the page picks up the new index.html and its new hashed chunks.
         registration.addEventListener("updatefound", () => {
@@ -24,7 +24,7 @@ if ("serviceWorker" in navigator && window.isSecureContext) {
         });
       })
       .catch((error) => {
-        console.warn("VoltSetu SW registration failed:", error);
+        console.warn("ChargePush SW registration failed:", error);
       });
   });
 }
@@ -37,7 +37,7 @@ if ("serviceWorker" in navigator && window.isSecureContext) {
  * 1. Unhandled promise rejections caused by chunk imports reload once.
  * 2. Global script errors that look like chunk-load failures reload once.
  */
-const STALE_RELOAD_KEY = "voltsetu-stale-reload";
+const STALE_RELOAD_KEY = "chargepush-stale-reload";
 const MAX_RELOADS = 1;
 
 function staleChunkReloadCount(): number {
@@ -55,7 +55,7 @@ window.addEventListener("unhandledrejection", (event) => {
   // Vite chunk-load failures surface as "Failed to fetch" or "import()" errors
   // referencing /assets/*.js. Treat them as stale-bundle signals and reload.
   if (/failed to fetch|failed to load module|error.*chunk|import\(\)|unexpected token/i.test(msg) && /\/assets\//.test(msg)) {
-    console.warn("[VoltSetu] suspected stale chunk, auto-reloading", msg);
+    console.warn("[ChargePush] suspected stale chunk, auto-reloading", msg);
     maybeReloadForStaleChunk();
   }
 });
