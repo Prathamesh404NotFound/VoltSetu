@@ -154,8 +154,8 @@ const AdminDashboardPage: React.FC = () => {
   return (
     <ResponsiveContainer size="xl" className="py-6">
       <SEO 
-        title="Admin Dashboard | VoltSetu"
-        description="System overview, user analytics, and platform performance metrics for VoltSetu administrators."
+        title="Admin Dashboard | ChargePush"
+        description="System overview, user analytics, and platform performance metrics for ChargePush administrators."
         noindex={true}
       />
       <div className="space-y-6">

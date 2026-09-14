@@ -54,7 +54,7 @@ export default function ParallaxHero() {
       {/* ============ Parallax header (pinned) ============ */}
       <section
         className="relative h-[200vh]"
-        aria-label="VoltSetu hero"
+        aria-label="ChargePush hero"
       >
         <motion.div style={{ opacity: reduceMotion ? 1 : headerOpacity }}>
         <div className="sticky top-0 h-screen overflow-hidden">
@@ -63,8 +63,6 @@ export default function ParallaxHero() {
               layer.kind === "img" && layer.src ? (
                 <div
                   key={layer.src}
-                  // Framed, offset layers (like the original component) instead of
-                  // full-viewport covers so the giant title stays readable on top
                   className={`absolute overflow-hidden rounded-2xl shadow-2xl ${
                     i === 0
                       ? "-left-[12%] -top-[18%] w-[52%] h-[78%] z-0"
@@ -96,32 +94,34 @@ export default function ParallaxHero() {
         <motion.div style={{ opacity: reduceMotion ? 1 : contentFade, y: reduceMotion ? 0 : contentY }} className="relative z-20">
           <div className="container mx-auto px-4 max-w-3xl text-center pb-4">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 dark:bg-primary/15 border border-primary/20 text-primary text-sm font-semibold mb-6">
-              <MapPin className="w-4 h-4" /> India's peer-to-peer EV charging network
+              <MapPin className="w-4 h-4" /> Distributed EV Charging Access Network
             </div>
-            <h1 className="font-display font-bold tracking-squish text-4xl sm:text-6xl md:text-7xl text-foreground mb-6 text-balance">
-              Charge anywhere your <span className="text-gradient">scooter reaches</span>
+            <h1 className="font-display font-black tracking-tight text-4xl sm:text-6xl md:text-7xl text-foreground mb-4 text-balance">
+              Charge. Push. <span className="text-gradient">Go.</span>
             </h1>
+            <p className="text-xl sm:text-2xl font-bold text-foreground mb-4">
+              Keep Moving.
+            </p>
             <p className="text-base sm:text-lg text-muted-foreground max-w-xl mx-auto mb-10 leading-relaxed">
-              Find, book, and charge at verified home and network spots near you — or list your outlet and
-              earn from every charge with transparent pay-per-use pricing.
+              Find power when you need it. ChargePush connects riders with nearby charging access from home hosts, local spots, and charging networks.
             </p>
             <div className="flex flex-col sm:flex-row flex-wrap gap-4 justify-center">
               <Link
                 to="/spots"
-                className="magnet-lift px-8 py-4 rounded-xl gradient-primary text-white font-semibold text-lg shadow-xl shadow-primary/25 hover:shadow-primary/40 flex items-center justify-center gap-2"
+                className="magnet-lift px-8 py-4 rounded-xl gradient-primary text-white font-bold text-lg shadow-xl shadow-primary/25 hover:shadow-primary/40 flex items-center justify-center gap-2 btn-forward"
               >
-                <MapPin className="w-5 h-5" /> Find a Spot
+                <MapPin className="w-5 h-5" /> Find a Charge
               </Link>
               <Link
                 to="/host"
-                className="magnet-lift px-8 py-4 rounded-xl bg-card text-foreground border border-border font-semibold text-lg hover:bg-muted flex items-center justify-center gap-2"
+                className="magnet-lift px-8 py-4 rounded-xl bg-card text-foreground border border-border font-bold text-lg hover:bg-muted flex items-center justify-center gap-2"
               >
-                <Home className="w-5 h-5" /> Register Your Home
+                <Home className="w-5 h-5" /> Power Your Neighborhood
               </Link>
             </div>
             <div className="flex flex-wrap items-center justify-center gap-3 mt-10">
-              {["UPI accepted", "24×7 spots", "Verified hosts", "Pay at the spot"].map((chip) => (
-                <span key={chip} className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-card border border-border text-sm text-muted-foreground">
+              {["Verified hosts", "Real-time availability", "Transparent pricing", "Peer-to-peer charging"].map((chip) => (
+                <span key={chip} className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-card border border-border text-sm text-muted-foreground font-medium">
                   <span className="w-1.5 h-1.5 rounded-full bg-primary" />
                   {chip}
                 </span>
@@ -130,7 +130,7 @@ export default function ParallaxHero() {
           </div>
         </motion.div>
 
-        {/* Decorative closing brand mark (from the original component) */}
+        {/* Decorative closing brand mark */}
         <div aria-hidden className="flex justify-center pt-16 pb-4 opacity-30 dark:opacity-20 text-primary">
           <svg xmlns="http://www.w3.org/2000/svg" width="56" viewBox="0 0 160 160" fill="none" className="h-14 w-14">
             <path d="M94.8284 53.8578C92.3086 56.3776 88 54.593 88 51.0294V0H72V59.9999C72 66.6273 66.6274 71.9999 60 71.9999H0V87.9999H51.0294C54.5931 87.9999 56.3777 92.3085 53.8579 94.8283L18.3431 130.343L29.6569 141.657L65.1717 106.142C67.684 103.63 71.9745 105.396 72 108.939V160L88.0001 160L88 99.9999C88 93.3725 93.3726 87.9999 100 87.9999H160V71.9999H108.939C105.407 71.9745 103.64 67.7091 106.12 65.1938L106.142 65.1716L141.657 29.6568L130.343 18.3432L94.8284 53.8578Z" fill="currentColor" />
@@ -168,36 +168,36 @@ function ParallaxTitle({ y, reduced }: { y: number; reduced: boolean }) {
       style={{ translateY }}
     >
       <div className="px-3 py-1 rounded-full bg-primary/15 dark:bg-primary/20 border border-primary/30 text-primary text-xs font-bold uppercase tracking-[0.2em] mb-5">
-        India's peer-to-peer EV charging network
+        The ChargePush Network
       </div>
-      <h2 className="font-display text-[13vw] font-bold tracking-tight text-foreground/90">
-        Volt<span className="text-primary">Setu</span>
+      <h2 className="font-display text-[11vw] font-black tracking-tight text-foreground/90 uppercase">
+        CHARGE<span className="text-primary">PUSH</span>
       </h2>
-      <p className="mt-4 text-base md:text-xl text-foreground/70 max-w-md mx-auto font-medium">
-        Charge anywhere your scooter reaches
+      <p className="mt-4 text-lg md:text-2xl text-foreground/80 max-w-md mx-auto font-bold">
+        Charge. Push. Go.
       </p>
 
-      {/* CTA overlay inside the title layer (VoltSetu addition per spec) */}
+      {/* CTA overlay inside the title layer */}
       <div className="mt-7 flex flex-col sm:flex-row flex-wrap gap-4 justify-center items-center">
         <Link
           to="/spots"
-          className="px-6 py-3 rounded-xl gradient-primary text-white font-semibold shadow-lg shadow-primary/25 hover:shadow-primary/40 transition-shadow"
+          className="px-6 py-3 rounded-xl gradient-primary text-white font-bold shadow-lg shadow-primary/25 hover:shadow-primary/40 transition-shadow btn-forward"
         >
-          Find a spot near you
+          Find a Charge
         </Link>
         <Link
           to="/host"
-          className="px-6 py-3 rounded-xl bg-transparent text-foreground border-2 border-primary/40 dark:border-primary/50 font-semibold hover:bg-primary/10 transition-colors"
+          className="px-6 py-3 rounded-xl bg-transparent text-foreground border-2 border-primary/40 dark:border-primary/50 font-bold hover:bg-primary/10 transition-colors"
         >
-          List your spot
+          Power Your Neighborhood
         </Link>
       </div>
-      <div className="mt-5 flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-xs md:text-sm text-muted-foreground">
-        <span>1,240+ spots</span>
+      <div className="mt-5 flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-xs md:text-sm text-muted-foreground font-medium">
+        <span>Verified charging access</span>
         <span aria-hidden className="w-1 h-1 rounded-full bg-muted-foreground/50" />
-        <span>52 cities</span>
+        <span>Distributed network</span>
         <span aria-hidden className="w-1 h-1 rounded-full bg-muted-foreground/50" />
-        <span>hosts earn monthly</span>
+        <span>Keep Moving</span>
       </div>
     </motion.div>
   );

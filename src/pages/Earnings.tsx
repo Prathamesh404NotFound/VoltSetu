@@ -90,101 +90,27 @@ export default function Earnings() {
         setPayouts(await getHostPayoutRequests(user.id));
         try {
           const prof = await getUserProfile(user.id);
-          await ensureReferralCode(user.id, prof.name || "VoltSetu Host");
+          await ensureReferralCode(user.id, prof.name || "ChargePush Host");
         } catch {
-          /* best-effort index entry */
         }
-        setReferral(await getReferralStats(user.id));
-      } catch {
-        toast.error("Failed to load host workspace");
+      } catch (err) {
+        console.error("Error loading host data:", err);
       } finally {
         if (!disposed) setHostLoading(false);
       }
     })();
-    // live queue refresh while on Requests tab
-    let unsubQueue: (() => void) | undefined;
-    if (hostTab === "Requests") {
-      getHostSpots(user.id).then(s => {
-        if (disposed) return;
-        unsubQueue = listenPendingQueue(user.id, s, setQueue);
-      });
-    }
-    return () => { disposed = true; unsubQueue?.(); };
-  }, [user, isHost, hostTab]);
 
-  useEffect(() => {
-    if (!user) { setLoading(false); return; }
-    (async () => {
-      try {
-        const profile = await getUserProfile(user.id);
-        const host = profile.role === "host" || profile.role === "admin";
-        setIsHost(host);
-        if (host) {
-          const data = await getHostEarnings(user.id);
-          setSummary(data);
-        }
-      } catch {
-        toast.error("Failed to load earnings data");
-      } finally {
-        setLoading(false);
-      }
-    })();
-  }, [user]);
+    return () => {
+      disposed = true;
+    };
+  }, [user, isHost]);
 
-  const formatDate = (ts: any) => {
-    if (!ts) return "—";
-    return new Date(typeof ts === "number" ? ts : Date.now())
-      .toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" });
-  };
-
-  if (!user) return (
-    <div className="pt-24 pb-16 min-h-screen flex items-center justify-center">
-      <div className="text-center space-y-4">
-        <IndianRupee className="w-16 h-16 text-muted-foreground mx-auto" />
-        <h2 className="font-display font-bold text-2xl text-foreground">Sign in to view earnings</h2>
-        <Button onClick={() => setShowLogin(true)}>Sign In</Button>
-      </div>
-      <GoogleLoginModal isOpen={showLogin} onClose={() => setShowLogin(false)} />
-    </div>
-  );
-
-  if (loading) return (
-    <div className="pt-24 pb-16 min-h-screen flex items-center justify-center">
-      <Loader2 className="w-8 h-8 animate-spin text-primary" />
-    </div>
-  );
-
-  const dueForPayout = summary
-    ? Math.max(0, Math.round(summary.totalEarned - (payouts.filter(p => p.status === "paid").reduce((s, p) => s + p.amount, 0) || 0)) * 100) / 100
-    : 0;
-
-  if (!isHost) return (
-    <div className="pt-24 pb-16">
-      <div className="container mx-auto px-4 max-w-2xl">
-        <Card className="overflow-hidden">
-          <div className="bg-gradient-to-br from-ev-green/10 to-primary/10 p-10 text-center space-y-5">
-            <div className="w-20 h-20 gradient-green rounded-2xl flex items-center justify-center mx-auto shadow-lg">
-              <Home className="w-10 h-10 text-white" />
-            </div>
-            <h2 className="font-display font-bold text-2xl text-foreground">You're not a host yet</h2>
-            <p className="text-muted-foreground max-w-sm mx-auto">Register your charging spot to start earning. Hosts earn ₹3,000–₹5,000/month on average.</p>
-            <div className="flex flex-col sm:flex-row gap-3 justify-center">
-              <Button onClick={() => setShowRegister(true)} className="gradient-green hover:opacity-90">
-                Register as Host
-              </Button>
-              <Button variant="outline" asChild><Link to="/host">Learn More</Link></Button>
-            </div>
-          </div>
-        </Card>
-      </div>
-      <HostRegistrationModal isOpen={showRegister} onClose={() => setShowRegister(false)} />
-    </div>
-  );
+  if (!user) return null;
 
   return (
-    <div className="pt-24 pb-16">
+    <>
       <SEO 
-        title="Host Earnings | VoltSetu"
+        title="Host Earnings | ChargePush"
         description="Track your earnings from every charging session. View per-spot performance and weekly revenue summaries."
         noindex={true}
       />
@@ -483,7 +409,7 @@ export default function Earnings() {
                   </div>
                 )}
                 {!referral?.nextMilestone && referral && (
-                  <p className="text-xs text-ev-green font-semibold">All milestones earned — you're a VoltSetu Ambassador!</p>
+                  <p className="text-xs text-ev-green font-semibold">All milestones earned — you're a ChargePush Ambassador!</p>
                 )}
               </CardContent>
             </Card>
@@ -624,6 +550,6 @@ export default function Earnings() {
           </CardContent>
         </Card>
       </div>
-    </div>
+    </>
   );
 }

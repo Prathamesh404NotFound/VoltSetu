@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>VoltSetu - Find EV Two-Wheeler Charging Spots Near You in Kolhapur | Host & Earn</title>
+    <title>ChargePush — Charge. Push. Go. | Distributed EV Charging Access Network</title>
 
     <!-- Resource Hints -->
     <link rel="preconnect" href="https://basemaps.cartocdn.com" />
@@ -11,22 +11,19 @@
     <link rel="dns-prefetch" href="https://charge-nest-default-rtdb.asia-southeast1.firebasedatabase.app" />
     <link rel="dns-prefetch" href="https://www.openstreetmap.org" />
 
-    <meta name="description" content="Find verified EV two-wheeler charging spots in Kolhapur, Maharashtra, or list your outlet on VoltSetu to host and earn passive income." />
-    <meta name="keywords" content="voltsetu, volt setu, VoltSetu Kolhapur, VoltSetu app, EV charging Kolhapur, EV two-wheeler charging spot, electric scooter charging near me, electric bike charging station Kolhapur, host EV charging spot earn money, EV charging marketplace India, two-wheeler charging point Kolhapur, verified EV charging host, book EV charging spot, list charging outlet earn" />
-    <meta name="author" content="Code Catalyst" />
+    <meta name="description" content="ChargePush is a distributed EV charging-access network connecting EV riders with nearby charging access from home hosts and local spots. Charge. Push. Go." />
+    <meta name="keywords" content="ChargePush, charge push go, EV charging network, electric vehicle charging spot, host EV charging, EV scooter charger, find EV charger, book charging spot, power your neighborhood" />
+    <meta name="author" content="ChargePush Network" />
     <meta name="robots" content="index, follow" />
-    <link rel="canonical" href="https://voltsetu.netlify.app/" />
+    <link rel="canonical" href="https://chargepush.com/" />
     <link rel="manifest" href="/manifest.json" />
-    <meta name="theme-color" content="#3b82f6" />
+    <meta name="theme-color" content="#0066FF" />
 
-    <!-- Stale-bundle failsafe: an old index.html may reference chunks that no
-         longer exist on the server. Module errors and asset load errors
-         referencing /assets/ trigger one cache-busting reload. Max 2 reloads
-         per session to avoid loops. -->
+    <!-- Stale-bundle failsafe -->
     <script>
       (function () {
         function vsrReload() {
-          var k = "vsr";
+          var k = "cp_sr";
           var n = Number(sessionStorage.getItem(k) || 0);
           if (n < 2) {
             sessionStorage.setItem(k, String(n + 1));
@@ -44,7 +41,7 @@
       })();
     </script>
 
-    <!-- Dark-mode FOUC prevention: apply the stored theme BEFORE first paint -->
+    <!-- Dark-mode FOUC prevention -->
     <script>
       (function () {
         try {
@@ -58,27 +55,27 @@
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://voltsetu.netlify.app/" />
-    <meta property="og:title" content="VoltSetu - Find EV Two-Wheeler Charging Spots Near You in Kolhapur | Host & Earn" />
-    <meta property="og:description" content="Find verified EV two-wheeler charging spots in Kolhapur, Maharashtra, or list your outlet on VoltSetu to host and earn passive income." />
-    <meta property="og:image" content="https://voltsetu.netlify.app/og-image.png" />
-    <meta property="og:site_name" content="VoltSetu" />
+    <meta property="og:url" content="https://chargepush.com/" />
+    <meta property="og:title" content="ChargePush — Charge. Push. Go. | EV Charging Network" />
+    <meta property="og:description" content="Distributed EV charging-access network connecting riders with nearby home hosts and charging spots. Keep moving." />
+    <meta property="og:image" content="https://chargepush.com/og-image.png" />
+    <meta property="og:site_name" content="ChargePush" />
     <meta property="og:locale" content="en_IN" />
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:url" content="https://voltsetu.netlify.app/" />
-    <meta name="twitter:title" content="VoltSetu - Find EV Two-Wheeler Charging Spots Near You in Kolhapur" />
-    <meta name="twitter:description" content="Find verified EV two-wheeler charging spots in Kolhapur, Maharashtra, or list your outlet on VoltSetu to host and earn passive income." />
-    <meta name="twitter:image" content="https://voltsetu.netlify.app/og-image.png" />
+    <meta name="twitter:url" content="https://chargepush.com/" />
+    <meta name="twitter:title" content="ChargePush — Charge. Push. Go." />
+    <meta name="twitter:description" content="Distributed EV charging-access network connecting riders with nearby home hosts and charging spots. Keep moving." />
+    <meta name="twitter:image" content="https://chargepush.com/og-image.png" />
 
     <!-- Structured Data -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
       "@type": "WebSite",
-      "name": "VoltSetu",
-      "url": "https://voltsetu.netlify.app/"
+      "name": "ChargePush",
+      "url": "https://chargepush.com/"
     }
     </script>
 
@@ -86,10 +83,10 @@
     {
       "@context": "https://schema.org",
       "@type": "Organization",
-      "name": "VoltSetu",
-      "url": "https://voltsetu.netlify.app/",
-      "logo": "https://voltsetu.netlify.app/og-image.png",
-      "description": "VoltSetu is a hyperlocal marketplace connecting EV riders with nearby charging spot hosts in Kolhapur, Maharashtra."
+      "name": "ChargePush",
+      "url": "https://chargepush.com/",
+      "logo": "https://chargepush.com/og-image.png",
+      "description": "ChargePush is a distributed EV charging-access network and marketplace connecting riders with nearby hosts and charging spots."
     }
     </script>
 
@@ -97,40 +94,23 @@
     {
       "@context": "https://schema.org",
       "@type": "Service",
-      "name": "EV Charging Spot Marketplace",
+      "name": "Distributed EV Charging Access Network",
       "provider": {
         "@type": "Organization",
-        "name": "VoltSetu"
+        "name": "ChargePush"
       },
-      "areaServed": "Kolhapur, Maharashtra, India",
-      "serviceType": "EV Charging Spot Booking"
+      "serviceType": "EV Charging Access Network"
     }
-    </script>
-
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
       "@type": "LocalBusiness",
-      "name": "VoltSetu",
-      "image": "https://voltsetu.netlify.app/og-image.png",
-      "url": "https://voltsetu.netlify.app/",
-      "telephone": "+91 98765 43210",
-      "email": "hello@voltsetu.in",
-      "address": {
-        "@type": "PostalAddress",
-        "addressLocality": "Kolhapur",
-        "addressRegion": "Maharashtra",
-        "addressCountry": "IN"
-      },
-      "areaServed": "Kolhapur, Maharashtra",
-      "priceRange": "₹5 - ₹15 per 10 minutes",
-      "currenciesAccepted": "INR",
-      "serviceType": "EV Charging Spot Marketplace",
-      "geo": {
-        "@type": "GeoCoordinates",
-        "latitude": 16.7050,
-        "longitude": 74.2433
-      }
+      "name": "ChargePush",
+      "image": "https://chargepush.com/og-image.png",
+      "url": "https://chargepush.com/",
+      "email": "hello@chargepush.com",
+      "areaServed": "India",
+      "serviceType": "Distributed EV Charging Access Network"
     }
     </script>
 
@@ -141,34 +121,26 @@
       "mainEntity": [
         {
           "@type": "Question",
-          "name": "What is VoltSetu?",
+          "name": "What is ChargePush?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "VoltSetu is a hyperlocal marketplace connecting EV two-wheeler riders with verified home charging spot hosts in Kolhapur, Maharashtra."
+            "text": "ChargePush is a distributed EV charging-access network connecting EV riders with nearby charging spots from home hosts, local spots, and charging networks."
           }
         },
         {
           "@type": "Question",
-          "name": "How does VoltSetu work?",
+          "name": "How does ChargePush work?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Riders search for a charging spot on the map, navigate to it, plug in their electric scooter or bike, and pay based on charging time. Hosts list their spare power outlets to earn passive income."
+            "text": "Riders find nearby charging access on the ChargePush map, compare options, navigate, book, charge, and continue their journey. Hosts list their charging access to earn from usage."
           }
         },
         {
           "@type": "Question",
-          "name": "How much can I earn hosting a charging spot on VoltSetu?",
+          "name": "How do I become a ChargePush Host?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "On average, VoltSetu hosts earn ₹2,000 to ₹5,000 per month by sharing their home charging outlet. You set your own rates and availability."
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "Which areas does VoltSetu currently serve?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "VoltSetu currently serves Kolhapur and surrounding neighborhoods in Maharashtra, India."
+            "text": "Suitable home hosts and local charging spot owners can join the ChargePush Network by listing charging access, setting availability, and accepting charging requests."
           }
         }
       ]

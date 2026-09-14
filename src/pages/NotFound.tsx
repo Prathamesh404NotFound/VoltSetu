@@ -12,7 +12,7 @@ const NotFound = () => {
   return (
     <div className="flex min-h-screen items-center justify-center bg-muted">
       <SEO 
-        title="404 - Page Not Found | VoltSetu"
+        title="404 - Page Not Found | ChargePush"
         description="The page you are looking for does not exist."
         noindex={true}
       />

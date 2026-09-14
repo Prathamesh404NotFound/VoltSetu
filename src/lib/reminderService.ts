@@ -90,7 +90,7 @@ function startHealTick(): void {
 async function fireNotification(r: BookingReminder): void {
   try {
     if (remindersSupported() && Notification.permission === "granted") {
-      new Notification("VoltSetu — Charging Session Soon", {
+      new Notification("ChargePush — Charging Session Soon", {
         body: `Your session at ${r.spotName} starts in ${r.minutesBefore} minutes. Don't forget to plug in!`,
         icon: "/favicon.svg",
         tag: `voltsetu-reminder-${r.bookingId}`,

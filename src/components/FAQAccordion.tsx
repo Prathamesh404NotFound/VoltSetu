@@ -7,8 +7,8 @@ import {
 
 const defaultFaqs = [
   {
-    q: "How does VoltSetu work?",
-    a: "VoltSetu connects EV two-wheeler riders with nearby home charging spots. Riders search for a spot, navigate to it, plug in, and pay based on charging time. Homeowners list their outlet and earn money each time a rider charges.",
+    q: "How does ChargePush work?",
+    a: "ChargePush connects EV riders with nearby home charging spots. Riders search for a spot, navigate to it, plug in, and pay based on charging time. Homeowners list their outlet and earn money each time a rider charges.",
   },
   {
     q: "How much does it cost to charge?",

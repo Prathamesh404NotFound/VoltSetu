@@ -283,7 +283,7 @@ export default function SpotEditor({ spot, hostId, onClose, onSaved }: SpotEdito
                     : "border-border text-foreground hover:border-ev-green/50"
                 )}
               >
-                Live on VoltSetu
+                Live on ChargePush
               </button>
               <button
                 type="button"

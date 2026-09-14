@@ -1,4 +1,4 @@
-/* VoltSetu admin anomaly / fraud detector (Round 35).
+/* ChargePush admin anomaly / fraud detector.
  *
  * Client-side read-only analysis of the whole booking + referral dataset.
  * RTDB paths: chargingRequests/{userId}/{requestId}, referralClaims/{uid}

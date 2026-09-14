@@ -95,7 +95,7 @@ export async function decidePayoutRequest(
   const payload: Record<string, unknown> = {
     status: decision,
     ...(decision === "paid"
-      ? { paidAt: Date.now(), note: note || "Paid via VoltSetu admin workspace" }
+      ? { paidAt: Date.now(), note: note || "Paid via ChargePush admin workspace" }
       : { note: note || "Rejected by admin" }),
   };
   await update(ref(database, `payoutRequests/${hostId}/${requestId}`), sanitizeForDb(payload));
@@ -111,7 +111,7 @@ export async function decidePayoutRequest(
         status: "paid" as const,
         paidAt: Date.now(),
         createdAt: Date.now(),
-        note: note || "Paid via VoltSetu admin workspace",
+        note: note || "Paid via ChargePush admin workspace",
       }));
     }
   }
@@ -229,7 +229,7 @@ function notifyRiderBookingDecision(
       : response === "rejected" ? "rejected"
       : "completed";
   const title = `Booking ${verb}`;
-  const body = `Your VoltSetu booking for ${spotName || "your spot"} was ${verb} — open the app to see details.`;
+  const body = `Your ChargePush booking for ${spotName || "your spot"} was ${verb} — open the app to see details.`;
   if (typeof window !== "undefined" && "Notification" in window && Notification.permission === "granted") {
     try {
       new Notification(title, { body, icon: "/placeholder.svg" });

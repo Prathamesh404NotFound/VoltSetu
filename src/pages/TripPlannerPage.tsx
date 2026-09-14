@@ -63,10 +63,10 @@ export default function TripPlannerPage() {
   if (selectedSpot) {
     return (
       <div className="pt-24 pb-16">
-        <SEO title={`${selectedSpot.name} — VoltSetu Trip Planner`} description={`Charging stop on your route: ${selectedSpot.name}.`} />
+        <SEO title={`${selectedSpot.name} — ChargePush Route`} description={`Charging stop on your route: ${selectedSpot.name}.`} />
         <ResponsiveContainer size="xl" className="py-6">
-          <Link to="/route" className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground mb-4">
-            <ArrowRight className="w-4 h-4 rotate-180" /> Back to trip planner
+          <Link to="/route" className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground mb-4 font-semibold">
+            <ArrowRight className="w-4 h-4 rotate-180" /> Back to ChargePush Route
           </Link>
           <div className="rounded-2xl border border-border bg-card p-5 shadow-sm">
             <h1 className="font-display font-bold text-xl text-foreground mb-1">{selectedSpot.name}</h1>
@@ -74,11 +74,11 @@ export default function TripPlannerPage() {
               {selectedSpot.city ?? "India"} · ₹{(selectedSpot.pricePerHour ?? 10)}/hr
             </p>
             <div className="flex flex-wrap gap-2">
-              <Button onClick={() => setSelectedSpot(null)} variant="outline" size="sm">
+              <Button onClick={() => setSelectedSpot(null)} variant="outline" size="sm" className="font-semibold">
                 Keep planning
               </Button>
-              <Button asChild size="sm">
-                <Link to="/spots">Browse all spots</Link>
+              <Button asChild size="sm" className="font-semibold btn-forward">
+                <Link to="/spots">Browse all charging access</Link>
               </Button>
             </div>
           </div>
@@ -90,8 +90,8 @@ export default function TripPlannerPage() {
   return (
     <div className="pt-24">
       <SEO
-        title="Trip Planner — Find EV Charging Spots Along Your Route | VoltSetu"
-        description="Enter your start and destination. VoltSetu finds every verified charging spot along your drive with ₹/km pricing so you pick the cheapest stop on the way."
+        title="ChargePush Route — Plan Your Charge Along Your Journey"
+        description="Enter your starting point and destination. ChargePush Route surfaces every verified charging access point along your drive so you can charge and keep moving."
       />
 
       <section className="relative py-16 gradient-hero overflow-hidden">
@@ -100,15 +100,14 @@ export default function TripPlannerPage() {
         </div>
         <div className="container mx-auto px-4 relative z-10">
           <div className="text-center mb-6">
-            <div className="inline-flex items-center gap-2 rounded-full bg-white/10 backdrop-blur px-4 py-1.5 text-xs font-semibold text-white/90 mb-4">
-              <Route className="w-3.5 h-3.5" /> Route charging for two-wheelers
+            <div className="inline-flex items-center gap-2 rounded-full bg-white/10 backdrop-blur px-4 py-1.5 text-xs font-bold text-white mb-4">
+              <Route className="w-3.5 h-3.5" /> ChargePush Route
             </div>
-            <h1 className="font-display font-bold text-3xl md:text-5xl text-white mb-4">
-              Charge Along the Way
+            <h1 className="font-display font-black text-3xl md:text-5xl text-white mb-4">
+              Plan Your Charge
             </h1>
-            <p className="text-white/70 max-w-xl mx-auto">
-              Plan your route and VoltSetu will surface every charging spot beside it — ranked by
-              distance from your start and price per kilometre.
+            <p className="text-white/70 max-w-xl mx-auto font-medium">
+              Enter your route and ChargePush will surface every charging access point along your journey. Charge. Push. Go.
             </p>
           </div>
         </div>
@@ -117,8 +116,8 @@ export default function TripPlannerPage() {
       <section className="py-12 min-h-[40vh]">
         <div className="container mx-auto px-4 max-w-3xl">
           {loading ? (
-            <div className="flex items-center justify-center gap-2 text-muted-foreground py-20">
-              <Loader2 className="w-5 h-5 animate-spin text-primary" /> Loading spot network…
+            <div className="flex items-center justify-center gap-2 text-muted-foreground py-20 font-medium">
+              <Loader2 className="w-5 h-5 animate-spin text-primary" /> Loading ChargePush Network…
             </div>
           ) : (
             <TripPlannerPanel spots={tripSpots} onPickSpot={setSelectedSpot} />
@@ -127,25 +126,23 @@ export default function TripPlannerPage() {
           <div className="grid sm:grid-cols-3 gap-4 mt-10">
             <div className="rounded-2xl border border-border bg-card p-5">
               <Navigation2 className="w-5 h-5 text-primary mb-2" />
-              <p className="font-semibold text-sm text-foreground mb-1">Route-based matching</p>
-              <p className="text-xs text-muted-foreground">
-                Spots are matched against the actual driving route, not a straight line, so every
-                result is a realistic stop.
+              <p className="font-bold text-sm text-foreground mb-1">Route Corridor Matching</p>
+              <p className="text-xs text-muted-foreground font-medium">
+                Charging spots matched against driving corridors so every result is on your way.
               </p>
             </div>
             <div className="rounded-2xl border border-border bg-card p-5">
               <IndianRupee className="w-5 h-5 text-primary mb-2" />
-              <p className="font-semibold text-sm text-foreground mb-1">Cheapest per kilometre</p>
-              <p className="text-xs text-muted-foreground">
-                Every result shows ₹/km so you can pick the most economical stop, not just the nearest.
+              <p className="font-bold text-sm text-foreground mb-1">Transparent Pricing</p>
+              <p className="text-xs text-muted-foreground font-medium">
+                Upfront rates shown per session and distance so you pick the best stop.
               </p>
             </div>
             <div className="rounded-2xl border border-border bg-card p-5">
               <MapPinned className="w-5 h-5 text-primary mb-2" />
-              <p className="font-semibold text-sm text-foreground mb-1">One network, every spot</p>
-              <p className="text-xs text-muted-foreground">
-                Host spots and network charging stations are searched together — one list for the
-                whole journey.
+              <p className="font-bold text-sm text-foreground mb-1">Unified Network</p>
+              <p className="text-xs text-muted-foreground font-medium">
+                Home hosts and charging spots integrated into one unified route planner.
               </p>
             </div>
           </div>
@@ -153,8 +150,8 @@ export default function TripPlannerPage() {
           <div className="mt-10">
             <CTABanner
               variant="dark"
-              title="Never Run Out of Charge on the Road"
-              subtitle="VoltSetu makes every two-wheeler journey in India safer with charging spots along the way."
+              title="Charge. Push. Go."
+              subtitle="ChargePush Route keeps every EV journey moving with accessible charging spots along the way."
             />
           </div>
         </div>

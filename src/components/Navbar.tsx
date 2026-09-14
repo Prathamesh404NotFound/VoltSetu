@@ -22,20 +22,19 @@ import {
 
 // Kept lean by design: Trip Planner lives in the profile menu,
 // and About + Contact are merged into a single About & Contact page.
-const navLinkKeys = [
+const primaryLinks = [
   { to: "/", key: "nav.home" },
   { to: "/spots", key: "nav.findSpots" },
+  { to: "/route", key: "nav.tripPlanner" },
   { to: "/host", key: "nav.becomeHost" },
   { to: "/how-it-works", key: "nav.howItWorks" },
-  { to: "/pricing", key: "nav.pricing" },
-  { to: "/about-contact", key: "nav.aboutContact" },
 ];
 
-// At lg widths (1024–1279px) the full 7-link nav crowds the header. The
-// secondary links move under a compact "More" dropdown there; all links
-// stay visible inline at xl+.
-const primaryLinks = navLinkKeys.slice(0, 4);
-const secondaryLinks = navLinkKeys.slice(4);
+const secondaryLinks = [
+  { to: "/pricing", key: "nav.pricing" },
+  { to: "/rescue", key: "nav.rescue" },
+  { to: "/about-contact", key: "nav.aboutContact" },
+];
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -49,7 +48,6 @@ export default function Navbar() {
   const { lang, setLang } = useLang();
 
   // Auto-open the sign-in modal when a deep link arrives with ?signin
-  // (e.g. the Roadside Rescue page redirecting unsigned riders).
   useEffect(() => {
     if (searchParams.get("signin") && !loginModalOpen) {
       setLoginModalOpen(true);
@@ -72,12 +70,12 @@ export default function Navbar() {
 
   // ── Browser Notification Permission Prompt ──────────────────────────────
   useEffect(() => {
-    if (!user) return; // Only prompt logged-in users
-    if (!("Notification" in window)) return; // Browser doesn't support it
+    if (!user) return;
+    if (!("Notification" in window)) return;
 
     if (Notification.permission === "default") {
-      const toastId = toast("Get notified about your booking status", {
-        description: "Enable native browser notifications to receive updates even when you're away from the tab.",
+      const toastId = toast("Get notified about your charging status", {
+        description: "Enable notifications to receive updates when your charging spot or waitlist is ready.",
         action: {
           label: "Enable",
           onClick: async (e) => {
@@ -90,7 +88,7 @@ export default function Navbar() {
             }
           },
         },
-        duration: Infinity, // Keep it visible until dismissed or user clicks Enable
+        duration: Infinity,
       });
     }
   }, [user]);
@@ -110,22 +108,22 @@ export default function Navbar() {
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
         <Link to="/" className="flex items-center gap-2 group flex-shrink-0">
-          <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg gradient-primary flex items-center justify-center shadow-lg group-hover:shadow-primary/40 transition-shadow">
-            <Zap className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-primary-foreground" />
+          <div className="w-8 h-8 rounded-lg gradient-primary flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform">
+            <Zap className="w-4 h-4 text-primary-foreground fill-current" />
           </div>
-          <span className="font-display font-bold text-lg sm:text-xl text-foreground">
-            VoltSetu
+          <span className="font-display font-black text-xl sm:text-2xl tracking-tight text-foreground">
+            CHARGE<span className="text-primary">PUSH</span>
           </span>
         </Link>
 
         {/* Desktop Nav */}
-        <nav className="hidden lg:flex items-center gap-0.5 xl:gap-1 min-w-0">
+        <nav className="hidden lg:flex items-center gap-1 xl:gap-1.5 min-w-0">
           {primaryLinks.map((link) => (
             <Link
               key={link.to}
               to={link.to}
               className={cn(
-                "px-1.5 xl:px-3 py-2 rounded-lg text-xs xl:text-sm font-medium transition-all duration-200 hover:bg-primary/10 hover:text-primary whitespace-nowrap",
+                "px-2.5 py-2 rounded-lg text-xs xl:text-sm font-semibold transition-all duration-200 hover:bg-primary/10 hover:text-primary whitespace-nowrap",
                 location.pathname === link.to
                   ? "text-primary bg-primary/10 shadow-sm"
                   : "text-muted-foreground"
@@ -139,14 +137,14 @@ export default function Navbar() {
             <DropdownMenuTrigger asChild>
               <button
                 className={cn(
-                  "xl:hidden inline-flex items-center gap-1 px-1.5 py-2 rounded-lg text-xs font-medium text-muted-foreground transition-all hover:bg-primary/10 hover:text-primary"
+                  "inline-flex items-center gap-1 px-2.5 py-2 rounded-lg text-xs xl:text-sm font-semibold text-muted-foreground transition-all hover:bg-primary/10 hover:text-primary"
                 )}
                 aria-label="More navigation links"
               >
-                More <ChevronDown className="w-3 h-3" />
+                More <ChevronDown className="w-3.5 h-3.5 opacity-70" />
               </button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-44">
+            <DropdownMenuContent align="end" className="w-48">
               {secondaryLinks.map((link) => (
                 <DropdownMenuItem key={link.to} asChild>
                   <Link
@@ -162,63 +160,37 @@ export default function Navbar() {
               ))}
             </DropdownMenuContent>
           </DropdownMenu>
-          {secondaryLinks.map((link) => (
-            <Link
-              key={link.to}
-              to={link.to}
-              className={cn(
-                "hidden xl:inline-block px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 hover:bg-primary/10 hover:text-primary whitespace-nowrap",
-                location.pathname === link.to
-                  ? "text-primary bg-primary/10 shadow-sm"
-                  : "text-muted-foreground"
-              )}
-              aria-current={location.pathname === link.to ? "page" : undefined}
-            >
-              {t(link.key)}
-            </Link>
-          ))}
         </nav>
 
-        <div className="hidden lg:flex items-center gap-1.5 xl:gap-2.5 min-w-0">
-          <span className="xl:hidden w-px h-4 bg-border/60" />
-          <span className="hidden xl:inline-flex">
-            <InstallPwaButton />
-          </span>
-          <span className="hidden xl:inline-flex">
-            <CitySelector onNavigate={navigate} />
-          </span>
-          <span className="xl:hidden">
-            <CitySelector onNavigate={navigate} compact />
-          </span>
+        <div className="hidden lg:flex items-center gap-2 xl:gap-3 min-w-0">
+          <InstallPwaButton />
+          <CitySelector onNavigate={navigate} />
           {user ? (
             <>
-              {/* Theme toggle moved inside the profile menu to keep the nav short */}
               <NotificationBell />
               <UserMenu />
               <Link
                 to="/spots"
-                className="px-2.5 xl:px-4 py-1.5 rounded-xl bg-primary text-primary-foreground font-semibold text-[11px] xl:text-sm whitespace-nowrap hover:bg-primary/90 transition-all shadow-lg hover:shadow-primary/30 hover:-translate-y-0.5 animate-glow"
+                className="px-4 py-2 rounded-xl bg-primary text-primary-foreground font-bold text-xs xl:text-sm whitespace-nowrap hover:bg-primary/90 transition-all shadow-lg hover:shadow-primary/30 btn-forward"
               >
-                <span className="hidden xl:inline">{t("common.findASpot")}</span>
-                <span className="inline xl:hidden">{t("nav.findSpots")}</span>
+                {t("common.findASpot")}
               </Link>
             </>
           ) : (
             <>
-              {/* Theme toggle moved inside the profile menu to keep the nav short */}
               <Button
                 variant="ghost"
                 onClick={() => setLoginModalOpen(true)}
-                className="font-semibold text-[11px] xl:text-sm px-1.5 xl:px-3 whitespace-nowrap"
+                className="font-semibold text-xs xl:text-sm px-3 whitespace-nowrap"
               >
                 {t("nav.signIn")}
               </Button>
-              <Button
-                onClick={() => setLoginModalOpen(true)}
-                className="px-2.5 xl:px-4 py-1.5 rounded-xl bg-primary text-primary-foreground font-semibold text-[11px] xl:text-sm whitespace-nowrap hover:bg-primary/90 transition-all shadow-lg hover:shadow-primary/30 hover:-translate-y-0.5"
+              <Link
+                to="/spots"
+                className="px-4 py-2 rounded-xl bg-primary text-primary-foreground font-bold text-xs xl:text-sm whitespace-nowrap hover:bg-primary/90 transition-all shadow-lg hover:shadow-primary/30 btn-forward"
               >
-                {t("nav.getStarted")}
-              </Button>
+                {t("common.findASpot")}
+              </Link>
             </>
           )}
         </div>
@@ -251,12 +223,12 @@ export default function Navbar() {
                 <span className={lang === "hi" ? "text-primary" : "text-muted-foreground/70"}>हिं</span>
               </button>
             </div>
-            {navLinkKeys.map((link) => (
+            {[...primaryLinks, ...secondaryLinks].map((link) => (
               <Link
                 key={link.to}
                 to={link.to}
                 className={cn(
-                  "px-4 py-3 rounded-lg text-sm font-medium transition-all",
+                  "px-4 py-3 rounded-lg text-sm font-semibold transition-all",
                   location.pathname === link.to
                     ? "text-primary bg-primary/10"
                     : "text-muted-foreground hover:bg-muted"
@@ -272,33 +244,33 @@ export default function Navbar() {
               <InstallPwaButton />
             </div>
             {user ? (
-              <div className="mt-4 sm:mt-6 flex flex-col sm:flex-row items-center gap-3 px-4">
-                <div className="flex items-center gap-2">
+              <div className="mt-4 flex flex-col gap-3 px-4">
+                <div className="flex items-center justify-between">
                   <NotificationBell />
                   <UserMenu />
                 </div>
                 <Link
                   to="/spots"
-                  className="flex-1 px-5 py-3 rounded-xl bg-primary text-primary-foreground font-semibold text-sm text-center"
+                  className="w-full px-5 py-3 rounded-xl bg-primary text-primary-foreground font-bold text-sm text-center shadow-lg btn-forward"
                 >
                   {t("common.findASpot")}
                 </Link>
               </div>
             ) : (
-              <div className="mt-4 sm:mt-6 flex flex-col gap-2 px-4">
+              <div className="mt-4 flex flex-col gap-2 px-4">
                 <Button
                   variant="ghost"
                   onClick={() => setLoginModalOpen(true)}
-                  className="font-semibold text-sm sm:text-base justify-center"
+                  className="font-semibold text-sm justify-center"
                 >
                   {t("nav.signIn")}
                 </Button>
-                <Button
-                  onClick={() => setLoginModalOpen(true)}
-                  className="px-5 py-3 rounded-xl bg-primary text-primary-foreground font-semibold text-sm"
+                <Link
+                  to="/spots"
+                  className="w-full px-5 py-3 rounded-xl bg-primary text-primary-foreground font-bold text-sm text-center shadow-lg btn-forward"
                 >
-                  {t("nav.getStarted")}
-                </Button>
+                  {t("common.findASpot")}
+                </Link>
               </div>
             )}
           </nav>

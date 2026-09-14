@@ -74,7 +74,7 @@ export default function CityWaitlist({ slug, cityName, className = "", accent = 
         <div className="flex items-center gap-2 mb-4">
           <BellRing className="w-5 h-5 text-primary" />
           <h3 className="font-display font-semibold text-lg text-foreground">
-            Notify me when VoltSetu launches in {cityName}
+            Notify me when ChargePush launches in {cityName}
           </h3>
         </div>
         <form onSubmit={handleSubmit} className="space-y-3">
@@ -130,7 +130,7 @@ export default function CityWaitlist({ slug, cityName, className = "", accent = 
             Join the launch list
           </Button>
           <p className="text-[11px] text-muted-foreground">
-            No spam — we only notify you about VoltSetu's arrival in {cityName}.
+            No spam — we only notify you about ChargePush's arrival in {cityName}.
           </p>
         </form>
       </CardContent>

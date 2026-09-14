@@ -63,7 +63,7 @@ export function ReviewsSection({ spotId, spotRating = 0, hostId }: ReviewsSectio
       targetOwnerId: hostId ?? "",
       reason,
       reporterId: user.id,
-      reporterName: (user as { displayName?: string }).displayName || "VoltSetu rider",
+      reporterName: (user as { displayName?: string }).displayName || "ChargePush rider",
     });
     setFlaggingReviewId(null);
     toast[result.ok ? "success" : "error"](result.message);
@@ -85,7 +85,7 @@ export function ReviewsSection({ spotId, spotRating = 0, hostId }: ReviewsSectio
       const newReview = await submitSpotReview({
         spotId,
         userId: user.id,
-        userName: (user as { displayName?: string }).displayName || "VoltSetu rider",
+        userName: (user as { displayName?: string }).displayName || "ChargePush rider",
         userPhoto: (user as { photoURL?: string }).photoURL || undefined,
         rating,
         comment: comment.trim(),

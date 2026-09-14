@@ -43,8 +43,8 @@ export default function CityPage() {
     return (
       <div className="pt-24 min-h-screen">
         <SEO
-          title="City Not Available Yet | VoltSetu"
-          description="This city is coming soon to VoltSetu. Explore Kolhapur, our launch city, and get notified when we arrive."
+          title="City Not Available Yet — ChargePush"
+          description="This city is coming soon to ChargePush. Explore our active cities and get notified when we arrive."
           noindex
         />
         <NotFound />
@@ -52,15 +52,15 @@ export default function CityPage() {
     );
   }
 
-  const title = `EV Charging in ${city.name} — Verified Home Charging Spots | VoltSetu`;
-  const description = `Find verified EV two-wheeler charging spots in ${city.name}, ${city.state}. Book instantly from Rs 5 per 10 minutes or list your outlet to earn.`;
+  const title = `EV Charging in ${city.name} — Verified Host Spots | ChargePush`;
+  const description = `Find verified EV charging access points in ${city.name}, ${city.state}. Book instantly or power your neighborhood as a host.`;
 
   const otherCities = CITIES.filter((c) => c.active && c.slug !== city.slug);
 
   // Cities not yet live get a full launch page instead of a 404.
   if (!city.active) {
-    const launchTitle = `EV Charging in ${city.name} — Coming Soon | VoltSetu`;
-    const launchDescription = `VoltSetu is launching in ${city.name}, ${city.state}. Join the waitlist as an early rider or become a launch host and earn before anyone else.`;
+    const launchTitle = `EV Charging in ${city.name} — Coming Soon | ChargePush`;
+    const launchDescription = `ChargePush is launching in ${city.name}, ${city.state}. Join the waitlist as an early rider or become a launch host.`;
     return (
       <div className="pt-24">
         <SEO title={launchTitle} description={launchDescription} canonical={`/city/${city.slug}`} noindex={city.slug !== "kolhapur"} />
@@ -68,25 +68,25 @@ export default function CityPage() {
           <div className="absolute top-10 right-10 w-72 h-72 bg-primary/20 rounded-full blur-3xl animate-blob" />
           <div className="container mx-auto px-4 relative z-10">
             <div className="max-w-3xl">
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 text-amber-300 text-sm font-medium mb-6">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 text-primary text-sm font-medium mb-6">
                 <Rocket className="w-4 h-4" /> Coming soon to {city.name}, {city.state}
               </div>
               <h1 className="font-display font-bold text-3xl md:text-5xl text-white leading-tight mb-6">
-                VoltSetu is on its way to{" "}
-                <span className="text-amber-300">{city.name}</span>
+                ChargePush is on its way to{" "}
+                <span className="text-gradient">{city.name}</span>
               </h1>
               <p className="text-lg text-white/70 max-w-xl mb-8 leading-relaxed">
                 {city.seo?.sub}
               </p>
               <div className="flex flex-wrap gap-4">
-                <Button asChild className="px-8 py-4 rounded-xl gradient-green text-white font-semibold text-lg shadow-xl hover:opacity-90 hover:-translate-y-1 transition-all">
+                <Button asChild className="px-8 py-4 rounded-xl gradient-primary text-white font-semibold text-lg shadow-xl hover:opacity-90 transition-all btn-forward">
                   <Link to="/host">
                     <Flame className="w-5 h-5" /> Become a Launch Host
                   </Link>
                 </Button>
-                <Button variant="outline" asChild className="px-8 py-4 rounded-xl bg-white/5 border-white/20 text-white font-semibold text-lg hover:bg-white/15 hover:-translate-y-1 transition-all">
+                <Button variant="outline" asChild className="px-8 py-4 rounded-xl bg-white/5 border-white/20 text-white font-semibold text-lg hover:bg-white/15 transition-all btn-forward">
                   <Link to="/spots">
-                    <MapPin className="w-5 h-5" /> Explore Live Cities
+                    <MapPin className="w-4 h-4" /> Explore Live Cities
                   </Link>
                 </Button>
               </div>
@@ -98,16 +98,15 @@ export default function CityPage() {
           <div className="container mx-auto px-4 max-w-4xl space-y-6">
             <div className="grid lg:grid-cols-2 gap-6">
               <div className="rounded-2xl bg-card border border-border p-8 shadow-sm">
-                <div className="w-14 h-14 rounded-2xl gradient-green flex items-center justify-center mb-5">
+                <div className="w-14 h-14 rounded-2xl gradient-primary flex items-center justify-center mb-5">
                   <BatteryCharging className="w-7 h-7 text-white" />
                 </div>
                 <h3 className="font-display font-bold text-xl text-foreground mb-3">Be a launch host in {city.name}</h3>
                 <p className="text-muted-foreground leading-relaxed mb-4">
-                  First hosts get priority verification, a launch badge, and featured placement on the
-                  {city.name} page before the city officially opens. Earn from day one.
+                  First hosts get priority verification and featured placement on the {city.name} network page before the city officially opens.
                 </p>
-                <Button asChild className="gradient-green">
-                  <Link to={`/host?city=${city.slug}`}>List My Outlet First</Link>
+                <Button asChild className="gradient-primary btn-forward">
+                  <Link to={`/host?city=${city.slug}`}>Power Your Neighborhood First</Link>
                 </Button>
               </div>
               <div className="rounded-2xl bg-card border border-border p-8 shadow-sm">
@@ -116,8 +115,7 @@ export default function CityPage() {
                 </div>
                 <h3 className="font-display font-bold text-xl text-foreground mb-3">Early riders get first dibs</h3>
                 <p className="text-muted-foreground leading-relaxed mb-4">
-                  Join the waitlist and we'll notify you the moment verified spots go live in {city.name} —
-                  plus an early-adopter perk when we launch.
+                  Join the waitlist and we'll notify you the moment verified spots go live in {city.name}.
                 </p>
               </div>
             </div>
@@ -129,7 +127,7 @@ export default function CityPage() {
           <section className="py-16">
             <div className="container mx-auto px-4 max-w-4xl">
               <h2 className="font-display font-bold text-2xl md:text-3xl text-foreground mb-8 text-center">
-                VoltSetu in Other Cities
+                ChargePush in Other Cities
               </h2>
               <div className="flex flex-wrap justify-center gap-3">
                 {otherCities.map((c) => (
@@ -157,35 +155,35 @@ export default function CityPage() {
 
       {/* Hero */}
       <section className="relative py-20 gradient-hero overflow-hidden">
-        <div className="absolute top-10 left-10 w-72 h-72 bg-ev-green/15 rounded-full blur-3xl animate-blob" />
+        <div className="absolute top-10 left-10 w-72 h-72 bg-primary/15 rounded-full blur-3xl animate-blob" />
         <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-3xl">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 text-ev-green text-sm font-medium mb-6">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 text-primary text-sm font-medium mb-6">
               <MapPin className="w-4 h-4" /> {city.name}, {city.state}
               {city.launch && (
-                <span className="px-2 py-0.5 rounded-full bg-ev-green/20 text-xs font-semibold">Launch City</span>
+                <span className="px-2 py-0.5 rounded-full bg-primary/20 text-xs font-semibold">Featured City</span>
               )}
               {!city.active && (
                 <span className="px-2 py-0.5 rounded-full bg-white/15 text-white/80 text-xs font-semibold">Coming Soon</span>
               )}
             </div>
             <h1 className="font-display font-bold text-3xl md:text-5xl text-white leading-tight mb-6">
-              EV Charging Spots in{" "}
-              <span className="text-ev-green">{city.name}</span>
+              EV Charging Access in{" "}
+              <span className="text-gradient">{city.name}</span>
             </h1>
             <p className="text-lg text-white/70 max-w-xl mb-8 leading-relaxed">
               {city.seo?.sub ??
-                "Book a verified home charging point near you — starting at Rs 5 per 10 minutes. No queue, no detour, just plug in and charge your two-wheeler anywhere in the city."}
+                "Book a verified host charging spot near you. Find power, charge, and keep moving anywhere in the city."}
             </p>
             <div className="flex flex-wrap gap-4">
-              <Button asChild className="px-8 py-4 rounded-xl gradient-green text-white font-semibold text-lg shadow-xl hover:opacity-90 hover:-translate-y-1 transition-all">
+              <Button asChild className="px-8 py-4 rounded-xl gradient-primary text-white font-semibold text-lg shadow-xl hover:opacity-90 transition-all btn-forward">
                 <Link to="/spots">
-                  <Zap className="w-5 h-5" /> Find Spots Near Me
+                  <Zap className="w-5 h-5" /> Find a Charge
                 </Link>
               </Button>
-              <Button variant="outline" asChild className="px-8 py-4 rounded-xl bg-white/5 border-white/20 text-white font-semibold text-lg hover:bg-white/15 hover:-translate-y-1 transition-all">
+              <Button variant="outline" asChild className="px-8 py-4 rounded-xl bg-white/5 border-white/20 text-white font-semibold text-lg hover:bg-white/15 transition-all btn-forward">
                 <Link to="/host">
-                  <IndianRupee className="w-5 h-5" /> List My Outlet
+                  <IndianRupee className="w-5 h-5" /> Power Your Neighborhood
                 </Link>
               </Button>
             </div>
@@ -207,7 +205,7 @@ export default function CityPage() {
               </span>
             )}
             <span className="flex items-center gap-1.5">
-              <BadgeCheck className="w-4 h-4 text-ev-green" /> Verified hosts
+              <BadgeCheck className="w-4 h-4 text-emerald-500" /> Verified hosts
             </span>
             <span className="flex items-center gap-1.5">
               <Clock className="w-4 h-4 text-primary" /> Live availability
@@ -227,23 +225,22 @@ export default function CityPage() {
               <h3 className="font-display font-bold text-2xl text-foreground mb-3">Riding an EV in {city.name}?</h3>
               <p className="text-muted-foreground leading-relaxed mb-5">
                 {city.seo?.why ??
-                  "Skip the long detour to public charging stations. Book a verified home outlet near you, check live availability, and charge your two-wheeler in minutes."}
+                  "Skip the long search for charging. Book a verified host outlet near you, check live availability, and keep moving."}
               </p>
-              <Button asChild className="gradient-primary">
-                <Link to="/spots">Find Charging Spots</Link>
+              <Button asChild className="gradient-primary btn-forward">
+                <Link to="/spots">Find a Charge</Link>
               </Button>
             </div>
             <div className="reveal rounded-2xl bg-card border border-border p-8 shadow-sm hover:shadow-xl transition-all duration-300" style={{ transitionDelay: "0.1s" }}>
-              <div className="w-14 h-14 rounded-2xl gradient-green flex items-center justify-center mb-5">
+              <div className="w-14 h-14 rounded-2xl gradient-primary flex items-center justify-center mb-5">
                 <BatteryCharging className="w-7 h-7 text-white" />
               </div>
               <h3 className="font-display font-bold text-2xl text-foreground mb-3">Have a spare outlet?</h3>
               <p className="text-muted-foreground leading-relaxed mb-5">
-                EV riders in {city.name} are looking for convenient charging points. List your home
-                outlet, set your own price, and earn with every charge session — zero investment.
+                EV riders in {city.name} are looking for convenient charging access. List your host outlet, control availability, and earn from usage.
               </p>
-              <Button asChild className="gradient-green">
-                <Link to="/host">Become a Host</Link>
+              <Button asChild className="gradient-primary btn-forward">
+                <Link to="/host">Power Your Neighborhood</Link>
               </Button>
             </div>
           </div>
@@ -255,7 +252,7 @@ export default function CityPage() {
         <section className="py-16">
           <div className="container mx-auto px-4 max-w-4xl">
             <h2 className="font-display font-bold text-2xl md:text-3xl text-foreground mb-8 text-center reveal">
-              VoltSetu in Other Cities
+              ChargePush in Other Cities
             </h2>
             <div className="flex flex-wrap justify-center gap-3 reveal">
               {otherCities.map((c) => (
@@ -277,7 +274,7 @@ export default function CityPage() {
       <CTABanner
         variant="dark"
         title={`Charging in ${city.name}, Made Simple`}
-        subtitle="VoltSetu is growing across India — join riders and hosts building the neighborhood charging network."
+        subtitle="ChargePush is growing across India — join riders and hosts building the charging network."
       />
       <Button asChild className="fixed bottom-20 right-4 z-40 rounded-full shadow-xl gradient-primary px-5 py-3 text-sm font-semibold hover:-translate-y-0.5 transition-transform">
         <Link to="/spots">

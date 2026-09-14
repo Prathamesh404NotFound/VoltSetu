@@ -176,7 +176,7 @@ const AdminAnalyticsPage: React.FC = () => {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `voltsetu-analytics-${selectedPeriod}-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.download = `chargepush-analytics-${selectedPeriod}-${new Date().toISOString().slice(0, 10)}.csv`;
     a.click();
     URL.revokeObjectURL(url);
   };
@@ -247,7 +247,7 @@ const AdminAnalyticsPage: React.FC = () => {
 
   return (
     <div className="space-y-6 p-6">
-      <SEO title="Admin Analytics | VoltSetu" description="Detailed system performance metrics and analytics for VoltSetu administrators." noindex={true} />
+      <SEO title="Admin Analytics | ChargePush" description="Detailed system performance metrics and analytics for ChargePush administrators." noindex={true} />
 
       {/* Header */}
       <div className="flex items-center justify-between">

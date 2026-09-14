@@ -66,7 +66,7 @@ export default function DemandHeatmap() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = "voltsetu-demand-heatmap.csv";
+    a.download = "chargepush-demand-heatmap.csv";
     a.click();
     URL.revokeObjectURL(url);
   };
@@ -74,7 +74,7 @@ export default function DemandHeatmap() {
   return (
     <AdminContainer size="xl" className="py-6">
       <SEO
-        title="Demand Heatmap — VoltSetu Admin"
+        title="Demand Heatmap — ChargePush Admin"
         description="City-by-city demand vs supply insights."
         noIndex
       />
@@ -214,7 +214,7 @@ export default function DemandHeatmap() {
             <p className="font-medium text-foreground mb-1">No city data yet</p>
             <p className="text-sm text-muted-foreground">
               As spots get city values and booking requests flow in, this
-              heatmap shows where VoltSetu supply is strongest and where hosts
+              heatmap shows where ChargePush supply is strongest and where hosts
               are most needed.
             </p>
           </CardContent>

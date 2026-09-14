@@ -268,7 +268,7 @@ const AdminLayoutPage: React.FC = () => {
                 <p className="truncate text-sm font-semibold text-foreground">{activeNavItem?.title || 'Operations Center'}</p>
                 <span className="hidden rounded-full bg-emerald-500/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-emerald-600 sm:inline-flex">Live</span>
               </div>
-              <p className="hidden truncate text-xs text-muted-foreground sm:block">{activeNavItem?.description || 'Monitor and manage the VoltSetu network'}</p>
+              <p className="hidden truncate text-xs text-muted-foreground sm:block">{activeNavItem?.description || 'Monitor and manage the ChargePush network'}</p>
             </div>
 
             <form

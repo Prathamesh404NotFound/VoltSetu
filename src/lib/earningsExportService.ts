@@ -70,7 +70,7 @@ export interface ExportStats {
  */
 export async function exportHostEarningsCsv(
   hostUid: string,
-  filename = "voltsetu-host-earnings.csv"
+  filename = "chargepush-host-earnings.csv"
 ): Promise<ExportStats> {
   const spots = await getHostSpots(hostUid);
   const requests = (await Promise.all(

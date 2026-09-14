@@ -104,7 +104,7 @@ export default function Settings() {
   return (
     <div className="pt-24 pb-16">
       <SEO 
-        title="Account Settings | VoltSetu"
+        title="Account Settings | ChargePush"
         description="Update your profile, phone number, and notification preferences. Manage your security and account details."
         noindex={true}
       />

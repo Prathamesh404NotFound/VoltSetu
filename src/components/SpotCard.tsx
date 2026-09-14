@@ -74,11 +74,11 @@ function BadgeCluster({ badges }: { badges: Array<{ key: string; node: ReactNode
 
 function ImagePlaceholder() {
   return (
-    <div className="w-full h-full bg-gradient-to-br from-primary/20 to-ev-green/20 flex flex-col items-center justify-center">
+    <div className="w-full h-full bg-gradient-to-br from-primary/20 to-cyan-500/20 flex flex-col items-center justify-center">
       <div className="w-12 h-12 rounded-xl gradient-primary flex items-center justify-center mb-2 shadow-md">
         <Zap className="w-6 h-6 text-white" />
       </div>
-      <span className="text-primary/70 font-semibold text-sm tracking-wide">VoltSetu</span>
+      <span className="text-primary font-black text-sm tracking-wide uppercase">ChargePush</span>
     </div>
   );
 }

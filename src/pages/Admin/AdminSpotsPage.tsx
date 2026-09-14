@@ -255,7 +255,7 @@ const AdminSpotsPage: React.FC = () => {
   return (
     <ResponsiveContainer size="xl" className="py-6">
       <SEO 
-        title="Manage Charging Spots | Admin | VoltSetu"
+        title="Manage Charging Spots | Admin | ChargePush"
         description="Oversee all charging spots across the network, manage their status, and review performance."
         noindex={true}
       />

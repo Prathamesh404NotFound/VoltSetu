@@ -21,11 +21,11 @@ export default function SEO({
   title,
   description,
   canonical,
-  ogImage = "https://voltsetu.netlify.app/og-image.png",
+  ogImage = "https://chargepush.netlify.app/og-image.png",
   noindex = false,
   schema,
 }: SEOProps) {
-  const siteUrl = "https://voltsetu.netlify.app";
+  const siteUrl = "https://chargepush.netlify.app";
   const url = canonical ? `${siteUrl}${canonical}` : window.location.href;
 
   return (

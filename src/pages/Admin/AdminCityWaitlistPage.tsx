@@ -1,5 +1,5 @@
 /**
- * VoltSetu Admin — City Waitlist panel (Round 31)
+ * ChargePush Admin — City Waitlist panel
  *
  * Manages cityWaitlist/{slug}/{entryId} entries collected from /city/:slug
  * launch pages. Provides per-city counts, filtering, CSV export for outreach,
@@ -135,7 +135,7 @@ export default function AdminCityWaitlistPage() {
 
   async function exportCity() {
     if (!selectedCityInfo) return;
-    downloadCsv(toCsv(entries, selectedCityInfo), `voltsetu-waitlist-${selectedCity}.csv`);
+    downloadCsv(toCsv(entries, selectedCityInfo), `chargepush-waitlist-${selectedCity}.csv`);
     toast.success(`Exported ${entries.length} ${selectedCityInfo.name} waitlist entr${entries.length === 1 ? "y" : "ies"}.`);
   }
 
@@ -160,7 +160,7 @@ export default function AdminCityWaitlistPage() {
 
   return (
     <div className="pt-24 pb-12">
-      <SEO title="City Waitlist — VoltSetu Admin" description="Upcoming-city rider and host waitlist signups." />
+      <SEO title="City Waitlist — ChargePush Admin" description="Upcoming-city rider and host waitlist signups." />
       <ResponsiveContainer size="xl" className="py-6">
         <div className="mb-6">
           <Link to="/admin" className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground mb-3">

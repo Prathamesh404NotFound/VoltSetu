@@ -303,7 +303,7 @@ export default function AdminPayoutsPage() {
           req.id,
           decision,
           decision === "paid"
-            ? "Approved via VoltSetu admin payout queue (bulk)"
+            ? "Approved via ChargePush admin payout queue (bulk)"
             : bulkNote.trim()
         );
         ok += 1;
@@ -335,7 +335,7 @@ export default function AdminPayoutsPage() {
         status: "paid",
         paidAt: serverTimestamp(),
         createdAt: serverTimestamp(),
-        note: "Marked paid from VoltSetu admin workspace",
+        note: "Marked paid from ChargePush admin workspace",
       });
       toast.success(`Payout of ₹${amount.toFixed(2)} recorded for ${hostName}`);
       await loadData();
@@ -360,8 +360,8 @@ export default function AdminPayoutsPage() {
         req.id,
         decision,
         decision === "paid"
-          ? "Approved via VoltSetu admin payout queue"
-          : "Rejected via VoltSetu admin payout queue"
+          ? "Approved via ChargePush admin payout queue"
+          : "Rejected via ChargePush admin payout queue"
       );
       toast.success(
         decision === "paid"

@@ -43,7 +43,7 @@ export function InstallPwaButton() {
       type="button"
       onClick={handleInstall}
       className="inline-flex items-center gap-1.5 rounded-lg bg-ev-green px-3 py-1.5 text-xs font-semibold text-white shadow-sm transition-all hover:bg-ev-green/90 hover:-translate-y-px"
-      aria-label="Install VoltSetu app"
+      aria-label="Install ChargePush app"
     >
       <Smartphone className="h-3.5 w-3.5" />
       <span className="hidden sm:inline">Install app</span>

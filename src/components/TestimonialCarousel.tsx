@@ -5,7 +5,7 @@ const testimonials = [
   {
     name: "Priya Sharma",
     role: "EV Rider, Pune",
-    text: "VoltSetu has been a game-changer for my daily commute. I no longer worry about running out of charge. Found three spots within walking distance of my office!",
+    text: "ChargePush has been a game-changer for my daily commute. I no longer worry about running out of charge. Found three spots within walking distance of my office!",
     rating: 5,
   },
   {

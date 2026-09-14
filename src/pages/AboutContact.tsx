@@ -109,8 +109,8 @@ export default function AboutContact() {
   return (
     <div className="pt-24">
       <SEO
-        title="About & Contact VoltSetu — Our Mission and How to Reach Us"
-        description="Learn how VoltSetu is building a hyperlocal EV charging network across India, and get in touch with our team via phone, WhatsApp, email or the contact form."
+        title="About & Contact ChargePush — Keep Moving"
+        description="Learn how ChargePush is building a distributed EV charging access network across India, and get in touch with our team via phone, WhatsApp, email or contact form."
       />
 
       {/* ── About: Hero ── */}
@@ -120,11 +120,11 @@ export default function AboutContact() {
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div>
               <h1 className="font-display font-bold text-3xl md:text-5xl text-white leading-tight mb-6">
-                Powering India's EV Future,{" "}
+                Powering Electric Mobility,{" "}
                 <span className="text-gradient">One Neighborhood at a Time</span>
               </h1>
               <p className="text-lg text-white/70 leading-relaxed">
-                VoltSetu was born from a simple observation: millions of EV two-wheeler riders in India struggle to find convenient charging points, while millions of homeowners have unused electricity outlets. We connect them.
+                ChargePush was born from a simple observation: EV riders struggle to find nearby charging access, while homeowners and local businesses have unused electricity outlets. We connect them so everyone can keep moving.
               </p>
             </div>
             <div className="hidden lg:block">
@@ -139,16 +139,16 @@ export default function AboutContact() {
         <ResponsiveContainer size="md" className="py-8">
           <div className="max-w-3xl mx-auto">
             <div className="reveal">
-              <h2 className="font-display font-bold text-3xl md:text-4xl text-foreground mb-6 text-center">Our Story</h2>
+              <h2 className="font-display font-bold text-3xl md:text-4xl text-foreground mb-6 text-center">Our Philosophy</h2>
               <div className="prose prose-lg text-muted-foreground mx-auto text-center">
                 <p>
-                  In cities and towns across India, EV adoption is booming. Electric scooters and two-wheelers are becoming the preferred choice for daily commuters. But the charging infrastructure has not kept up. Public charging stations are few, far, and often unreliable.
+                  The battery is not the destination. Charging is what keeps the journey moving. In cities and towns across India, EV adoption is booming, but accessible charging options haven't kept pace.
                 </p>
                 <p>
-                  We realized that the solution was already hiding in plain sight: every home, shop, and apartment building has electricity outlets that sit unused for hours each day. What if we could turn those outlets into a distributed charging network?
+                  We realized the solution was already in place: homes, local shops, and community spots with existing power outlets sitting idle. By uniting them into a single accessible network, charging becomes effortless.
                 </p>
                 <p>
-                  That is how VoltSetu was born. A hyperlocal marketplace where riders find nearby charging spots and homeowners earn passive income from their existing outlets. No heavy equipment, no special installation, just community-powered charging.
+                  That is how ChargePush was born. A distributed EV charging network where riders quickly locate, book, and charge, while hosts earn from sharing power and supporting their local neighborhood.
                 </p>
               </div>
             </div>
@@ -192,10 +192,10 @@ export default function AboutContact() {
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 reveal">
             {[
-              { icon: Globe, title: "Access Gap", desc: "Most Tier 2 and Tier 3 cities lack public EV charging infrastructure." },
-              { icon: TrendingUp, title: "Growing Demand", desc: "EV two-wheeler sales are growing 50%+ year-on-year in India." },
-              { icon: Users, title: "Community Power", desc: "Decentralized charging builds stronger, connected neighborhoods." },
-              { icon: Leaf, title: "Green Impact", desc: "Every charge on VoltSetu reduces emissions and fossil fuel dependence." },
+              { icon: Globe, title: "Access Gap", desc: "Most Tier 2 and Tier 3 cities lack accessible public EV charging points." },
+              { icon: TrendingUp, title: "Growing Demand", desc: "EV adoption is accelerating rapidly across India." },
+              { icon: Users, title: "Community Power", desc: "Distributed charging networks empower host communities." },
+              { icon: Leaf, title: "Green Impact", desc: "Every charge on ChargePush reduces emissions and keeps electric mobility moving." },
             ].map((item, i) => {
               const Icon = item.icon;
               return (
@@ -230,8 +230,8 @@ export default function AboutContact() {
               const Icon = item.icon;
               return (
                 <div key={i} className="flex gap-4 p-6 rounded-2xl bg-card border border-border" style={{ transitionDelay: `${i * 0.1}s` }}>
-                  <div className="w-10 h-10 rounded-xl bg-ev-green/10 flex items-center justify-center flex-shrink-0">
-                    <Icon className="w-5 h-5 text-ev-green" />
+                  <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
+                    <Icon className="w-5 h-5 text-primary" />
                   </div>
                   <div>
                     <h3 className="font-display font-semibold text-foreground mb-1">{item.title}</h3>
@@ -251,7 +251,7 @@ export default function AboutContact() {
             {[
               { icon: Phone, label: "Call Us", value: "+91 98765 43210", href: "tel:+919876543210", color: "primary" },
               { icon: MessageCircle, label: "WhatsApp", value: "Chat Now", href: "https://wa.me/919876543210", color: "green" },
-              { icon: Mail, label: "Email", value: "hello@voltsetu.in", href: "mailto:hello@voltsetu.in", color: "primary" },
+              { icon: Mail, label: "Email", value: "support@chargepush.com", href: "mailto:support@chargepush.com", color: "primary" },
               { icon: Clock, label: "Hours", value: "Mon-Sat, 9am-7pm", href: "#", color: "primary" },
             ].map((item, i) => {
               const Icon = item.icon;
@@ -448,7 +448,7 @@ export default function AboutContact() {
         </ResponsiveContainer>
       </section>
 
-      <CTABanner variant="dark" title="Join the VoltSetu Movement" subtitle="Be part of India's community-powered EV charging revolution." />
+      <CTABanner variant="dark" title="The ChargePush Network" subtitle="Be part of India's distributed EV charging access network." />
     </div>
   );
 }

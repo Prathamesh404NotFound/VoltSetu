@@ -42,11 +42,11 @@ export default function FeatureGrid() {
   const reduceMotion = useReducedMotion();
 
   return (
-    <section className="w-full py-20 lg:py-24 bg-background" aria-label="Why VoltSetu">
+    <section className="w-full py-20 lg:py-24 bg-background" aria-label="Why ChargePush">
       <div className="container mx-auto px-4">
         <div className="text-center max-w-2xl mx-auto mb-12">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 dark:bg-primary/15 text-primary text-xs font-bold uppercase tracking-[0.18em] mb-4">
-            Why VoltSetu
+            Why ChargePush
           </div>
           <h2 className="font-display font-bold text-3xl md:text-4xl text-foreground">
             Everything a rider needs

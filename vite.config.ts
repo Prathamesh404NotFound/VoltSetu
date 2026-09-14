@@ -22,11 +22,11 @@ export default defineConfig(({ mode }) => ({
   build: {
     rollupOptions: {
       output: {
-        manualChunks: {
-          leaflet: ["leaflet", "react-leaflet"],
-          recharts: ["recharts"],
-          firebase: ["firebase/app", "firebase/auth", "firebase/database", "firebase/storage", "@firebase/util"],
-          lucide: ["lucide-react"],
+        manualChunks(id) {
+          if (id.includes("node_modules/leaflet") || id.includes("node_modules/react-leaflet")) return "leaflet";
+          if (id.includes("node_modules/recharts")) return "recharts";
+          if (id.includes("node_modules/firebase") || id.includes("node_modules/@firebase")) return "firebase";
+          if (id.includes("node_modules/lucide-react")) return "lucide";
         },
       },
     },

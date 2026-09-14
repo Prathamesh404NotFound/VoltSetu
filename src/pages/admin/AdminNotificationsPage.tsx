@@ -1,4 +1,4 @@
-/* VoltSetu admin notification inbox (Round 21).
+/* ChargePush admin notification inbox.
  *
  * One-stop queue: new content flags, pending listing reviews, and pending
  * host verifications, each deep-linked to the right admin tool.

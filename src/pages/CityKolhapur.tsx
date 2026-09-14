@@ -9,11 +9,11 @@ import { getAllChargingSpots } from "@/lib/hostRegistration";
 import { getAllNetworkStations, mergeNetworkStations } from "@/lib/networkStationsService";import { useEffect, useState } from "react";
 
 const kolhapurFaqs = [
-  { q: "Where can I find EV charging spots in Kolhapur?", a: "VoltSetu lists verified home and commercial charging spots across Kolhapur — from Shahupuri and Rajarampuri to the Railway Station area and Shirol Road. Use the map on our spots page to find the nearest open outlet." },
-  { q: "How much does EV charging cost in Kolhapur?", a: "Most VoltSetu hosts in Kolhapur charge between Rs 5 and Rs 15 per 10 minutes depending on the outlet type. The price is always shown up front before you book." },
-  { q: "Is VoltSetu available in other cities?", a: "Kolhapur is our launch city. We are onboarding hosts across Maharashtra next — hosts from any city can register today and be ready for launch." },
-  { q: "Can I charge my EV bike overnight in Kolhapur?", a: "Many hosts offer extended evening hours. Filter by 'Open Now' on the spots page or message a host on WhatsApp to arrange a convenient time." },
-  { q: "How do I earn money listing my outlet in Kolhapur?", a: "Register on the Become a Host page, set your price and hours, get verified, and riders in your neighborhood can book your outlet. Hosts keep their earnings with weekly deposits." },
+  { q: "Where can I find EV charging spots in Kolhapur?", a: "ChargePush connects verified host charging access points across Kolhapur — from Shahupuri and Rajarampuri to the Railway Station area and Shirol Road. Use the map on our spots page to find the nearest open location." },
+  { q: "How much does EV charging cost in Kolhapur?", a: "Most ChargePush hosts in Kolhapur set clear rates per session or duration. The price is always shown up front before you book." },
+  { q: "Is ChargePush available in other cities?", a: "Kolhapur is one of our key locations. We are expanding across Maharashtra and all major Indian cities — hosts from any city can power their neighborhood today." },
+  { q: "Can I charge my EV bike overnight in Kolhapur?", a: "Many hosts offer extended evening hours. Filter by 'Open Now' on the spots page or message a host to arrange a convenient time." },
+  { q: "How do I earn money listing my outlet in Kolhapur?", a: "Register on the Become a Host page, set your price and hours, get verified, and riders in your neighborhood can book your outlet. Hosts keep their earnings with direct payouts." },
 ];
 
 const areaCards = [
@@ -36,13 +36,13 @@ export default function CityKolhapur() {
   return (
     <div className="pt-24">
       <SEO
-        title="EV Charging in Kolhapur — Verified Home Charging Spots Near You | VoltSetu"
-        description="Find verified EV two-wheeler charging spots in Kolhapur — Shahupuri, Rajarampuri, Railway Station area and more. Book instantly from Rs 5 per 10 minutes or list your outlet to earn."
+        title="EV Charging in Kolhapur — Verified Host Charging Spots | ChargePush"
+        description="Find verified EV charging access points in Kolhapur — Shahupuri, Rajarampuri, Railway Station area and more. Book instantly or list your outlet to power your neighborhood."
         canonical="/kolhapur"
         schema={{
           "@context": "https://schema.org",
           "@type": "ItemList",
-          name: "EV Charging Spots in Kolhapur",
+          name: "EV Charging Access Points in Kolhapur",
           itemListElement: areaCards.map((a, i) => ({
             "@type": "ListItem",
             position: i + 1,
@@ -53,29 +53,28 @@ export default function CityKolhapur() {
 
       {/* Hero */}
       <section className="relative py-20 gradient-hero overflow-hidden">
-        <div className="absolute top-10 left-10 w-72 h-72 bg-ev-green/15 rounded-full blur-3xl animate-blob" />
+        <div className="absolute top-10 left-10 w-72 h-72 bg-primary/15 rounded-full blur-3xl animate-blob" />
         <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-3xl">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 text-ev-green text-sm font-medium mb-6">
-              <MapPin className="w-4 h-4" /> Launch City — Kolhapur, Maharashtra
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 text-primary text-sm font-medium mb-6">
+              <MapPin className="w-4 h-4" /> Featured Area — Kolhapur, Maharashtra
             </div>
             <h1 className="font-display font-bold text-3xl md:text-5xl text-white leading-tight mb-6">
-              EV Charging Spots in{" "}
-              <span className="text-ev-green">Kolhapur</span>
+              EV Charging Access in{" "}
+              <span className="text-gradient">Kolhapur</span>
             </h1>
             <p className="text-lg text-white/70 max-w-xl mb-8 leading-relaxed">
-              Book a verified home charging point near you — starting at Rs 5 per 10 minutes. No
-              queue, no detour, just plug in and charge your two-wheeler anywhere in the city.
+              Book a verified host charging spot near you. Find power, charge, and keep moving anywhere in the city.
             </p>
             <div className="flex flex-wrap gap-4">
-              <Button asChild className="px-8 py-4 rounded-xl gradient-green text-white font-semibold text-lg shadow-xl hover:opacity-90 hover:-translate-y-1 transition-all">
+              <Button asChild className="px-8 py-4 rounded-xl gradient-primary text-white font-semibold text-lg shadow-xl hover:opacity-90 transition-all btn-forward">
                 <Link to="/spots">
-                  <Zap className="w-5 h-5" /> Find Spots Near Me
+                  <Zap className="w-5 h-5" /> Find a Charge
                 </Link>
               </Button>
-              <Button variant="outline" asChild className="px-8 py-4 rounded-xl bg-white/5 border-white/20 text-white font-semibold text-lg hover:bg-white/15 hover:-translate-y-1 transition-all">
+              <Button variant="outline" asChild className="px-8 py-4 rounded-xl bg-white/5 border-white/20 text-white font-semibold text-lg hover:bg-white/15 transition-all btn-forward">
                 <Link to="/host">
-                  <IndianRupee className="w-5 h-5" /> List My Outlet
+                  <IndianRupee className="w-5 h-5" /> Power Your Neighborhood
                 </Link>
               </Button>
             </div>
@@ -92,7 +91,7 @@ export default function CityKolhapur() {
               <span className="font-semibold text-foreground">{spotCount ?? "—"}</span> charging spots listed
             </span>
             <span className="flex items-center gap-1.5">
-              <BadgeCheck className="w-4 h-4 text-ev-green" /> Verified hosts
+              <BadgeCheck className="w-4 h-4 text-emerald-500" /> Verified hosts
             </span>
             <span className="flex items-center gap-1.5">
               <Clock className="w-4 h-4 text-primary" /> Live availability
@@ -109,7 +108,7 @@ export default function CityKolhapur() {
               Charge Anywhere in Kolhapur
             </h2>
             <p className="text-muted-foreground max-w-lg mx-auto">
-              VoltSetu hosts cover every major neighborhood — pick the area closest to you.
+              ChargePush hosts cover every major neighborhood — pick the area closest to you.
             </p>
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -121,8 +120,8 @@ export default function CityKolhapur() {
                   className="reveal p-6 rounded-2xl bg-card border border-border shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group"
                   style={{ transitionDelay: `${i * 0.1}s` }}
                 >
-                  <div className="w-12 h-12 rounded-xl bg-ev-green/10 flex items-center justify-center mb-4 group-hover:bg-ev-green/20 transition-colors">
-                    <Icon className="w-6 h-6 text-ev-green" />
+                  <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
+                    <Icon className="w-6 h-6 text-primary" />
                   </div>
                   <h3 className="font-display font-semibold text-lg text-foreground mb-1">{a.name}</h3>
                   <p className="text-sm text-muted-foreground">{a.note}</p>
@@ -131,7 +130,7 @@ export default function CityKolhapur() {
             })}
           </div>
           <div className="text-center mt-10">
-            <Button asChild className="gradient-primary px-6 py-3 rounded-xl">
+            <Button asChild className="gradient-primary px-6 py-3 rounded-xl btn-forward">
               <Link to="/spots">
                 <MapPin className="w-4 h-4" /> See All Spots on the Map <ArrowRight className="w-4 h-4" />
               </Link>
@@ -150,26 +149,22 @@ export default function CityKolhapur() {
               </div>
               <h3 className="font-display font-bold text-2xl text-foreground mb-3">Riding an EV in Kolhapur?</h3>
               <p className="text-muted-foreground leading-relaxed mb-5">
-                Skip the long detour to public charging stations. Book a verified home outlet near
-                you, check live availability, and charge your two-wheeler in minutes — starting at
-                Rs 5 per 10 minutes.
+                Skip the long search for charging. Book a verified host outlet near you, check live availability, and keep moving.
               </p>
-              <Button asChild className="gradient-primary">
-                <Link to="/spots">Find Charging Spots</Link>
+              <Button asChild className="gradient-primary btn-forward">
+                <Link to="/spots">Find a Charge</Link>
               </Button>
             </div>
             <div className="reveal rounded-2xl bg-card border border-border p-8 shadow-sm hover:shadow-xl transition-all duration-300" style={{ transitionDelay: "0.1s" }}>
-              <div className="w-14 h-14 rounded-2xl gradient-green flex items-center justify-center mb-5">
+              <div className="w-14 h-14 rounded-2xl gradient-primary flex items-center justify-center mb-5">
                 <BatteryCharging className="w-7 h-7 text-white" />
               </div>
               <h3 className="font-display font-bold text-2xl text-foreground mb-3">Have a spare outlet?</h3>
               <p className="text-muted-foreground leading-relaxed mb-5">
-                Thousands of EV riders in Kolhapur are looking for convenient charging points. List
-                your home outlet, set your own price, and earn Rs 3,000–5,000+ every month with
-                zero investment.
+                EV riders in Kolhapur are looking for convenient charging access. List your host outlet, control availability, and earn from usage.
               </p>
-              <Button asChild className="gradient-green">
-                <Link to="/host">Become a Host</Link>
+              <Button asChild className="gradient-primary btn-forward">
+                <Link to="/host">Power Your Neighborhood</Link>
               </Button>
             </div>
           </div>
@@ -181,21 +176,21 @@ export default function CityKolhapur() {
         <div className="container mx-auto px-4 max-w-3xl">
           <div className="text-center mb-12 reveal">
             <h2 className="font-display font-bold text-3xl md:text-4xl text-foreground mb-4">
-              Why Kolhapur Riders Choose VoltSetu
+              Why Riders Choose ChargePush
             </h2>
           </div>
           <div className="space-y-6">
             {[
-              { icon: Star, title: "Verified hosts", desc: "Every host is identity and outlet verified before listing goes live." },
+              { icon: Star, title: "Verified hosts", desc: "Every host is verified before listing goes live." },
               { icon: Clock, title: "Live open/closed status", desc: "See which spots are open right now before you ride out." },
-              { icon: IndianRupee, title: "Transparent pricing", desc: "Pay exactly the listed rate — no surge, no hidden fees." },
-              { icon: Phone, title: "Direct host contact", desc: "Call or WhatsApp your host directly from the spot card." },
+              { icon: IndianRupee, title: "Transparent pricing", desc: "Pay exactly the listed rate — no hidden fees." },
+              { icon: Phone, title: "Direct host contact", desc: "Call or message your host directly from the spot card." },
             ].map((f, i) => {
               const Icon = f.icon;
               return (
                 <div key={i} className="reveal flex gap-4 items-start">
-                  <div className="w-10 h-10 rounded-xl bg-ev-green/10 flex items-center justify-center flex-shrink-0">
-                    <Icon className="w-5 h-5 text-ev-green" />
+                  <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
+                    <Icon className="w-5 h-5 text-primary" />
                   </div>
                   <div>
                     <h3 className="font-display font-semibold text-lg text-foreground">{f.title}</h3>
@@ -225,7 +220,7 @@ export default function CityKolhapur() {
       <CTABanner
         variant="dark"
         title="Charging in Kolhapur, Made Simple"
-        subtitle="Join hundreds of riders and hosts already using VoltSetu across the city."
+        subtitle="Join riders and hosts using ChargePush across the city."
       />
 
       {/* Local business schema footer note */}
@@ -235,11 +230,11 @@ export default function CityKolhapur() {
           __html: JSON.stringify({
             "@context": "https://schema.org",
             "@type": "Service",
-            name: "VoltSetu EV Charging — Kolhapur",
+            name: "ChargePush EV Charging — Kolhapur",
             areaServed: { "@type": "City", name: "Kolhapur", address: { "@type": "PostalAddress", addressRegion: "Maharashtra", addressCountry: "IN" } },
-            provider: { "@type": "Organization", name: "VoltSetu", url: "https://voltsetu.netlify.app" },
-            serviceType: "EV Two-Wheeler Charging",
-            termsOfService: "https://voltsetu.netlify.app/pricing",
+            provider: { "@type": "Organization", name: "ChargePush", url: "https://chargepush.com" },
+            serviceType: "EV Charging Access Network",
+            termsOfService: "https://chargepush.com/pricing",
           }),
         }}
       />

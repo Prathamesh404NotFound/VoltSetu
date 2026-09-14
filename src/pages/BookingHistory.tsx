@@ -123,7 +123,7 @@ export default function BookingHistory() {
   return (
     <div className="pt-24 pb-16">
       <SEO 
-        title="My Bookings | VoltSetu"
+        title="My Bookings | ChargePush"
         description="Review your past and upcoming EV charging sessions. Track approval status and session costs."
         noindex={true}
       />

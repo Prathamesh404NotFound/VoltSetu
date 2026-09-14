@@ -1,15 +1,15 @@
 {
-  "short_name": "VoltSetu",
-  "name": "VoltSetu — Find EV Two-Wheeler Charging Spots Near You",
-  "description": "VoltSetu is India's peer-to-peer EV two-wheeler charging marketplace. Discover verified home and shop charging spots in Kolhapur, Pune, Mumbai and beyond, book a slot in seconds, and get back on the road. Become a host and earn from your spare outlet.",
+  "short_name": "ChargePush",
+  "name": "ChargePush — Distributed EV Charging Access Network",
+  "description": "ChargePush is a distributed EV charging-access network connecting EV riders with nearby charging access from home hosts, local spots, and charging networks. Charge. Push. Go.",
   "id": "/",
   "start_url": "/",
   "scope": "/",
   "display_override": ["window-controls-overlay", "standalone", "minimal-ui"],
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#0a0f1c",
-  "theme_color": "#4f46e5",
+  "background_color": "#0F172A",
+  "theme_color": "#0066FF",
   "categories": ["travel", "navigation", "lifestyle", "utilities"],
   "lang": "en-IN",
   "icons": [
@@ -28,28 +28,28 @@
   ],
   "shortcuts": [
     {
-      "name": "Roadside Rescue",
+      "name": "ChargePush Rescue",
       "short_name": "Rescue",
-      "description": "I'm stranded — find the nearest open charging spot now",
+      "description": "Get Emergency Charge — find nearest open charging access now",
       "url": "/rescue",
       "icons": [{ "src": "/logo192.png", "sizes": "192x192" }]
     },
     {
-      "name": "Find Charging Spots",
-      "short_name": "Find Spots",
-      "description": "Browse verified EV charging spots near you",
+      "name": "Find a Charge",
+      "short_name": "Find Charge",
+      "description": "Find nearby charging access on The ChargePush Network",
       "url": "/spots",
       "icons": [{ "src": "/logo192.png", "sizes": "192x192" }]
     },
     {
-      "name": "Become a Host",
+      "name": "ChargePush Host",
       "short_name": "Host",
-      "description": "List your charging outlet and start earning",
+      "description": "Power Your Neighborhood — list charging access and earn",
       "url": "/host",
       "icons": [{ "src": "/logo192.png", "sizes": "192x192" }]
     },
     {
-      "name": "My Dashboard",
+      "name": "Dashboard",
       "short_name": "Dashboard",
       "description": "View bookings, earnings, and saved spots",
       "url": "/dashboard",

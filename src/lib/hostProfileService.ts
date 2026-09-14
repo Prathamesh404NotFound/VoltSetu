@@ -106,7 +106,7 @@ export async function getHostProfile(hostId: string): Promise<HostProfile | null
 
     return {
       hostId,
-      displayName: String(userData.displayName ?? "VoltSetu Host"),
+      displayName: String(userData.displayName ?? "ChargePush Host"),
       photoURL: userData.photoURL ? String(userData.photoURL) : undefined,
       phone: userData.phone ? String(userData.phone) : undefined,
       city: userData.city ? String(userData.city) : undefined,

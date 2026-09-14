@@ -1028,7 +1028,7 @@ const HostRegistrationModal = ({ isOpen, onClose }: HostRegistrationModalProps) 
               <div>
                 <p className="font-semibold mb-1">Your documents stay secure</p>
                 <p>
-                  Only VoltSetu admins see your documents during review. Mask sensitive numbers (show only
+                  Only ChargePush admins see your documents during review. Mask sensitive numbers (show only
                   the first and last few digits) — a full Aadhaar/PAN number is never required.
                 </p>
               </div>
@@ -1388,7 +1388,7 @@ const HostRegistrationModal = ({ isOpen, onClose }: HostRegistrationModalProps) 
                   </div>
                 </div>
                 <p className="text-[11px] text-muted-foreground leading-relaxed">
-                  This is how riders will see your listing on VoltSetu. Keep filling the form — the preview updates instantly.
+                  This is how riders will see your listing on ChargePush. Keep filling the form — the preview updates instantly.
                 </p>
               </div>
             )}

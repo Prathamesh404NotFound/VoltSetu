@@ -1,4 +1,4 @@
-/* VoltSetu rider loyalty page (Round 14).
+/* ChargePush Rewards page.
  *
  * Shows points, level, badges and streak. Pure read-side derivation — no
  * loyalty database, so nothing can be corrupted or abused.
@@ -23,12 +23,11 @@ const BADGE_ICONS: Record<string, React.ComponentType<{ className?: string }>> =
   trophy: Trophy,
 };
 
-// Round 20: shareable CO2 impact — Web Share API with WhatsApp fallback.
 async function shareImpact(co2Kg: number, level: number) {
-  const text = `I've saved ${co2Kg} kg of CO₂ charging my EV on VoltSetu — find charging spots near you at https://volt-setu.vercel.app #ElectricIndia 🌱⚡`;
+  const text = `I've saved ${co2Kg} kg of CO₂ charging my EV on ChargePush — find charging access near you at https://chargepush.com #ChargePush #KeepMoving ⚡`;
   if (navigator.share) {
     try {
-      await navigator.share({ title: "My VoltSetu Green Impact", text });
+      await navigator.share({ title: "My ChargePush Impact", text });
       return;
     } catch {
       /* cancelled / unsupported */
@@ -57,13 +56,13 @@ export default function Loyalty() {
   return (
     <div className="container mx-auto px-4 py-8">
       <SEO
-        title="My Loyalty | VoltSetu"
-        description="Track your VoltSetu loyalty points, badges and charging streak."
+        title="ChargePush Rewards — Earn Points & Level Up"
+        description="Track your ChargePush rewards, badges, and charging streak."
         noindex
       />
       <div className="mb-8 flex items-end justify-between">
         <div>
-          <h1 className="font-display font-bold text-3xl">My Loyalty</h1>
+          <h1 className="font-display font-bold text-3xl">ChargePush Rewards</h1>
           <p className="text-muted-foreground text-sm mt-1">
             Earn points for every session. Charge often, save CO₂, collect badges.
           </p>

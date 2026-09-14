@@ -110,7 +110,7 @@ export default function StatsCounter() {
   }, []);
 
   return (
-    <section className="py-20 relative" aria-label="VoltSetu network statistics">
+    <section className="py-20 relative" aria-label="ChargePush network statistics">
       <div className="absolute inset-0 gradient-hero opacity-5 rounded-3xl" />
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8">

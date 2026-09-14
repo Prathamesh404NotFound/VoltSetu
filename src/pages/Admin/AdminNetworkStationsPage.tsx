@@ -559,7 +559,7 @@ const AdminNetworkStationsPage: React.FC = () => {
   return (
     <div className="space-y-6 p-6">
       <SEO 
-        title="Manage Network Stations | Admin | VoltSetu"
+        title="Manage Network Stations | Admin | ChargePush"
         description="Monitor and manage network EV charging infrastructure and verification status."
         noindex={true}
       />

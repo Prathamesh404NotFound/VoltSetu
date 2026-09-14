@@ -26,7 +26,7 @@ export default function PlanMyChargeSection() {
               {[
                 ["Instant range estimate", "for typical Indian EV two-wheelers"],
                 ["Top-up time & cost", "at average neighborhood outlet rates"],
-                ["One tap to live spots", "in any VoltSetu city"],
+                ["One tap to live spots", "in any ChargePush city"],
               ].map(([t, d]) => (
                 <li key={t} className="flex items-start gap-3 text-[15px] text-muted-foreground">
                   <span className="mt-1.5 h-2 w-2 rounded-full bg-ev-green shrink-0" />

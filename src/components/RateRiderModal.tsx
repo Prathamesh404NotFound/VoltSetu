@@ -66,9 +66,9 @@ export default function RateRiderModal({ isOpen, onClose, booking, hostUid, ride
       const res = await submitRiderRating({
         riderUid,
         hostUid,
-        hostName: booking.hostName || "VoltSetu Host",
+        hostName: booking.hostName || "ChargePush Host",
         spotId: booking.spotId || "",
-        spotName: booking.spotName || "VoltSetu Spot",
+        spotName: booking.spotName || "ChargePush Spot",
         bookingId: booking.id,
         punctuality,
         courtesy,
@@ -99,7 +99,7 @@ export default function RateRiderModal({ isOpen, onClose, booking, hostUid, ride
           </DialogTitle>
         </DialogHeader>
         <p className="text-sm text-muted-foreground">
-          Your feedback keeps the VoltSetu community trustworthy. {riderName ? `Feedback about ${riderName}:` : ""}
+          Your feedback keeps the ChargePush community trustworthy. {riderName ? `Feedback about ${riderName}:` : ""}
         </p>
         <div className="space-y-4 py-2">
           <StarRow value={punctuality} onChange={setPunctuality} label="Punctuality — arrived on time?" />

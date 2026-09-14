@@ -33,10 +33,10 @@ const plans = [
 ];
 
 const pricingFaqs = [
-  { q: "Who sets the charging price?", a: "Hosts set their own prices based on their electricity costs and local demand. VoltSetu provides recommended pricing guidelines." },
-  { q: "What is VoltSetu's commission?", a: "VoltSetu charges a small platform fee of 15% on each transaction. This covers payment processing, insurance, support, and platform operations." },
-  { q: "Are there any hidden fees?", a: "Absolutely not. The price shown on the spot listing is the exact price you pay per 10 minutes. No registration fee, no membership charges." },
-  { q: "How does the host receive payment?", a: "Hosts receive 85% of each transaction, deposited weekly to their registered bank account." },
+  { q: "Who sets the charging price?", a: "Hosts set their own prices based on their electricity costs and local demand. ChargePush provides recommended pricing guidelines." },
+  { q: "What is ChargePush's platform fee?", a: "ChargePush charges a transparent platform fee on each transaction. This covers payment processing, host support, and platform operations." },
+  { q: "Are there any hidden fees?", a: "Absolutely not. The price shown on the spot listing is the exact price you pay per charging duration. No registration fee, no membership charges." },
+  { q: "How does the host receive payment?", a: "Hosts receive their earnings directly to their registered bank account or payout method." },
 ];
 
 export default function Pricing() {
@@ -45,18 +45,18 @@ export default function Pricing() {
   return (
     <div className="pt-24">
       <SEO 
-        title="VoltSetu Pricing — Transparent & Affordable EV Charging"
-        description="Pay-per-use EV charging starting at just ₹5 for 10 minutes. No subscriptions, no hidden fees. Understand our fair pricing model for both riders and hosts."
+        title="ChargePush Pricing — Transparent & Affordable EV Charging"
+        description="Pay-per-use EV charging access starting at affordable rates. No subscriptions, no hidden fees. Understand our fair pricing model for both riders and hosts."
       />
       {/* Hero */}
       <section className="py-20 gradient-hero relative overflow-hidden">
-        <div className="absolute bottom-0 right-0 w-96 h-96 bg-ev-green/10 rounded-full blur-3xl" />
+        <div className="absolute bottom-0 right-0 w-96 h-96 bg-primary/10 rounded-full blur-3xl" />
         <div className="container mx-auto px-4 relative z-10 text-center">
           <h1 className="font-display font-bold text-3xl md:text-5xl text-white mb-4">
             Simple, Transparent Pricing
           </h1>
           <p className="text-lg text-white/70 max-w-xl mx-auto">
-            Pay only for what you use. No subscriptions, no hidden fees. Just plug in, charge, and pay per 10 minutes.
+            Pay only for what you use. No subscriptions, no hidden fees. Find power, charge, and keep moving.
           </p>
         </div>
       </section>
@@ -92,21 +92,22 @@ export default function Pricing() {
                 <ul className="space-y-3 mb-8">
                   {plan.features.map((f, fi) => (
                     <li key={fi} className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <CheckCircle className={cn("w-4 h-4 flex-shrink-0", plan.highlighted ? "text-primary" : "text-ev-green")} />
+                      <CheckCircle className={cn("w-4 h-4 flex-shrink-0", plan.highlighted ? "text-primary" : "text-emerald-500")} />
                       {f}
                     </li>
                   ))}
                 </ul>
-                <button
+                <a
+                  href="/spots"
                   className={cn(
-                    "w-full py-3 rounded-xl font-semibold text-sm transition-all",
+                    "block w-full py-3 rounded-xl font-semibold text-sm text-center transition-all btn-forward",
                     plan.highlighted
                       ? "gradient-primary text-white shadow-lg hover:opacity-90"
                       : "bg-secondary text-secondary-foreground hover:bg-muted"
                   )}
                 >
-                  Get Started
-                </button>
+                  Find a Charge
+                </a>
               </div>
             ))}
           </div>

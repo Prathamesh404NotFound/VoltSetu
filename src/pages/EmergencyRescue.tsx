@@ -205,7 +205,7 @@ export default function EmergencyRescue() {
         <header className="sticky top-0 z-10 flex items-center justify-between border-b border-red-950/60 bg-[#0a0a0a]/90 px-4 py-3 backdrop-blur">
           <div className="flex items-center gap-2">
             <BatteryWarning className="h-6 w-6 text-red-500" />
-            <span className="font-display text-lg font-bold tracking-tight">ROADSIDE RESCUE</span>
+            <span className="font-display text-lg font-bold tracking-tight">CHARGEPUSH RESCUE</span>
             <span className="animate-pulse rounded-full bg-red-600/20 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wider text-red-400">
               SOS
             </span>
@@ -336,7 +336,7 @@ export default function EmergencyRescue() {
               <p className="mb-4 text-sm text-neutral-400">
                 {battery
                   ? "No open spot fits within your battery range. Raise the battery level or widen your search."
-                  : "Every open outlet is booked or closed for the hour. Call a host directly — hosts on VoltSetu often make exceptions for stranded riders."}
+                  : "Every open outlet is booked or closed for the hour. Call a host directly — hosts on ChargePush often make exceptions for stranded riders."}
               </p>
               <a
                 href="/spots"
@@ -458,7 +458,7 @@ export default function EmergencyRescue() {
                   {rescue.spot.hostPhone && (
                     <a
                       href={`https://wa.me/${rescue.spot.hostPhone.replace(/[^0-9]/g, "")}?text=${encodeURIComponent(
-                        "EMERGENCY — stranded rider on VoltSetu, coming to your spot now!"
+                        "EMERGENCY — stranded rider on ChargePush, coming to your spot now!"
                       )}`}
                       target="_blank"
                       rel="noopener noreferrer"

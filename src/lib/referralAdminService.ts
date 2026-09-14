@@ -51,7 +51,7 @@ export async function getAdminReferrals(): Promise<AdminReferralSnapshot> {
     codes.push({
       code: child.key!,
       hostUid: meta.hostUid,
-      hostName: meta.hostName || "VoltSetu Host",
+      hostName: meta.hostName || "ChargePush Host",
       createdAt: meta.createdAt,
       credits: 0,
       referredCount: 0,

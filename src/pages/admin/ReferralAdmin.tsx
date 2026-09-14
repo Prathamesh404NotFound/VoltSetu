@@ -1,4 +1,4 @@
-/* VoltSetu admin referral dashboard (Round 14).
+/* ChargePush admin referral dashboard.
  *
  * Read-only audit view of the host referral program:
  * codes, claims, credits issued, and total referrals.
@@ -72,7 +72,7 @@ export default function ReferralAdmin() {
   return (
     <ResponsiveContainer size="xl" className="py-6">
       <SEO
-        title="Referral Program | VoltSetu Admin"
+        title="Referral Program | ChargePush Admin"
         description="Audit the host referral program: codes, claims, credits and referral conversions."
         noindex
       />

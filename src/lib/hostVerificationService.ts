@@ -108,7 +108,7 @@ export async function submitHostVerification(data: {
   const now = Date.now();
   const caseData = sanitizeForDb({
     uid: user.uid,
-    userName: user.displayName || "VoltSetu Host",
+    userName: user.displayName || "ChargePush Host",
     userEmail: user.email || "",
     userPhone: "",
     registrationId: data.registrationId || undefined,

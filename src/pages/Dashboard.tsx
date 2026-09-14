@@ -79,7 +79,7 @@ export default function Dashboard() {
     if (!user || !isHost) return;
     Promise.all([
       getHostSettings(user.id),
-      ensureReferralCode(user.id, profile?.displayName || user.displayName || "VoltSetu Host"),
+      ensureReferralCode(user.id, profile?.displayName || user.displayName || "ChargePush Host"),
     ]).then(([settings]) => {
       setHostSettings(settings);
       getReferralStats(user.id).then(setReferral);
@@ -155,10 +155,10 @@ export default function Dashboard() {
   // Round 20: one-tap WhatsApp share of the referral code (Web Share API fallback to WhatsApp deep link).
   const handleShareReferral = async () => {
     if (!referral) return;
-    const message = `Earn money with VoltSetu! Register your home EV charging spot and get paid by nearby riders. Use my referral code ${referral.code} when signing up at https://volt-setu.vercel.app — refer a host and they earn ₹50 credit too!`;
+    const message = `Earn money with ChargePush! Register your home EV charging spot and get paid by nearby riders. Use my referral code ${referral.code} when signing up at https://chargepush.com — refer a host and they earn credit too!`;
     if (navigator.share) {
       try {
-        await navigator.share({ title: "Earn with VoltSetu", text: message, url: "https://volt-setu.vercel.app" });
+        await navigator.share({ title: "Earn with ChargePush", text: message, url: "https://chargepush.com" });
         return;
       } catch {
         /* share cancelled or unsupported — fall through to WhatsApp */
@@ -184,7 +184,7 @@ export default function Dashboard() {
   return (
     <div className="container mx-auto px-4">
       <SEO 
-        title="My Dashboard | VoltSetu"
+        title="My Dashboard | ChargePush"
         description="Manage your EV charging sessions, track your carbon footprint, and monitor your host earnings in one place."
         noindex={true}
       />
@@ -311,13 +311,13 @@ export default function Dashboard() {
               <div className="w-16 h-16 gradient-green rounded-2xl flex items-center justify-center mx-auto shadow-lg mb-5">
                 <Zap className="w-8 h-8 text-white" />
               </div>
-              <h3 className="font-display font-bold text-2xl text-foreground mb-2">Want to earn with VoltSetu?</h3>
+              <h3 className="font-display font-bold text-2xl text-foreground mb-2">Power Your Neighborhood with ChargePush Host</h3>
               <p className="text-muted-foreground max-w-sm mx-auto mb-6 text-sm">
-                Register your home outlet to start earning ₹3,000–5,000+ per month. Registration is free and takes 5 minutes.
+                List your power outlet, set availability, and earn from nearby EV riders.
               </p>
               <div className="flex gap-3 justify-center">
-                <Button className="gradient-green w-40" asChild>
-                  <Link to="/host">Register</Link>
+                <Button className="gradient-primary w-40 btn-forward" asChild>
+                  <Link to="/host">Become a Host</Link>
                 </Button>
               </div>
             </CardContent>

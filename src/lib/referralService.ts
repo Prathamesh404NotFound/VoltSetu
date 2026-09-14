@@ -58,7 +58,7 @@ export async function ensureReferralCode(
     if (!snap.exists()) {
       await update(ref(database, `referralCodes/${encodeURIComponent(code)}`), {
         hostUid: uid,
-        hostName: hostName || "VoltSetu Host",
+        hostName: hostName || "ChargePush Host",
         createdAt: serverTimestamp(),
       });
     }

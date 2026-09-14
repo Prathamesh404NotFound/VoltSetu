@@ -88,7 +88,7 @@ export default function EarningsEstimator() {
         </div>
       </div>
       <p className="text-[11px] text-muted-foreground text-center mt-4">
-        Estimate only, assumes ~50 min per session. VoltSetu takes 0% commission — you keep it all.
+        Estimate only, assumes ~50 min per session. ChargePush takes 0% commission — you keep it all.
       </p>
     </div>
   );

@@ -58,7 +58,7 @@ function HostProfileInner() {
       targetId: hostId,
       reason,
       reporterId: user.id,
-      reporterName: (user as { displayName?: string }).displayName || "VoltSetu rider",
+      reporterName: (user as { displayName?: string }).displayName || "ChargePush rider",
     });
     setReportingHost(false);
     toast[result.ok ? "success" : "error"](result.message);
@@ -112,8 +112,8 @@ function HostProfileInner() {
     <div className="mx-auto max-w-6xl px-4 py-8">
       {profile && (
         <SEO
-          title={`${profile.displayName} — EV Charging Host${profile.city ? ` in ${profile.city}` : ""} | VoltSetu`}
-          description={`Browse ${profile.activeSpotCount} verified charging spot${profile.activeSpotCount === 1 ? "" : "s"} by ${profile.displayName}${profile.city ? ` in ${profile.city}` : ""}. See pricing, reviews, and book a session instantly with VoltSetu.`}
+          title={`${profile.displayName} — EV Charging Host${profile.city ? ` in ${profile.city}` : ""} | ChargePush`}
+          description={`Browse ${profile.activeSpotCount} verified charging spot${profile.activeSpotCount === 1 ? "" : "s"} by ${profile.displayName}${profile.city ? ` in ${profile.city}` : ""}. See pricing, reviews, and book a session instantly with ChargePush.`}
           canonical={`/host/${hostId}`}
           schema={{
             "@context": "https://schema.org",

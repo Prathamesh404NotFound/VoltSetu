@@ -27,8 +27,8 @@ export default function SavedSpots() {
   return (
     <AuthenticatedRoute>
       <SEO
-        title="Saved Charging Spots | VoltSetu"
-        description="Your saved EV charging spots, ready for quick booking. VoltSetu keeps your favorite neighborhood charging points in one place."
+        title="Saved Charging Spots | ChargePush"
+        description="Your saved EV charging spots, ready for quick booking. ChargePush keeps your favorite neighborhood charging points in one place."
       />
       <div className="pt-24 pb-16 min-h-[80vh]">
         <div className="container mx-auto px-4">

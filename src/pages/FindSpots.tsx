@@ -337,13 +337,13 @@ export default function FindSpots() {
       <SEO
         title={
           selectedSpot
-            ? `${selectedSpot.name} - EV Charging Spot in ${selectedSpot.area || selectedSpot.city || "Kolhapur"} | VoltSetu`
-            : "Find EV Charging Spots Near You | VoltSetu"
+            ? `${selectedSpot.name} — ChargePush EV Charging Access`
+            : "Find a Charge Near You | ChargePush"
         }
         description={
           selectedSpot
-            ? `Book charging at ${selectedSpot.name}. Located in ${selectedSpot.address || selectedSpot.city}. Outlet: ${selectedSpot.outletType || "Standard"}. Charging rate: Rs ${selectedSpot.pricePerHour || 10}/hr. Verified host.`
-            : "Search our real-time map for verified EV charging spots in your neighborhood. Check availability, book instantly, and charge your vehicle with ease."
+            ? `Book charging at ${selectedSpot.name}. Located in ${selectedSpot.address || selectedSpot.city}. Outlet: ${selectedSpot.outletType || "Standard"}. Rate: Rs ${selectedSpot.pricePerHour || 10}/hr. Verified host on ChargePush.`
+            : "Find nearby charging access on The ChargePush Network. Compare rates, check live availability, book instantly, and keep moving."
         }
       />
 
@@ -353,12 +353,11 @@ export default function FindSpots() {
         </div>
         <div className="container mx-auto px-4 relative z-10">
           <div className="text-center mb-8">
-            <h1 className="font-display font-bold text-3xl md:text-5xl text-white mb-4">
-              Find EV Charging Spots Near You
+            <h1 className="font-display font-black text-3xl md:text-5xl text-white mb-4">
+              Find a Charge Near You
             </h1>
-            <p className="text-white/70 max-w-lg mx-auto">
-              Discover verified home charging points in your neighborhood. Search, book, and charge
-              in minutes.
+            <p className="text-white/70 max-w-lg mx-auto font-medium">
+              Discover verified charging access in your neighborhood on The ChargePush Network. Compare, book, and keep moving.
             </p>
           </div>
 
@@ -370,7 +369,7 @@ export default function FindSpots() {
                 placeholder="Search by location, area, or landmark..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-12 pr-4 py-4 rounded-2xl bg-card text-foreground shadow-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary border-0"
+                className="w-full pl-12 pr-4 py-4 rounded-2xl bg-card text-foreground shadow-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary border-0 font-medium"
               />
             </div>
           </div>
