@@ -65,53 +65,6 @@
     --sidebar-border: 220 13% 91%;
     --sidebar-ring: 215 100% 50%;
   }
-
-  .dark {
-    --background: 220 24% 8%;
-    --foreground: 220 14% 96%;
-
-    --card: 220 20% 12%;
-    --card-foreground: 220 14% 96%;
-
-    --popover: 220 20% 12%;
-    --popover-foreground: 220 14% 96%;
-
-    --primary: 215 100% 55%;
-    --primary-foreground: 0 0% 100%;
-
-    --secondary: 220 20% 16%;
-    --secondary-foreground: 220 14% 96%;
-
-    --muted: 220 20% 18%;
-    --muted-foreground: 220 10% 60%;
-
-    --accent: 190 100% 50%;
-    --accent-foreground: 220 24% 8%;
-
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 220 20% 18%;
-    --input: 220 20% 18%;
-    --ring: 215 100% 55%;
-
-    --sidebar-background: 220 24% 8%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 215 100% 55%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 215 100% 55%;
-
-    --electric: 215 100% 58%;
-    --electric-foreground: 0 0% 100%;
-    --ev-green: 142 64% 52%;
-    --ev-green-foreground: 0 0% 100%;
-
-    --warning: 38 92% 58%;
-    --warning-foreground: 0 0% 100%;
-  }
 }
 
 @layer base {
@@ -347,8 +300,6 @@
   }
 }
 
-.dark .glass { @apply bg-card/80 border-white/10; }
-.dark .surface-card { box-shadow: 0 18px 50px hsl(0 0% 0% / 0.2); }
 
 
 /* === Round 3A: premium motion & typography layer (top-design) === */

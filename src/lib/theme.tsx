@@ -1,38 +1,20 @@
-/* VoltSetu dark mode (Round 15).
+/**
+ * ChargePush — permanent light-theme stub.
  *
- * Theme handling:
- *  - Three modes: "light" | "dark" | "system"
- *  - Persisted to localStorage (voltsetu:theme), defaulting to "system"
- *  - "system" follows prefers-color-scheme live (media query listener)
- *  - Applies .dark class to <html> so the index.css dark tokens take effect
- *  - A tiny inline script in index.html (see <script> block) runs before
- *    React so the page is themed from the very first paint (FOUC-free)
+ * Dark mode has been removed from ChargePush by design.
+ * This file keeps the original export surface intact so existing imports
+ * compile without changes, but all runtime behaviour is hard-coded to light.
  */
-import { createContext, useCallback, useContext, useEffect, useState } from "react";
+import type { ReactNode } from "react";
 
-export type ThemeMode = "light" | "dark" | "system";
+export type ThemeMode = "light";
 
-const STORAGE_KEY = "voltsetu:theme";
-
-function getSystemDark(): boolean {
-  return (
-    typeof window !== "undefined" &&
-    window.matchMedia("(prefers-color-scheme: dark)").matches
-  );
-}
-
-export function effectiveDark(mode: ThemeMode): boolean {
-  return mode === "dark" || (mode === "system" && getSystemDark());
-}
-
-function applyClass(): void {
-  const mode = (localStorage.getItem(STORAGE_KEY) as ThemeMode) || "system";
-  document.documentElement.classList.toggle("dark", effectiveDark(mode));
-}
-
-/** Call once at app boot to sync the class with the stored mode. */
 export function applyStoredTheme(): void {
-  applyClass();
+  // No-op: the app is permanently light, no class toggling needed.
+}
+
+export function effectiveDark(_mode: ThemeMode): boolean {
+  return false;
 }
 
 interface ThemeContextValue {
@@ -41,46 +23,19 @@ interface ThemeContextValue {
   isDark: boolean;
 }
 
-const ThemeContext = createContext<ThemeContextValue>({
-  theme: "system",
-  setTheme: () => undefined,
-  isDark: false,
-});
+const _noop = () => undefined;
 
-export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setThemeState] = useState<ThemeMode>(() => {
-    if (typeof window === "undefined") return "system";
-    const stored = localStorage.getItem(STORAGE_KEY) as ThemeMode | null;
-    return stored === "light" || stored === "dark" || stored === "system" ? stored : "system";
-  });
-  const [isDark, setIsDark] = useState<boolean>(() => effectiveDark(theme));
-
-  const setTheme = useCallback((mode: ThemeMode) => {
-    localStorage.setItem(STORAGE_KEY, mode);
-    setThemeState(mode);
-    setIsDark(effectiveDark(mode));
-    document.documentElement.classList.toggle("dark", effectiveDark(mode));
-  }, []);
-
-  // Follow live system preference changes when in "system" mode
-  useEffect(() => {
-    if (theme !== "system") return;
-    const mq = window.matchMedia("(prefers-color-scheme: dark)");
-    const onMatch = () => setIsDark(effectiveDark("system"));
-    mq.addEventListener("change", onMatch);
-    return () => mq.removeEventListener("change", onMatch);
-  }, [theme]);
-
-  return (
-    <ThemeContext.Provider value={{ theme, setTheme, isDark }}>{children}</ThemeContext.Provider>
-  );
+// Keep useTheme importable but always return light state.
+export function useTheme(): ThemeContextValue {
+  return { theme: "light", setTheme: _noop, isDark: false };
 }
 
-export const useTheme = () => useContext(ThemeContext);
+export function ThemeProvider({ children }: { children: ReactNode }) {
+  // Transparent passthrough — no context or effect needed.
+  return <>{children}</>;
+}
 
-// Round 19: imperative dark-mode check for styling helpers (no hook needed).
+// Imperative helper kept for any call sites that imported it directly.
 export function isDark(): boolean {
-  return effectiveDark(
-    (typeof localStorage !== "undefined" && (localStorage.getItem(STORAGE_KEY) as ThemeMode | null)) || "system"
-  );
+  return false;
 }

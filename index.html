@@ -41,17 +41,7 @@
       })();
     </script>
 
-    <!-- Dark-mode FOUC prevention -->
-    <script>
-      (function () {
-        try {
-          var mode = localStorage.getItem("voltsetu:theme") || "system";
-          if (mode !== "light" && mode !== "dark" && mode !== "system") mode = "system";
-          var dark = mode === "dark" || (mode === "system" && matchMedia("(prefers-color-scheme: dark)").matches);
-          if (dark) document.documentElement.classList.add("dark");
-        } catch (e) { /* storage unavailable */ }
-      })();
-    </script>
+
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
@@ -101,6 +91,8 @@
       },
       "serviceType": "EV Charging Access Network"
     }
+    </script>
+
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",

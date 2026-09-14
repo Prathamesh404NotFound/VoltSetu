@@ -12,7 +12,6 @@ import { useT, useLang } from "@/lib/i18n";
 import { requestNotificationPermission } from "@/lib/browserNotifications";
 import { CITIES, getCityBySlug } from "@/lib/cities";
 import { InstallPwaButton } from "@/components/InstallPwaButton";
-import ThemeToggle from "@/components/ThemeToggle";
 import {
   DropdownMenu,
   DropdownMenuContent,
