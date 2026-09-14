@@ -7,20 +7,40 @@ import {
 
 const defaultFaqs = [
   {
-    q: "How does ChargePush work?",
-    a: "ChargePush connects EV riders with nearby home charging spots. Riders search for a spot, navigate to it, plug in, and pay based on charging time. Homeowners list their outlet and earn money each time a rider charges.",
+    q: "What is ChargePush?",
+    a: "ChargePush is a distributed EV charging-access network and marketplace that connects EV riders with nearby charging access from home hosts, local charging spots, and commercial charging networks.",
   },
   {
-    q: "How much does it cost to charge?",
-    a: "Pricing is set by individual hosts, typically ranging from Rs 5 to Rs 15 per 10 minutes. You can see the exact price on each charging spot listing before you book.",
+    q: "How do I find a charge?",
+    a: "Open the 'Find a Charge' map to discover nearby charging spots. You can filter by distance, outlet type, price, and host rating, then navigate directly to your chosen spot.",
   },
   {
-    q: "Is it safe to charge at someone's home?",
-    a: "Yes. All hosts go through a verification process. We verify identity, outlet safety, and location details. Riders and hosts both have rating systems to maintain community trust.",
+    q: "Can I charge from a home-hosted spot?",
+    a: "Yes. ChargePush connects riders with verified home hosts who make their outlets or home charging setups accessible to electric riders in their neighborhood.",
   },
   {
-    q: "How much can I earn as a host?",
-    a: "Earnings depend on your area's demand and pricing. On average, hosts earn Rs 2,000 to Rs 5,000 per month with minimal effort. You set your own rates and availability.",
+    q: "Can I book a spot?",
+    a: "Yes. You can request a charging slot in advance or reserve instant charging sessions directly through the app where host availability permits.",
+  },
+  {
+    q: "How does pricing work?",
+    a: "Pricing is transparently displayed on each listing before you charge. Rates are set by hosts or network operators per hour or session, with zero hidden fees.",
+  },
+  {
+    q: "How do hosts join?",
+    a: "Homeowners and local spot operators can click 'Power Your Neighborhood', submit basic property and outlet details, complete host verification, and start accepting charging requests.",
+  },
+  {
+    q: "How does route charging work?",
+    a: "Using ChargePush Route, enter your origin and destination to discover verified charging access points along your travel corridor before your battery gets low.",
+  },
+  {
+    q: "What happens if I need charging urgently?",
+    a: "Use ChargePush Rescue to instantly surface open, high-reliability charging options nearby when your battery percentage is critically low.",
+  },
+  {
+    q: "How are charging spots verified?",
+    a: "Every host listed on ChargePush completes identity check and outlet safety verification. Rider ratings and community reviews maintain high quality across the network.",
   },
 ];
 
