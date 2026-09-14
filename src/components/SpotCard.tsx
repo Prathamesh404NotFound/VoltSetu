@@ -43,6 +43,8 @@ interface SpotCardProps {
   suggestedStop?: boolean;
   /** Rider-side pause flag from hostSettings (Round 34). */
   isPaused?: boolean;
+  /** Explicit source tag: ChargePush Host vs Network Station */
+  isNetworkStation?: boolean;
   onBook?: () => void;
   /** Live toggle overlay: host's "outlet available now" status. */
   showLiveStatus?: boolean;
@@ -89,7 +91,7 @@ const overlayBadgeClass =
 export default function SpotCard({
   id, name, host, hostId, hostPhone, distance, pricePerHour, rating, reviews,
   isOpen, isVerified, isFeatured, image, outletType, availableHours, amenities, suggestedStop, onBook,
-  isPaused,
+  isPaused, isNetworkStation,
   showLiveStatus = true,
   showCostPerKm = true,
 }: SpotCardProps) {
@@ -382,6 +384,38 @@ export default function SpotCard({
 
       {/* Content */}
       <div className="p-5 flex flex-col flex-1">
+        {/* Source label + status badge header */}
+        <div className="flex items-center justify-between gap-2 mb-3">
+          {isNetworkStation ? (
+            <span className="px-2.5 py-0.5 rounded-full bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border border-cyan-500/20 text-[11px] font-bold uppercase tracking-wider flex items-center gap-1">
+              <Zap className="w-3 h-3 text-cyan-500" /> Network Station
+            </span>
+          ) : (
+            <span className="px-2.5 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20 text-[11px] font-bold uppercase tracking-wider flex items-center gap-1">
+              <Home className="w-3 h-3 text-primary" /> ChargePush Host
+            </span>
+          )}
+
+          {/* 4-tier status indicator */}
+          {isOpen === false ? (
+            <span className="px-2 py-0.5 rounded-full bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/20 text-[11px] font-bold flex items-center gap-1">
+              UNAVAILABLE
+            </span>
+          ) : isPaused ? (
+            <span className="px-2 py-0.5 rounded-full bg-slate-500/10 text-slate-600 dark:text-slate-400 border border-slate-500/20 text-[11px] font-bold flex items-center gap-1">
+              PAUSED
+            </span>
+          ) : availability?.isOccupied || liveStatus?.available === false ? (
+            <span className="px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20 text-[11px] font-bold flex items-center gap-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-ping" /> OCCUPIED
+            </span>
+          ) : (
+            <span className="px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 text-[11px] font-bold flex items-center gap-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" /> READY
+            </span>
+          )}
+        </div>
+
         {amenities && amenities.length > 0 && (
           <div className="mb-3">
             <FacilitiesChips amenities={amenities.slice(0, 4)} />
@@ -484,7 +518,7 @@ export default function SpotCard({
               isOpen === false && "opacity-60 cursor-not-allowed hover:translate-y-0"
             )}
           >
-            {isOpen === false ? "Currently Closed" : "Book Now"}
+            {isOpen === false ? "Currently Closed" : isPaused ? "Temporarily Paused" : "Book / Request"}
           </Button>
           {hostPhone && (
             <>

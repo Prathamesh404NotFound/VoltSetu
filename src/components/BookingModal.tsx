@@ -577,9 +577,11 @@ export default function BookingModal({ isOpen, onClose, spot }: BookingModalProp
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
               </svg>
             </div>
-            <DialogTitle className="text-2xl font-bold mb-2">Request Sent!</DialogTitle>
+            <DialogTitle className="text-2xl font-bold mb-2 text-amber-600 dark:text-amber-400 flex items-center justify-center gap-2">
+              <Clock className="w-6 h-6 animate-pulse" /> Request Sent — Waiting for Host
+            </DialogTitle>
             <DialogDescription className="text-base text-muted-foreground mb-4">
-              Your booking request has been sent to{" "}
+              Your booking request is pending host approval from{" "}
               <span className="font-semibold text-foreground">{spot.hostName}</span>.
             </DialogDescription>
             <div
@@ -916,10 +918,14 @@ export default function BookingModal({ isOpen, onClose, spot }: BookingModalProp
                 )}
               </div>
 
-              <div className="rounded-xl border border-border bg-muted/40 px-4 py-3 text-sm">
-                <span className="font-semibold text-foreground">
-                  ₹{spot.pricePerHour} × {formatDurationForPrice(activeDuration)} = ₹{estimatedCost}
-                </span>
+              <div className="rounded-xl border border-border bg-muted/40 px-4 py-3 text-sm flex flex-col gap-1">
+                <div className="flex items-center justify-between font-semibold text-foreground">
+                  <span>Estimated Cost:</span>
+                  <span className="text-primary text-base">₹{estimatedCost}</span>
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  Rate: ₹{spot.pricePerHour}/hr × {formatDurationForPrice(activeDuration)} · Price set by host (no hidden charges)
+                </p>
               </div>
 
               {spot.availableHours && (

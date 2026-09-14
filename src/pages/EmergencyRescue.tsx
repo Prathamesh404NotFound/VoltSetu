@@ -221,19 +221,23 @@ export default function EmergencyRescue() {
 
         <div className="mx-auto max-w-xl px-4 pb-24 pt-6">
           {/* Urgency panel */}
-          <div className="mb-5 rounded-2xl border border-red-950/60 bg-gradient-to-b from-red-950/40 to-transparent p-4">
+          <div className="mb-5 rounded-2xl border border-red-950/60 bg-gradient-to-b from-red-950/40 to-transparent p-5">
             <div className="mb-2 flex items-center gap-2 text-red-400">
               <AlertTriangle className="h-4 w-4" />
-              <span className="text-xs font-semibold uppercase tracking-wider">Don't let it die — act within</span>
+              <span className="text-xs font-semibold uppercase tracking-wider">ChargePush Rescue</span>
             </div>
-            <div className="flex items-baseline gap-3">
-              <span className="font-display text-4xl font-bold tabular-nums text-red-500">{display}</span>
-              <span className="text-sm text-neutral-400">rescue window remaining</span>
+            <h1 className="font-display text-3xl font-black tracking-tight text-white mb-1">
+              Battery almost empty?
+            </h1>
+            <p className="text-sm font-medium text-neutral-300 mb-4">
+              Find a nearby charging option when you need one most.
+            </p>
+            <div className="flex items-baseline gap-3 pt-2 border-t border-red-950/60">
+              <span className="font-display text-3xl font-bold tabular-nums text-red-500">{display}</span>
+              <span className="text-xs text-neutral-400">rescue window remaining</span>
             </div>
-            <p className="mt-2 text-sm text-neutral-400">
-              Two-wheeler batteries forgive no one. We found spots that are{" "}
-              <span className="font-semibold text-neutral-200">open right now</span>. Tap Rescue Me — your host gets a
-              pending request instantly.
+            <p className="mt-2 text-xs text-neutral-400">
+              Surfacing verified charging spots open right now. Select a spot and tap <strong className="text-neutral-200">Get Emergency Charge</strong> — your host receives a priority booking notification with your message.
             </p>
             {/* National emergency fallback */}
             <a
@@ -443,7 +447,7 @@ export default function EmergencyRescue() {
                       ) : (
                         <Zap className="h-5 w-5" />
                       )}
-                      Rescue Me — {rescue.spot.name || "book now"}
+                      Get Emergency Charge — {rescue.spot.name || "Book Now"}
                     </button>
                   )}
                   {rescue.spot.hostPhone && (

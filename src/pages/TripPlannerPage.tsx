@@ -104,10 +104,10 @@ export default function TripPlannerPage() {
               <Route className="w-3.5 h-3.5" /> ChargePush Route
             </div>
             <h1 className="font-display font-black text-3xl md:text-5xl text-white mb-4">
-              Plan Your Charge
+              Charge along the way.
             </h1>
-            <p className="text-white/70 max-w-xl mx-auto font-medium">
-              Enter your route and ChargePush will surface every charging access point along your journey. Charge. Push. Go.
+            <p className="text-white/80 max-w-xl mx-auto font-medium text-base">
+              Plan your journey and discover charging spots that fit your route.
             </p>
           </div>
         </div>

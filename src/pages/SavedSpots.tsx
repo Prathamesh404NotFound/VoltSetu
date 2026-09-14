@@ -12,6 +12,7 @@ export default function SavedSpots() {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [version, setVersion] = useState(0);
+  const [tabFilter, setTabFilter] = useState("saved");
 
   const favorites = useMemo(() => {
     void version;
@@ -38,20 +39,40 @@ export default function SavedSpots() {
               Saved Spots
             </h1>
             <p className="text-muted-foreground max-w-xl">
-              Your bookmarked charging spots. They stay here across sessions so your favorite
-              neighborhood outlets are one tap away from booking.
+              Your personal charging shortlist. Saved spots stay here across sessions so your favorite neighborhood outlets are one tap away from booking.
             </p>
           </div>
 
+          {/* Filter Tabs */}
+          <div className="flex items-center gap-2 mb-8 border-b border-border pb-3">
+            {[
+              { id: "saved", label: "Saved" },
+              { id: "recent", label: "Recent" },
+              { id: "frequent", label: "Frequently Used" },
+            ].map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setTabFilter(tab.id)}
+                className={`px-4 py-2 rounded-full text-xs font-bold transition-all ${
+                  tabFilter === tab.id
+                    ? "bg-primary text-primary-foreground shadow-sm"
+                    : "bg-muted/50 text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
+
           {favorites.length === 0 ? (
-            <div className="rounded-2xl border border-dashed border-border bg-muted/40 p-12 text-center">
-              <Heart className="w-10 h-10 text-muted-foreground/50 mx-auto mb-4" />
-              <h2 className="font-display font-semibold text-xl text-foreground mb-2">No saved spots yet</h2>
-              <p className="text-muted-foreground mb-6">
-                Tap the heart on any spot card to save it here for quick access.
+            <div className="rounded-2xl border border-dashed border-border bg-card p-12 text-center max-w-lg mx-auto">
+              <Heart className="w-12 h-12 text-muted-foreground/40 mx-auto mb-4" />
+              <h2 className="font-display font-bold text-2xl text-foreground mb-2">Nothing saved yet.</h2>
+              <p className="text-muted-foreground text-sm mb-6">
+                Tap the heart icon on any charging spot card to bookmark it for quick access.
               </p>
-              <Button onClick={() => navigate("/spots")} className="gradient-primary text-white border-0">
-                <MapPin className="w-4 h-4" /> Browse charging spots
+              <Button onClick={() => navigate("/spots")} className="gradient-primary text-white border-0 font-bold px-6 py-3 rounded-xl shadow-md btn-forward">
+                <MapPin className="w-4 h-4 mr-2" /> Find a Charge
               </Button>
             </div>
           ) : (
