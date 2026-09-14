@@ -50,7 +50,7 @@ function persist(reminders: BookingReminder[]): void {
   }
 }
 
-let armedTimers = new Map<string, number>();
+const armedTimers = new Map<string, number>();
 
 /** Arm (or re-arm) all stored reminders after page load. */
 export function armAllReminders(): void {

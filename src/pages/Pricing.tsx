@@ -7,28 +7,34 @@ import SEO from "@/components/SEO";
 
 const plans = [
   {
-    name: "Basic",
-    desc: "For casual riders",
-    price: "Rs 5",
-    unit: "/ 10 min",
-    features: ["Standard outlets", "Basic support", "Community ratings", "Pay per use"],
+    name: "Standard AC",
+    desc: "3.3kW 16A outlets",
+    price: "₹8–15",
+    unit: "/ hr (set by host)",
+    features: ["Standard 16A socket access", "Community verified hosts", "Pay per session duration", "Direct host navigation"],
     highlighted: false,
+    cta: "Find Standard Spot",
+    href: "/spots",
   },
   {
-    name: "Featured",
-    desc: "Most popular choice",
-    price: "Rs 10",
-    unit: "/ 10 min",
-    features: ["Verified outlets", "Priority support", "Fast charging spots", "Detailed reviews", "WhatsApp alerts"],
+    name: "Fast AC",
+    desc: "7.4kW+ Level 2 charging",
+    price: "₹15–30",
+    unit: "/ hr (set by host)",
+    features: ["High-speed AC charger", "Verified active outlet", "WhatsApp arrival alerts", "Detailed host reviews"],
     highlighted: true,
+    cta: "Find Fast Charger",
+    href: "/spots",
   },
   {
-    name: "Premium",
-    desc: "For power users",
-    price: "Rs 15",
-    unit: "/ 10 min",
-    features: ["Premium outlets", "Dedicated support", "Guaranteed availability", "Extended hours", "Priority booking", "Monthly reports"],
+    name: "Roadside Rescue",
+    desc: "Urgent SOS charging window",
+    price: "Host rate",
+    unit: " (no surge markup)",
+    features: ["15-min priority booking window", "Nearest open host matching", "Direct host phone & WhatsApp", "National 112 backup fallback"],
     highlighted: false,
+    cta: "Get Emergency Charge",
+    href: "/rescue",
   },
 ];
 
@@ -98,7 +104,7 @@ export default function Pricing() {
                   ))}
                 </ul>
                 <a
-                  href="/spots"
+                  href={plan.href}
                   className={cn(
                     "block w-full py-3 rounded-xl font-semibold text-sm text-center transition-all btn-forward",
                     plan.highlighted
@@ -106,7 +112,7 @@ export default function Pricing() {
                       : "bg-secondary text-secondary-foreground hover:bg-muted"
                   )}
                 >
-                  Find a Charge
+                  {plan.cta}
                 </a>
               </div>
             ))}
@@ -119,24 +125,24 @@ export default function Pricing() {
         <div className="container mx-auto px-4 max-w-3xl">
           <div className="text-center mb-12 reveal">
             <h2 className="font-display font-bold text-3xl md:text-4xl text-foreground mb-4">
-              How Pricing Works
+              Transparent Fee Breakdown
             </h2>
           </div>
           <div className="grid md:grid-cols-3 gap-6 reveal">
             <div className="p-6 rounded-2xl bg-card border border-border text-center">
-              <div className="text-sm font-medium text-muted-foreground mb-2">Rider Pays</div>
-              <div className="font-display font-bold text-2xl text-primary mb-1">Rs 10</div>
-              <div className="text-xs text-muted-foreground">per 10 minutes</div>
+              <div className="text-sm font-medium text-muted-foreground mb-2">Rider Session</div>
+              <div className="font-display font-bold text-2xl text-primary mb-1">₹10</div>
+              <div className="text-xs text-muted-foreground">example charge session</div>
             </div>
             <div className="p-6 rounded-2xl bg-card border border-border text-center">
-              <div className="text-sm font-medium text-muted-foreground mb-2">Host Earns</div>
-              <div className="font-display font-bold text-2xl text-ev-green mb-1">Rs 8.50</div>
-              <div className="text-xs text-muted-foreground">85% of payment</div>
+              <div className="text-sm font-medium text-muted-foreground mb-2">Host Net Payout</div>
+              <div className="font-display font-bold text-2xl text-ev-green mb-1">₹8.50</div>
+              <div className="text-xs text-muted-foreground">85% of total payment</div>
             </div>
             <div className="p-6 rounded-2xl bg-card border border-border text-center">
               <div className="text-sm font-medium text-muted-foreground mb-2">Platform Fee</div>
-              <div className="font-display font-bold text-2xl text-foreground mb-1">Rs 1.50</div>
-              <div className="text-xs text-muted-foreground">15% commission</div>
+              <div className="font-display font-bold text-2xl text-foreground mb-1">₹1.50</div>
+              <div className="text-xs text-muted-foreground">15% platform fee</div>
             </div>
           </div>
         </div>

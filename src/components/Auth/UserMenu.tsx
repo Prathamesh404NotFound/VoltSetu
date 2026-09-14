@@ -1,7 +1,6 @@
-import { Star, BatteryWarning, Route as RouteIcon, SunMoon, User, LogOut, Settings, History, DollarSign, Shield } from "lucide-react";
+import { Star, BatteryWarning, Route as RouteIcon, User, LogOut, Settings, History, DollarSign, Shield } from "lucide-react";
 import { useAuth } from "./AuthProvider";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
-import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -13,7 +12,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Link } from "react-router-dom";
-import { useTheme, type ThemeMode } from "@/lib/theme";
 
 export default function UserMenu() {
   const { user, logout } = useAuth();
@@ -60,8 +58,6 @@ export default function UserMenu() {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
 
-        {/* Preferences grouped under the profile menu */}
-        <ProfileSubmenu />
         <DropdownMenuItem asChild>
           <Link to="/loyalty" className="flex items-center gap-2">
             <Star className="w-4 h-4 text-ev-green" />
@@ -126,35 +122,5 @@ export default function UserMenu() {
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
-  );
-}
-
-/** Compact theme selector (light / dark / system) placed inside the profile dropdown. */
-function ProfileSubmenu() {
-  const { theme, setTheme } = useTheme();
-  const options: { mode: ThemeMode; label: string }[] = [
-    { mode: "light", label: "Light" },
-    { mode: "dark", label: "Dark" },
-    { mode: "system", label: "System" },
-  ];
-  return (
-    <div className="flex items-center gap-1 px-2 py-1.5">
-      <SunMoon className="h-4 w-4 text-muted-foreground" />
-      {options.map((o) => (
-        <button
-          key={o.mode}
-          type="button"
-          onClick={() => setTheme(o.mode)}
-          className={cn(
-            "flex-1 rounded-md px-1.5 py-1 text-[11px] font-medium capitalize transition-colors",
-            theme === o.mode
-              ? "bg-primary text-primary-foreground"
-              : "text-muted-foreground hover:bg-muted hover:text-foreground"
-          )}
-        >
-          {o.label}
-        </button>
-      ))}
-    </div>
   );
 }

@@ -7,7 +7,7 @@ const fs = require('fs');
 const https = require('https');
 const path = require('path');
 
-const BASE_URL = 'https://voltsetu.netlify.app';
+const BASE_URL = 'https://volt-setu.vercel.app';
 const FIREBASE_DB_URL = 'https://charge-nest-default-rtdb.asia-southeast1.firebasedatabase.app/chargingSpots.json';
 const FIREBASE_USERS_URL = 'https://charge-nest-default-rtdb.asia-southeast1.firebasedatabase.app/users.json';
 
@@ -18,11 +18,15 @@ const FIREBASE_USERS_URL = 'https://charge-nest-default-rtdb.asia-southeast1.fir
 const staticPages = [
   { url: '/', priority: '1.0', changefreq: 'daily' },
   { url: '/spots', priority: '0.9', changefreq: 'always' },
+  { url: '/route', priority: '0.9', changefreq: 'daily' },
+  { url: '/rescue', priority: '0.9', changefreq: 'daily' },
   { url: '/host', priority: '0.8', changefreq: 'monthly' },
   { url: '/how-it-works', priority: '0.7', changefreq: 'monthly' },
   { url: '/pricing', priority: '0.6', changefreq: 'monthly' },
-  { url: '/about', priority: '0.5', changefreq: 'monthly' },
-  { url: '/contact', priority: '0.5', changefreq: 'monthly' },
+  { url: '/about-contact', priority: '0.6', changefreq: 'monthly' },
+  { url: '/privacy', priority: '0.4', changefreq: 'monthly' },
+  { url: '/terms', priority: '0.4', changefreq: 'monthly' },
+  { url: '/help', priority: '0.4', changefreq: 'monthly' },
 ];
 
 // Generic city landing pages rendered by /city/:slug — always routable.
@@ -122,23 +126,13 @@ async function generate() {
   </url>\n`;
   });
 
+  // Host profile pages (if host has active spots)
   hostIds.forEach((id) => {
     sitemap += `  <url>
     <loc>${BASE_URL}/host/${id}</loc>
     <lastmod>${formatDate()}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
-  </url>\n`;
-  });
-
-  spots.forEach((spot) => {
-    const city = typeof spot.city === 'string' ? spot.city.toLowerCase().trim() : '';
-    const cityUrl = activeCitySlugs.includes(city) ? `/city/${city}` : '/spots';
-    sitemap += `  <url>
-    <loc>${BASE_URL}${cityUrl}</loc>
-    <lastmod>${formatDate(spot.updatedAt || spot.createdAt)}</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
   </url>\n`;
   });
 

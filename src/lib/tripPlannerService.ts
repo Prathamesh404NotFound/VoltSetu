@@ -48,7 +48,6 @@ export async function findSpotsOnRoute(
   const route = await fetchOsrmRoute(start, end);
   const totalKm = route ? route.distanceMeters / 1000 : calculateDistanceKm(start.lat, start.lng, end.lat, end.lng);
 
-  let accumulated = 0;
   const coords = route?.geometry.coordinates ?? [];
   const spotDistances = spots.map((spot) => {
     if (spot.lat == null || spot.lng == null) return null;
@@ -67,8 +66,6 @@ export async function findSpotsOnRoute(
       pricePerKm: d.spot.pricePerHour ? Math.round((d.spot.pricePerHour / 10) * 100) / 100 : null,
     }));
 
-  // unused accumulated guard keeps linter happy and clarifies intent
-  void accumulated;
   void coords;
 
   return { route, routeSpots, totalKm: Math.round(totalKm * 10) / 10 };

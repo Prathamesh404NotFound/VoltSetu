@@ -92,6 +92,7 @@ export default function Earnings() {
           const prof = await getUserProfile(user.id);
           await ensureReferralCode(user.id, prof.name || "ChargePush Host");
         } catch {
+          /* referral code registration is optional */
         }
       } catch (err) {
         console.error("Error loading host data:", err);

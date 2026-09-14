@@ -8,7 +8,7 @@
   "display_override": ["window-controls-overlay", "standalone", "minimal-ui"],
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#0F172A",
+  "background_color": "#FFFFFF",
   "theme_color": "#0066FF",
   "categories": ["travel", "navigation", "lifestyle", "utilities"],
   "lang": "en-IN",

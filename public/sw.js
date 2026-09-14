@@ -162,7 +162,7 @@ self.addEventListener("fetch", (event) => {
     event.respondWith(
       fetch(request)
         .then((response) => {
-          if (response.ok && !isViteDevRequest(request) && request.url.startsWith(self.location.origin) && !isEntryBundle(request.url)) {
+          if (response.ok && !response.bodyUsed && !isViteDevRequest(request) && request.url.startsWith(self.location.origin) && !isEntryBundle(request.url)) {
             const copy = response.clone();
             caches.open(CACHE_SHELL).then((cache) => cache.put(request, copy));
           }
@@ -212,7 +212,7 @@ self.addEventListener("fetch", (event) => {
 
         const freshen = fetch(request)
           .then((response) => {
-            if (response.ok && request.url.startsWith(self.location.origin) && !isEntryBundle(request.url)) {
+            if (response.ok && !response.bodyUsed && request.url.startsWith(self.location.origin) && !isEntryBundle(request.url)) {
               const copy = response.clone();
               caches.open(CACHE_SHELL).then((cache) => cache.put(request, copy));
             }
@@ -232,7 +232,7 @@ self.addEventListener("fetch", (event) => {
         cache.match(request).then((cached) => {
           const networked = fetch(request)
             .then((response) => {
-              if (response.ok) {
+              if (response.ok && !response.bodyUsed) {
                 const copy = response.clone();
                 cache.put(request, copy);
               }
@@ -252,7 +252,7 @@ self.addEventListener("fetch", (event) => {
     caches.match(request).then((cached) => {
       const networked = fetch(request)
         .then((response) => {
-          if (response.ok && request.url.startsWith(self.location.origin) && !isEntryBundle(request.url)) {
+          if (response.ok && !response.bodyUsed && request.url.startsWith(self.location.origin) && !isEntryBundle(request.url)) {
             const copy = response.clone();
             caches.open(CACHE_SHELL).then((cache) => cache.put(request, copy));
           }

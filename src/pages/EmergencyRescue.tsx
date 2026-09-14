@@ -9,7 +9,7 @@
  * primary action visible without scrolling, safety tips + national emergency
  * number always reachable.
  */
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
@@ -50,13 +50,19 @@ const KM_PER_10_PERCENT = 8;
 
 const BATTERY_LEVELS = [5, 10, 20, 30, 40] as const;
 
-function useCountdown(seconds: number) {
-  const [left, setLeft] = useState(seconds);
+function useCountdown(initialSeconds: number) {
+  const [left, setLeft] = useState(initialSeconds);
+
+  useEffect(() => {
+    setLeft(initialSeconds);
+  }, [initialSeconds]);
+
   useEffect(() => {
     if (left <= 0) return;
     const t = setInterval(() => setLeft((l) => (l <= 1 ? 0 : l - 1)), 1000);
     return () => clearInterval(t);
   }, [left]);
+
   const mm = String(Math.floor(left / 60)).padStart(2, "0");
   const ss = String(left % 60).padStart(2, "0");
   return `${mm}:${ss}`;
@@ -108,12 +114,7 @@ export default function EmergencyRescue() {
   const [manualCity, setManualCity] = useState(false);
   const [bookingSpot, setBookingSpot] = useState<RescueSpot | null>(null);
   const [done, setDone] = useState<RescueSpot | null>(null);
-  const timerRef = useRef<number>(0);
-  const display = useCountdown(timerRef.current);
-
-  useEffect(() => {
-    timerRef.current = RESCUE_WINDOW_MINUTES * 60;
-  }, []);
+  const display = useCountdown(RESCUE_WINDOW_MINUTES * 60);
 
   useEffect(() => {
     if (loading) return;

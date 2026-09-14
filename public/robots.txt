@@ -28,4 +28,4 @@ Disallow: /admin/
 Disallow: /spots?*
 Disallow: /host/registration
 
-Sitemap: https://voltsetu.netlify.app/sitemap.xml
+Sitemap: https://volt-setu.vercel.app/sitemap.xml
