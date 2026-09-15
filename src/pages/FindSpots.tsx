@@ -592,7 +592,7 @@ export default function FindSpots() {
               {filteredSpots.map((spot, i) => renderSpotCard(spot, i))}
             </div>
           ) : (
-            <div className="reveal">
+            <div className="w-full min-h-[400px]">
               <SpotsMap
                 spots={filteredSpots}
                 onBookSpot={(spot) => setSelectedSpot(spot)}

@@ -32,6 +32,36 @@ export const MAP_CONFIG = {
 } as const;
 
 /**
+ * Fallback Raster Tile Style Specification
+ * Guarantees crisp map tiles render even if vector tile server or WebGL glyphs stall.
+ */
+export const CARTO_RASTER_STYLE = {
+  version: 8 as const,
+  sources: {
+    "carto-voyager": {
+      type: "raster" as const,
+      tiles: [
+        "https://a.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}@2x.png",
+        "https://b.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}@2x.png",
+        "https://c.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}@2x.png",
+      ],
+      tileSize: 256,
+      attribution:
+        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+    },
+  },
+  layers: [
+    {
+      id: "carto-voyager-layer",
+      type: "raster" as const,
+      source: "carto-voyager",
+      minzoom: 0,
+      maxzoom: 20,
+    },
+  ],
+};
+
+/**
  * Coordinate Normalization Utility
  * Safely validates and parses latitude and longitude values from any input format.
  */

@@ -34,8 +34,8 @@ export default function SpotsMap({
       routeGeometry={routeGeometry}
       destination={destination}
       userLocationOverride={userLocationOverride}
-      height="100%"
-      className="h-[350px] lg:h-[500px]"
+      height="500px"
+      className="h-[400px] md:h-[500px] lg:h-[600px] min-h-[400px] w-full"
     />
   );
 }

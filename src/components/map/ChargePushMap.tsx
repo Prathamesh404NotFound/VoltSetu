@@ -1,7 +1,7 @@
 /**
  * ChargePush Primary Map Component
  *
- * Built on MapLibre GL JS + OpenFreeMap.
+ * Built on MapLibre GL JS + OpenFreeMap with CARTO raster fallback.
  * Renders charging spot markers using GeoJSON source clustering, live status colors,
  * user location tracking, route geometry layer, and interactive popups.
  */
@@ -9,12 +9,19 @@
 import React, { useEffect, useRef, useState, useMemo } from "react";
 import * as maplibregl from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
-import { MAP_CONFIG, normalizeCoordinates } from "@/lib/mapConfig";
+import { MAP_CONFIG, CARTO_RASTER_STYLE, normalizeCoordinates } from "@/lib/mapConfig";
 import { subscribeToAllAvailability, type SpotAvailability } from "@/lib/availabilityService";
 import { getCurrentLocation, getAccuracyLabel, type UserLocationResult } from "@/lib/locationService";
 import type { ChargePushMapProps, ChargingSpotItem, SpotGeoJSONProperties } from "./types";
-import { BadgeCheck, Loader2, Navigation, Flag, Zap } from "lucide-react";
+import { BadgeCheck, Loader2, Navigation, Zap } from "lucide-react";
 import { cn } from "@/lib/utils";
+
+// Robust constructor resolution across bundler module types
+const MapConstructor = maplibregl.Map || (maplibregl as any).default?.Map || (maplibregl as any).default;
+const NavControlConstructor = maplibregl.NavigationControl || (maplibregl as any).default?.NavigationControl;
+const AttrControlConstructor = maplibregl.AttributionControl || (maplibregl as any).default?.AttributionControl;
+const MarkerConstructor = maplibregl.Marker || (maplibregl as any).default?.Marker;
+const LngLatBoundsConstructor = maplibregl.LngLatBounds || (maplibregl as any).default?.LngLatBounds;
 
 export function ChargePushMap({
   spots,
@@ -24,7 +31,7 @@ export function ChargePushMap({
   routeGeometry = null,
   destination = null,
   userLocationOverride = null,
-  height = "450px",
+  height = "500px",
   showControls = true,
   showRecenter = true,
   className = "",
@@ -54,43 +61,72 @@ export function ChargePushMap({
   useEffect(() => {
     if (!mapContainerRef.current || mapRef.current) return;
 
-    const map = new maplibregl.Map({
-      container: mapContainerRef.current,
-      style: MAP_CONFIG.STYLE_URL,
-      center: MAP_CONFIG.DEFAULT_CENTER,
-      zoom: MAP_CONFIG.DEFAULT_ZOOM,
-      minZoom: MAP_CONFIG.MIN_ZOOM,
-      maxZoom: MAP_CONFIG.MAX_ZOOM,
-      attributionControl: false, // Custom attribution control added below
-    });
+    try {
+      const map = new MapConstructor({
+        container: mapContainerRef.current,
+        style: MAP_CONFIG.STYLE_URL,
+        center: MAP_CONFIG.DEFAULT_CENTER,
+        zoom: MAP_CONFIG.DEFAULT_ZOOM,
+        minZoom: MAP_CONFIG.MIN_ZOOM,
+        maxZoom: MAP_CONFIG.MAX_ZOOM,
+        attributionControl: false,
+      });
 
-    // Add navigation controls
-    if (showControls) {
-      map.addControl(new maplibregl.NavigationControl({ showCompass: false }), "bottom-right");
+      if (showControls && NavControlConstructor) {
+        map.addControl(new NavControlConstructor({ showCompass: false }), "bottom-right");
+      }
+
+      if (AttrControlConstructor) {
+        map.addControl(
+          new AttrControlConstructor({
+            compact: false,
+            customAttribution: MAP_CONFIG.ATTRIBUTION,
+          }),
+          "bottom-left"
+        );
+      }
+
+      map.on("load", () => {
+        setMapLoaded(true);
+        setTimeout(() => map.resize(), 100);
+      });
+
+      // Fallback to raster tiles if vector style loading fails
+      map.on("error", (e: any) => {
+        if (e?.error?.message?.includes("style") || e?.error?.message?.includes("fetch")) {
+          console.warn("OpenFreeMap vector tile warning, using Carto Voyager style fallback...");
+          try {
+            map.setStyle(CARTO_RASTER_STYLE as any);
+          } catch {
+            // ignore fallback retry errors
+          }
+        }
+      });
+
+      mapRef.current = map;
+    } catch (err) {
+      console.error("MapLibre initialization error:", err);
     }
-
-    // Add explicit mandatory attribution
-    map.addControl(
-      new maplibregl.AttributionControl({
-        compact: false,
-        customAttribution: MAP_CONFIG.ATTRIBUTION,
-      }),
-      "bottom-left"
-    );
-
-    map.on("load", () => {
-      setMapLoaded(true);
-      // Trigger size recalculation once mounted
-      setTimeout(() => map.resize(), 100);
-    });
-
-    mapRef.current = map;
 
     return () => {
       if (popupRef.current) popupRef.current.remove();
-      map.remove();
-      mapRef.current = null;
+      if (mapRef.current) {
+        mapRef.current.remove();
+        mapRef.current = null;
+      }
     };
+  }, []);
+
+  // ResizeObserver to resize map whenever container dimensions change or tab switches
+  useEffect(() => {
+    if (!mapContainerRef.current) return;
+    const observer = new ResizeObserver(() => {
+      if (mapRef.current) {
+        mapRef.current.resize();
+      }
+    });
+    observer.observe(mapContainerRef.current);
+    return () => observer.disconnect();
   }, []);
 
   // Convert spots list to GeoJSON FeatureCollection
@@ -144,7 +180,6 @@ export function ChargePushMap({
     const map = mapRef.current;
     if (!map || !mapLoaded) return;
 
-    // Check if source exists
     if (!map.getSource("chargers-source")) {
       map.addSource("chargers-source", {
         type: "geojson",
@@ -185,7 +220,6 @@ export function ChargePushMap({
         filter: ["has", "point_count"],
         layout: {
           "text-field": "{point_count_abbreviated}",
-          "text-font": ["Metropolis Medium", "Noto Sans Regular"],
           "text-size": 13,
         },
         paint: {
@@ -256,7 +290,6 @@ export function ChargePushMap({
       map.on("mouseenter", "unclustered-chargers", () => (map.getCanvas().style.cursor = "pointer"));
       map.on("mouseleave", "unclustered-chargers", () => (map.getCanvas().style.cursor = ""));
     } else {
-      // Update existing source
       (map.getSource("chargers-source") as maplibregl.GeoJSONSource).setData(geojsonSpots);
     }
   }, [geojsonSpots, mapLoaded, spots, selectedSpotId, onSelectSpot, emergencyMode]);
@@ -300,10 +333,11 @@ export function ChargePushMap({
         (map.getSource("route-source") as maplibregl.GeoJSONSource).setData(routeGeoJSON);
       }
 
-      // Fit map bounds to route
-      const bounds = new maplibregl.LngLatBounds();
-      routeGeometry.coordinates.forEach(([lng, lat]) => bounds.extend([lng, lat]));
-      map.fitBounds(bounds, { padding: 48, maxZoom: 15 });
+      if (LngLatBoundsConstructor) {
+        const bounds = new LngLatBoundsConstructor();
+        routeGeometry.coordinates.forEach(([lng, lat]) => bounds.extend([lng, lat]));
+        map.fitBounds(bounds, { padding: 48, maxZoom: 15 });
+      }
     } else if (map.getSource("route-source")) {
       map.removeLayer("route-line");
       map.removeSource("route-source");
@@ -315,7 +349,7 @@ export function ChargePushMap({
 
   useEffect(() => {
     const map = mapRef.current;
-    if (!map || !mapLoaded) return;
+    if (!map || !mapLoaded || !MarkerConstructor) return;
 
     if (effectiveUserLoc) {
       if (!userMarkerRef.current) {
@@ -331,7 +365,7 @@ export function ChargePushMap({
           </div>
         `;
 
-        userMarkerRef.current = new maplibregl.Marker({ element: el })
+        userMarkerRef.current = new MarkerConstructor({ element: el })
           .setLngLat([effectiveUserLoc.lng, effectiveUserLoc.lat])
           .addTo(map);
       } else {
@@ -346,7 +380,7 @@ export function ChargePushMap({
   // Destination marker handling
   useEffect(() => {
     const map = mapRef.current;
-    if (!map || !mapLoaded) return;
+    if (!map || !mapLoaded || !MarkerConstructor) return;
 
     if (destination) {
       if (!destMarkerRef.current) {
@@ -356,7 +390,7 @@ export function ChargePushMap({
             <div style="width:8px;height:8px;background:#FFFFFF;border-radius:50%;transform:rotate(45deg);"></div>
           </div>
         `;
-        destMarkerRef.current = new maplibregl.Marker({ element: el })
+        destMarkerRef.current = new MarkerConstructor({ element: el })
           .setLngLat([destination.lng, destination.lat])
           .addTo(map);
       } else {
@@ -375,8 +409,8 @@ export function ChargePushMap({
 
     if (effectiveUserLoc) {
       map.flyTo({ center: [effectiveUserLoc.lng, effectiveUserLoc.lat], zoom: 14 });
-    } else if (spots.length > 0) {
-      const bounds = new maplibregl.LngLatBounds();
+    } else if (spots.length > 0 && LngLatBoundsConstructor) {
+      const bounds = new LngLatBoundsConstructor();
       let validCount = 0;
       spots.forEach((s) => {
         const norm = normalizeCoordinates(s.coordinates?.lat ?? s.lat, s.coordinates?.lng ?? s.lng);
@@ -407,8 +441,16 @@ export function ChargePushMap({
     }
   };
 
+  const containerStyle = height && height !== "100%" ? { height } : undefined;
+
   return (
-    <div className={cn("relative w-full rounded-2xl overflow-hidden shadow-md border border-border bg-card", className)} style={{ height }}>
+    <div
+      className={cn(
+        "relative w-full rounded-2xl overflow-hidden shadow-md border border-border bg-card min-h-[350px]",
+        className
+      )}
+      style={containerStyle}
+    >
       {/* Loading Overlay */}
       {locationLoading && (
         <div className="absolute inset-0 z-20 flex items-center justify-center bg-background/60 backdrop-blur-xs">
@@ -440,7 +482,7 @@ export function ChargePushMap({
       )}
 
       {/* Map Container Element */}
-      <div ref={mapContainerRef} className="w-full h-full" />
+      <div ref={mapContainerRef} className="w-full h-full min-h-[350px] relative" />
 
       {/* Selected Spot Popup / Card Modal */}
       {activePopupSpot && (
