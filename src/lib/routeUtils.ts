@@ -1,3 +1,11 @@
+/**
+ * ChargePush Route Utilities & Corridor Matching
+ *
+ * Provides geographically sound corridor matching, distance calculations along route,
+ * and delegates route fetching to routingService.ts.
+ */
+
+import { fetchRoute, type RouteResult } from "./routingService";
 import { calculateDistanceKm } from "@/lib/utils";
 
 export type LatLng = { lat: number; lng: number };
@@ -10,22 +18,19 @@ export interface GeoJSONLineString {
 export interface OsrmRouteResult {
   geometry: GeoJSONLineString;
   distanceMeters: number;
+  isFallback?: boolean;
 }
 
-const OSRM_BASE = "https://router.project-osrm.org";
-
 export async function fetchOsrmRoute(start: LatLng, end: LatLng): Promise<OsrmRouteResult | null> {
-  const url = `${OSRM_BASE}/route/v1/driving/${start.lng},${start.lat};${end.lng},${end.lat}?overview=full&geometries=geojson`;
   try {
-    const res = await fetch(url);
-    if (!res.ok) return null;
-    const data = await res.json();
-    if (data.code !== "Ok" || !data.routes?.[0]?.geometry) return null;
+    const route: RouteResult = await fetchRoute(start, end);
     return {
-      geometry: data.routes[0].geometry as GeoJSONLineString,
-      distanceMeters: data.routes[0].distance as number,
+      geometry: route.geometry,
+      distanceMeters: Math.round(route.distanceKm * 1000),
+      isFallback: route.isFallback,
     };
-  } catch {
+  } catch (err) {
+    console.warn("fetchOsrmRoute fallback error:", err);
     return null;
   }
 }
@@ -53,7 +58,7 @@ function pointToSegmentDistanceKm(point: LatLng, segStart: LatLng, segEnd: LatLn
 /** Minimum perpendicular distance from a point to a route polyline (km). */
 export function distanceToRouteKm(point: LatLng, geometry: GeoJSONLineString): number {
   const coords = geometry.coordinates;
-  if (coords.length < 2) return Infinity;
+  if (!coords || coords.length < 2) return Infinity;
 
   let min = Infinity;
   for (let i = 0; i < coords.length - 1; i++) {
@@ -72,7 +77,7 @@ export function distanceToRouteKm(point: LatLng, geometry: GeoJSONLineString): n
 /** Approximate distance from route start to the nearest point on the route (km). */
 export function distanceAlongRouteKm(point: LatLng, geometry: GeoJSONLineString): number {
   const coords = geometry.coordinates;
-  if (coords.length < 2) return 0;
+  if (!coords || coords.length < 2) return 0;
 
   let minDist = Infinity;
   let bestAlong = 0;

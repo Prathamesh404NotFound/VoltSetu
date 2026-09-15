@@ -1,0 +1,69 @@
+/**
+ * ChargePush Centralized Map Configuration
+ *
+ * Uses OpenFreeMap — a zero-cost vector-tile service built on OpenStreetMap and OpenMapTiles.
+ * No API keys required. All tile styles and endpoints are configured here.
+ */
+
+export const MAP_CONFIG = {
+  // Primary Vector Tile Style from OpenFreeMap
+  STYLE_URL: "https://tiles.openfreemap.org/styles/liberty",
+
+  // Default regional center: India centroid
+  DEFAULT_CENTER: [78.9629, 20.5937] as [number, number], // [lng, lat] for MapLibre
+  DEFAULT_ZOOM: 5,
+  CITY_DEFAULT_ZOOM: 13,
+  SPOT_DETAIL_ZOOM: 16,
+
+  MIN_ZOOM: 3,
+  MAX_ZOOM: 19,
+
+  // GeoJSON Source Clustering Configuration
+  CLUSTER_MAX_ZOOM: 11,
+  CLUSTER_RADIUS: 50,
+
+  // Attribution strings (Mandatory OpenStreetMap & OpenFreeMap credits)
+  ATTRIBUTION:
+    '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors | &copy; <a href="https://openfreemap.org" target="_blank" rel="noopener">OpenFreeMap</a>',
+
+  // Service Endpoints
+  GEOCODING_ENDPOINT: "https://nominatim.openstreetmap.org",
+  ROUTE_PROXY_ENDPOINT: "/api/route",
+} as const;
+
+/**
+ * Coordinate Normalization Utility
+ * Safely validates and parses latitude and longitude values from any input format.
+ */
+export interface NormalizedCoordinates {
+  lat: number;
+  lng: number;
+}
+
+export function normalizeCoordinates(
+  latInput: unknown,
+  lngInput: unknown
+): NormalizedCoordinates | null {
+  if (latInput === null || latInput === undefined || lngInput === null || lngInput === undefined) {
+    return null;
+  }
+
+  const lat = typeof latInput === "number" ? latInput : parseFloat(String(latInput));
+  const lng = typeof lngInput === "number" ? lngInput : parseFloat(String(lngInput));
+
+  if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
+    return null;
+  }
+
+  // Latitude must be [-90, 90], Longitude must be [-180, 180]
+  if (lat < -90 || lat > 90 || lng < -180 || lng > 180) {
+    return null;
+  }
+
+  // Reject (0, 0) default null points unless explicitly valid
+  if (lat === 0 && lng === 0) {
+    return null;
+  }
+
+  return { lat, lng };
+}

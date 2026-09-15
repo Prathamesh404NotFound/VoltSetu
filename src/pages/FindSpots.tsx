@@ -20,13 +20,13 @@ import { TripPlannerPanel } from "@/components/TripPlannerPanel";
 import spotsMapImg from "@/assets/spots-map.jpg";
 import { getAllChargingSpots } from "@/lib/hostRegistration";
 import { getAllNetworkStations, mergeNetworkStations } from "@/lib/networkStationsService";
-import { getHostSettings, isHostPaused } from "@/lib/hostSettingsService";import { toast } from "sonner";
+import { getHostSettings, isHostPaused } from "@/lib/hostSettingsService";
+import { toast } from "sonner";
 import SpotsMap from "@/components/SpotsMap";
-import { Capacitor } from "@capacitor/core";
-import { Geolocation } from "@capacitor/geolocation";
 import SEO from "@/components/SEO";
+import { getCurrentLocation, getAccuracyLabel, type UserLocationResult } from "@/lib/locationService";
+import { fetchRoute, type RouteResult } from "@/lib/routingService";
 import {
-  fetchOsrmRoute,
   distanceToRouteKm,
   distanceAlongRouteKm,
   findSuggestedStopId,
@@ -46,7 +46,7 @@ export default function FindSpots() {
   const [spots, setSpots] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedSpot, setSelectedSpot] = useState<any | null>(null);
-  const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
+  const [userLocation, setUserLocation] = useState<UserLocationResult | null>(null);
   const [locationLoading, setLocationLoading] = useState(true);
   const [locationError, setLocationError] = useState<string | null>(null);
   const [manualLat, setManualLat] = useState("");
@@ -66,8 +66,6 @@ export default function FindSpots() {
     Promise.all([getAllChargingSpots(), getAllNetworkStations()])
       .then(async ([data, net]) => {
         const merged = mergeNetworkStations(data, net);
-        // Round 34: resolve each host's pause settings so rider UI can mark
-        // holiday-paused listings without blocking riders from discovering them.
         const hostIds = Array.from(new Set(merged.map((s: any) => s.hostId).filter(Boolean)));
         const settings = await Promise.all(hostIds.map(getHostSettings));
         const settingsByHost = Object.fromEntries(hostIds.map((h, i) => [h, settings[i]]));
@@ -80,61 +78,29 @@ export default function FindSpots() {
       .finally(() => setLoading(false));
   }, []);
 
+  // Fetch Location using Unified locationService
   useEffect(() => {
-    const applyPosition = (pos: { coords: { latitude: number; longitude: number } }) => {
-      setUserLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude });
-      setLocationLoading(false);
-    };
-
-    const handleWebLocation = () => {
-      if (!navigator.geolocation) {
-        setLocationError("Geolocation not supported");
-        setLocationLoading(false);
-        return;
-      }
-      navigator.geolocation.getCurrentPosition(
-        applyPosition,
-        (err) => {
-          // Permission denied / position unavailable is a user choice, not a bug —
-          // log it quietly and degrade gracefully instead of spamming the console.
-          if (err.code !== err.PERMISSION_DENIED) {
-            console.error(err);
-          }
-          setLocationError(err.message);
+    let cancelled = false;
+    (async () => {
+      try {
+        const loc = await getCurrentLocation({ timeoutMs: 8000 });
+        if (!cancelled) {
+          setUserLocation(loc);
           setLocationLoading(false);
         }
-      );
-    };
-
-    const handleNativeLocation = async () => {
-      try {
-        const permission = await Geolocation.requestPermissions();
-        if (permission.location !== "granted" && permission.coarseLocation !== "granted") {
-          throw new Error("Location permission denied");
-        }
-        const position = await Geolocation.getCurrentPosition({
-          enableHighAccuracy: true,
-          timeout: 10000,
-        });
-        applyPosition(position);
       } catch (err: any) {
-        const msg = err?.message || "Native location error";
-        if (!String(msg).toLowerCase().includes("denied")) {
-          console.error(err);
+        if (!cancelled) {
+          setLocationError(err.message || "Location unavailable");
+          setLocationLoading(false);
         }
-        setLocationError(msg);
-        setLocationLoading(false);
       }
+    })();
+    return () => {
+      cancelled = true;
     };
-
-    if (Capacitor.isNativePlatform()) {
-      handleNativeLocation();
-    } else {
-      handleWebLocation();
-    }
   }, []);
 
-  // OSRM route fetch when route mode + destination + user location
+  // Route fetch when route mode + destination + user location
   useEffect(() => {
     if (viewMode !== "route" || !destination || !userLocation) {
       setRouteGeometry(null);
@@ -148,19 +114,21 @@ export default function FindSpots() {
     setRouteLoading(true);
     setRouteFallback(false);
 
-    fetchOsrmRoute(userLocation, destination).then((result) => {
-      if (cancelled) return;
-      if (result) {
+    fetchRoute(userLocation, destination)
+      .then((result: RouteResult) => {
+        if (cancelled) return;
         setRouteGeometry(result.geometry);
-        setRouteDistanceMeters(result.distanceMeters);
-        setRouteFallback(false);
-      } else {
+        setRouteDistanceMeters(Math.round(result.distanceKm * 1000));
+        setRouteFallback(result.isFallback);
+        setRouteLoading(false);
+      })
+      .catch(() => {
+        if (cancelled) return;
         setRouteGeometry(null);
         setRouteDistanceMeters(null);
         setRouteFallback(true);
-      }
-      setRouteLoading(false);
-    });
+        setRouteLoading(false);
+      });
 
     return () => {
       cancelled = true;
@@ -343,7 +311,7 @@ export default function FindSpots() {
         }
         description={
           selectedSpot
-            ? `Book charging at ${selectedSpot.name}. Located in ${selectedSpot.address || selectedSpot.city}. Outlet: ${selectedSpot.outletType || "Standard"}. Rate: Rs ${selectedSpot.pricePerHour || 10}/hr. Verified host on ChargePush.`
+            ? `Book charging at ${selectedSpot.name}. Located in ${selectedSpot.address || selectedSpot.city}. Rate: Rs ${selectedSpot.pricePerHour || 10}/hr. Verified host on ChargePush.`
             : "Find nearby charging access on The ChargePush Network. Compare rates, check live availability, book instantly, and keep moving."
         }
       />
@@ -384,12 +352,7 @@ export default function FindSpots() {
               ) : userLocation ? (
                 <>
                   <MapPin className="w-3.5 h-3.5 text-emerald-400" />
-                  <span>Location ready ({userLocation.lat.toFixed(2)}, {userLocation.lng.toFixed(2)})</span>
-                </>
-              ) : locationError?.toLowerCase().includes("denied") ? (
-                <>
-                  <AlertCircle className="w-3.5 h-3.5 text-amber-400" />
-                  <span>Permission denied — search by area or city above</span>
+                  <span>{getAccuracyLabel(userLocation.accuracyTier, userLocation.accuracy)}</span>
                 </>
               ) : (
                 <>
@@ -470,9 +433,7 @@ export default function FindSpots() {
                     Plan your route
                   </h2>
                   <p className="text-sm text-muted-foreground">
-                    Find charging spots along your drive using OpenStreetMap search and approximate
-                    driving directions (not two-wheeler specific). The planner below also works
-                    without location access — just enter start and destination.
+                    Find charging spots along your drive using OpenStreetMap search and driving directions.
                   </p>
                 </div>
 
@@ -523,26 +484,16 @@ export default function FindSpots() {
                       Skip
                     </button>
                   </div>
-                  <p className="text-xs text-muted-foreground mt-1.5">
-                    Your own estimate — we don&apos;t read vehicle telemetry.
-                  </p>
                 </div>
               </div>
 
-              {locationLoading && (
-                <div className="flex items-center gap-2 text-sm text-muted-foreground px-1">
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                  Getting your location for route planning…
-                </div>
-              )}
-
-              {!locationLoading && !userLocation && (
+              {!userLocation && (
                 <div className="flex flex-col gap-3 rounded-xl border border-amber-200 bg-amber-50 dark:bg-amber-950/30 dark:border-amber-800 px-4 py-3 text-sm text-amber-900 dark:text-amber-100">
                   <div className="flex items-start gap-2">
                     <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
                     <span>
                       {locationError
-                        ? `Location unavailable (${locationError}). Enable location access to draw a route from where you are.`
+                        ? `Location unavailable (${locationError}). Enter coordinates to set start location.`
                         : "Enable location access to draw a route from where you are."}
                     </span>
                   </div>
@@ -556,13 +507,16 @@ export default function FindSpots() {
                           toast.error("Please enter valid coordinates, e.g. 16.7050, 74.2433");
                           return;
                         }
-                        if (lat < -90 || lat > 90 || lng < -180 || lng > 180) {
-                          toast.error("Latitude must be between -90 and 90, longitude between -180 and 180");
-                          return;
-                        }
-                        setUserLocation({ lat, lng });
+                        setUserLocation({
+                          lat,
+                          lng,
+                          accuracy: 100,
+                          accuracyTier: "approximate",
+                          timestamp: Date.now(),
+                          source: "manual",
+                        });
                         setLocationError(null);
-                        toast.success("Starting point set — spots will be shown relative to it");
+                        toast.success("Starting point set");
                       }}
                       className="inline-flex items-center gap-1.5 rounded-lg bg-amber-100 dark:bg-amber-900/50 px-3 py-1.5 font-medium text-amber-900 dark:text-amber-100 hover:bg-amber-200 dark:hover:bg-amber-800/50 transition-colors"
                     >
@@ -572,27 +526,21 @@ export default function FindSpots() {
                     <input
                       type="text"
                       inputMode="decimal"
-                      placeholder="Latitude, e.g. 16.7050"
+                      placeholder="Latitude"
                       value={manualLat}
                       onChange={(e) => setManualLat(e.target.value)}
-                      className="w-40 rounded-lg border border-amber-300 dark:border-amber-700 bg-white dark:bg-slate-900 px-2.5 py-1.5 text-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary"
+                      className="w-32 rounded-lg border border-amber-300 dark:border-amber-700 bg-white dark:bg-slate-900 px-2.5 py-1.5 text-sm text-slate-900 dark:text-slate-100 focus:outline-none"
                     />
                     <input
                       type="text"
                       inputMode="decimal"
-                      placeholder="Longitude, e.g. 74.2433"
+                      placeholder="Longitude"
                       value={manualLng}
                       onChange={(e) => setManualLng(e.target.value)}
-                      className="w-40 rounded-lg border border-amber-300 dark:border-amber-700 bg-white dark:bg-slate-900 px-2.5 py-1.5 text-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary"
+                      className="w-32 rounded-lg border border-amber-300 dark:border-amber-700 bg-white dark:bg-slate-900 px-2.5 py-1.5 text-sm text-slate-900 dark:text-slate-100 focus:outline-none"
                     />
                   </div>
                 </div>
-              )}
-
-              {!destination && (
-                <p className="text-sm text-muted-foreground text-center py-4">
-                  Enter a destination above to see spots on your way.
-                </p>
               )}
 
               {destination && userLocation && routeLoading && (
@@ -605,37 +553,9 @@ export default function FindSpots() {
               {destination && userLocation && routeFallback && !routeLoading && (
                 <div className="flex items-start gap-2 rounded-xl border border-border bg-muted/50 px-4 py-3 text-sm text-muted-foreground">
                   <AlertCircle className="w-4 h-4 shrink-0 mt-0.5 text-primary" />
-                  Couldn&apos;t calculate a route — showing spots near your destination instead.
+                  Showing approximate straight-line route to destination.
                 </div>
               )}
-
-              {destination &&
-                userLocation &&
-                !rangeSkipped &&
-                rangeRemainingKm !== null &&
-                routeDistanceKm !== null &&
-                !routeLoading && (
-                  <div
-                    className={cn(
-                      "rounded-xl px-4 py-3 text-sm border",
-                      routeDistanceKm > rangeRemainingKm
-                        ? "border-amber-200 bg-amber-50 text-amber-900 dark:bg-amber-950/30 dark:border-amber-800 dark:text-amber-100"
-                        : "border-green-200 bg-green-50 text-green-900 dark:bg-green-950/30 dark:border-green-800 dark:text-green-100"
-                    )}
-                  >
-                    {routeDistanceKm > rangeRemainingKm ? (
-                      <>
-                        Your trip is about {routeDistanceKm} km — you may want to charge along the
-                        way.
-                      </>
-                    ) : (
-                      <>
-                        You should be able to make this trip without charging — but here are spots
-                        along the way just in case.
-                      </>
-                    )}
-                  </div>
-                )}
             </div>
           )}
 
@@ -643,8 +563,7 @@ export default function FindSpots() {
             <div className="flex flex-wrap items-center gap-x-6 gap-y-2 mb-8 text-sm text-muted-foreground">
               <span className="flex items-center gap-1.5">
                 <MapPin className="w-4 h-4 text-primary" />
-                <span className="font-semibold text-foreground">{filteredSpots.length}</span> spots
-                found
+                <span className="font-semibold text-foreground">{filteredSpots.length}</span> spots found
               </span>
               <span className="flex items-center gap-1.5">
                 <BadgeCheck className="w-4 h-4 text-ev-green" />
@@ -654,7 +573,7 @@ export default function FindSpots() {
                 <Battery className="w-4 h-4 text-ev-green" />
                 {filteredSpots.filter((s) => isSpotOpen(s.availableHours)).length} open now
               </span>
-              {viewMode === "route" && routeDistanceKm !== null && !routeFallback && (
+              {viewMode === "route" && routeDistanceKm !== null && (
                 <span className="flex items-center gap-1.5">
                   <Route className="w-4 h-4 text-primary" />
                   ~{routeDistanceKm} km route
@@ -669,70 +588,18 @@ export default function FindSpots() {
               <p>Searching for nearby EV spots...</p>
             </div>
           ) : viewMode === "list" ? (
-            <>
-              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {filteredSpots.map((spot, i) => renderSpotCard(spot, i))}
-              </div>
-              {filteredSpots.length === 0 && (
-                <div className="text-center py-20">
-                  <Filter className="w-16 h-16 text-muted mx-auto mb-4 opacity-50" />
-                  <h3 className="font-display font-semibold text-xl text-foreground mb-2">
-                    No spots found
-                  </h3>
-                  <p className="text-muted-foreground">
-                    Try adjusting your filters or search in a different area.
-                  </p>
-                </div>
-              )}
-            </>
-          ) : viewMode === "map" ? (
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredSpots.map((spot, i) => renderSpotCard(spot, i))}
+            </div>
+          ) : (
             <div className="reveal">
               <SpotsMap
                 spots={filteredSpots}
                 onBookSpot={(spot) => setSelectedSpot(spot)}
+                routeGeometry={routeGeometry}
+                destination={destination}
                 userLocationOverride={userLocation}
               />
-            </div>
-          ) : (
-            <div className="space-y-8">
-              {destination && userLocation && !routeLoading && (
-                <div className="reveal">
-                  <SpotsMap
-                    spots={filteredSpots}
-                    onBookSpot={(spot) => setSelectedSpot(spot)}
-                    routeGeometry={routeGeometry}
-                    destination={destination}
-                    userLocationOverride={userLocation}
-                  />
-                  <p className="text-xs text-muted-foreground mt-2 text-center">
-                    Route shown uses driving directions as an approximation — not exact
-                    two-wheeler routing.
-                  </p>
-                </div>
-              )}
-
-              {destination && userLocation && !routeLoading && (
-                <>
-                  <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {filteredSpots.map((spot, i) => renderSpotCard(spot, i))}
-                  </div>
-                  {filteredSpots.length === 0 && (
-                    <div className="text-center py-12">
-                      <Route className="w-12 h-12 text-muted mx-auto mb-3 opacity-50" />
-                      <h3 className="font-display font-semibold text-lg text-foreground mb-2">
-                        No spots along this route
-                      </h3>
-                      <p className="text-muted-foreground text-sm max-w-md mx-auto">
-                        Try a different destination or widen your search — we show spots within{" "}
-                        {routeFallback
-                          ? `${DESTINATION_FALLBACK_RADIUS_KM} km of your destination`
-                          : `${ROUTE_CORRIDOR_KM} km of the route`}
-                        .
-                      </p>
-                    </div>
-                  )}
-                </>
-              )}
             </div>
           )}
         </div>

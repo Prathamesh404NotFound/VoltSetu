@@ -1,18 +1,19 @@
-import { useState, useRef, useEffect, useCallback } from "react";
-import { MapPin, Loader2, Navigation } from "lucide-react";
+/**
+ * ChargePush Destination Search Component
+ *
+ * Consumes geocodingService to provide debounced (650ms), cancelable location search
+ * with clean labels (Name + Subtitle) for destination routing.
+ */
+
+import { useState, useRef, useEffect } from "react";
+import { MapPin, Loader2, Navigation, X } from "lucide-react";
+import { searchLocationDebounced, type SearchResultItem } from "@/lib/geocodingService";
 import { cn } from "@/lib/utils";
 
 export interface Destination {
   lat: number;
   lng: number;
   label: string;
-}
-
-interface NominatimResult {
-  place_id: number;
-  display_name: string;
-  lat: string;
-  lon: string;
 }
 
 interface DestinationSearchProps {
@@ -29,10 +30,9 @@ export default function DestinationSearch({
   className,
 }: DestinationSearchProps) {
   const [query, setQuery] = useState(value?.label ?? "");
-  const [suggestions, setSuggestions] = useState<NominatimResult[]>([]);
+  const [suggestions, setSuggestions] = useState<SearchResultItem[]>([]);
   const [loading, setLoading] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(false);
-  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const boxRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -49,78 +49,88 @@ export default function DestinationSearch({
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
-  const handleInput = useCallback(
-    (text: string) => {
-      setQuery(text);
+  const handleInput = (text: string) => {
+    setQuery(text);
+    if (!text.trim()) {
       onChange(null);
+      setSuggestions([]);
       setShowSuggestions(false);
-      if (debounceRef.current) clearTimeout(debounceRef.current);
-      if (text.trim().length < 4) {
-        setSuggestions([]);
-        return;
-      }
-      debounceRef.current = setTimeout(async () => {
-        setLoading(true);
-        try {
-          const res = await fetch(
-            `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(text)}&format=json&addressdetails=1&limit=6&countrycodes=in`,
-            { headers: { "Accept-Language": "en" } }
-          );
-          const data: NominatimResult[] = await res.json();
-          setSuggestions(data);
-          setShowSuggestions(data.length > 0);
-        } catch {
-          setSuggestions([]);
-        } finally {
-          setLoading(false);
-        }
-      }, 400);
-    },
-    [onChange]
-  );
+      return;
+    }
 
-  const pickSuggestion = (result: NominatimResult) => {
+    setLoading(true);
+    searchLocationDebounced(
+      text,
+      (results) => {
+        setSuggestions(results);
+        setShowSuggestions(results.length > 0);
+        setLoading(false);
+      },
+      650
+    );
+  };
+
+  const pickSuggestion = (item: SearchResultItem) => {
     const dest: Destination = {
-      lat: parseFloat(result.lat),
-      lng: parseFloat(result.lon),
-      label: result.display_name,
+      lat: item.lat,
+      lng: item.lng,
+      label: item.fullLabel,
     };
-    setQuery(result.display_name);
+    setQuery(item.fullLabel);
     setShowSuggestions(false);
     setSuggestions([]);
     onChange(dest);
   };
 
+  const clearInput = () => {
+    setQuery("");
+    onChange(null);
+    setSuggestions([]);
+    setShowSuggestions(false);
+  };
+
   return (
     <div ref={boxRef} className={cn("relative", className)}>
       <div className="relative">
-        <Navigation className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-primary" />
+        <Navigation className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-primary" />
         <input
           type="text"
           value={query}
           onChange={(e) => handleInput(e.target.value)}
           onFocus={() => suggestions.length > 0 && setShowSuggestions(true)}
           placeholder={placeholder}
-          className="w-full pl-12 pr-10 py-3.5 rounded-2xl bg-card border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary shadow-sm"
+          className="w-full pl-11 pr-10 py-3 rounded-2xl bg-card border border-border text-foreground text-xs xl:text-sm focus:outline-none focus:ring-2 focus:ring-primary shadow-sm"
           aria-label="Destination search"
           autoComplete="off"
         />
-        {loading && (
-          <Loader2 className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 animate-spin text-muted-foreground" />
-        )}
+        {loading ? (
+          <Loader2 className="absolute right-3.5 top-1/2 -translate-y-1/2 w-4 h-4 animate-spin text-muted-foreground" />
+        ) : query ? (
+          <button
+            type="button"
+            onClick={clearInput}
+            className="absolute right-3.5 top-1/2 -translate-y-1/2 p-1 text-muted-foreground hover:text-foreground rounded-full"
+            aria-label="Clear destination"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        ) : null}
       </div>
 
       {showSuggestions && suggestions.length > 0 && (
-        <ul className="absolute z-50 mt-2 w-full rounded-xl border border-border bg-card shadow-xl overflow-hidden max-h-60 overflow-y-auto">
+        <ul className="absolute z-50 mt-2 w-full rounded-2xl border border-border bg-card shadow-xl overflow-hidden max-h-60 overflow-y-auto p-1.5">
           {suggestions.map((s) => (
-            <li key={s.place_id}>
+            <li key={s.id}>
               <button
                 type="button"
                 onClick={() => pickSuggestion(s)}
-                className="w-full text-left px-4 py-3 text-sm hover:bg-muted transition-colors flex items-start gap-2"
+                className="w-full text-left px-3.5 py-2.5 rounded-xl text-xs xl:text-sm hover:bg-muted transition-colors flex items-start gap-2.5"
               >
                 <MapPin className="w-4 h-4 text-primary shrink-0 mt-0.5" />
-                <span className="line-clamp-2">{s.display_name}</span>
+                <div className="flex flex-col min-w-0">
+                  <span className="font-semibold text-foreground truncate">{s.name}</span>
+                  <span className="text-[11px] text-muted-foreground truncate">{s.subtitle}</span>
+                </div>
               </button>
             </li>
           ))}

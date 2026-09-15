@@ -1,20 +1,15 @@
 /**
- * Roadside Rescue — emergency stranded-rider mode (Round 40 upgrade).
+ * Roadside Rescue — emergency stranded-rider mode.
  *
  * Full-bleed urgent UI: auto geolocation → battery-level range filter →
- * nearest open (non-paused) spots ranked by haversine → mini map of the
- * rescue corridor → one-tap "Rescue Me" booking → direct host call/WhatsApp.
- *
- * Designed for panic moments: huge touch targets, battery window countdown,
- * primary action visible without scrolling, safety tips + national emergency
- * number always reachable.
+ * nearest open spots ranked by haversine → MapLibre GL rescue map →
+ * one-tap "Get Emergency Charge" booking → direct host call/WhatsApp.
  */
+
 import { useEffect, useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { toast } from "sonner";
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
-import L from "leaflet";
-import "leaflet/dist/leaflet.css";
+import { ChargePushMap } from "@/components/map/ChargePushMap";
 import {
   BatteryWarning,
   Battery,
@@ -50,57 +45,27 @@ const KM_PER_10_PERCENT = 8;
 
 const BATTERY_LEVELS = [5, 10, 20, 30, 40] as const;
 
+/**
+ * Robust countdown hook using persistent target timestamp.
+ * Prevents re-renders from glitching or resetting the 15:00 countdown.
+ */
 function useCountdown(initialSeconds: number) {
+  const [endTime] = useState(() => Date.now() + initialSeconds * 1000);
   const [left, setLeft] = useState(initialSeconds);
 
   useEffect(() => {
-    setLeft(initialSeconds);
-  }, [initialSeconds]);
-
-  useEffect(() => {
-    if (left <= 0) return;
-    const t = setInterval(() => setLeft((l) => (l <= 1 ? 0 : l - 1)), 1000);
-    return () => clearInterval(t);
-  }, [left]);
+    const timer = setInterval(() => {
+      const remaining = Math.max(0, Math.ceil((endTime - Date.now()) / 1000));
+      setLeft(remaining);
+      if (remaining <= 0) clearInterval(timer);
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [endTime]);
 
   const mm = String(Math.floor(left / 60)).padStart(2, "0");
   const ss = String(left % 60).padStart(2, "0");
   return `${mm}:${ss}`;
 }
-
-// ── Red SOS-style icons for the rescue map ──────────────────────────
-const rescueMarkerIcon = (rank: number) =>
-  L.divIcon({
-    className: "rescue-map-marker",
-    html: `
-      <div style="width:26px;height:26px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);
-                background:hsl(0,84%,55%);border:2px solid white;box-shadow:0 2px 6px rgba(0,0,0,.3);
-                display:flex;align-items:flex-start;justify-content:flex-start;padding-left:5px;padding-top:1px;">
-        <span style="transform:rotate(45deg);color:white;font-size:10px;font-weight:800;font-family:Space Grotesk,sans-serif;">${rank}</span>
-      </div>
-    `,
-    iconSize: [26, 26],
-    iconAnchor: [13, 26],
-    popupAnchor: [0, -26],
-  });
-
-const userDotIcon = L.divIcon({
-  className: "rescue-user-dot",
-  html: `
-    <div style="position:relative;width:26px;height:26px;">
-      <style>
-        @keyframes rescue-pulse{0%{transform:scale(.6);opacity:.8}100%{transform:scale(2.6);opacity:0}}
-      </style>
-      <div style="position:absolute;width:26px;height:26px;background:hsl(0,84%,55%);border-radius:50%;
-                  opacity:.4;animation:rescue-pulse 1.6s infinite ease-out;"></div>
-      <div style="position:absolute;top:6px;left:6px;width:14px;height:14px;
-                  background:hsl(0,84%,55%);border:2px solid white;border-radius:50%;
-                  box-shadow:0 2px 5px rgba(0,0,0,.3);"></div>
-    </div>
-  `,
-  iconSize: [26, 26],
-  iconAnchor: [13, 13],
-});
 
 export default function EmergencyRescue() {
   const { user, loading } = useAuth();
@@ -136,7 +101,6 @@ export default function EmergencyRescue() {
         const net = await getAllNetworkStations();
         if (cancelled) return;
         const merged = mergeNetworkStations(all, net);
-        // Exclude holiday-paused hosts (Round 34 settings layer)
         const hostIds = Array.from(new Set(merged.map((s: any) => s.hostId).filter(Boolean)));
         const settings = await Promise.all(hostIds.map(getHostSettings));
         const settingsByHost = Object.fromEntries(hostIds.map((h, i) => [h, settings[i]]));
@@ -167,11 +131,6 @@ export default function EmergencyRescue() {
   }, [allSpots, rangeKm]);
 
   const mapSpots = useMemo(() => nearest, [nearest]);
-
-  const userPos = useMemo(() => {
-    const pos = source === "gps" ? null : null;
-    return pos;
-  }, [source]);
 
   const handleRescue = async (rescue: RescueSpot) => {
     if (!user) {
@@ -240,7 +199,6 @@ export default function EmergencyRescue() {
             <p className="mt-2 text-xs text-neutral-400">
               Surfacing verified charging spots open right now. Select a spot and tap <strong className="text-neutral-200">Get Emergency Charge</strong> — your host receives a priority booking notification with your message.
             </p>
-            {/* National emergency fallback */}
             <a
               href="tel:112"
               className="mt-3 flex items-center justify-center gap-2 rounded-xl border border-red-800/60 bg-red-950/30 px-4 py-2.5 text-sm font-semibold text-red-300 transition-colors hover:bg-red-950/60"
@@ -316,79 +274,17 @@ export default function EmergencyRescue() {
                   </button>
                 )}
               </div>
-              {battery !== null && (
-                <p className="mt-3 text-xs text-neutral-500">
-                  Showing only spots within ~{Math.round(rangeKm ?? 0)} km.{" "}
-                  {allSpots.filter((s) => Number.isFinite(s.distanceKm) && s.distanceKm <= (rangeKm ?? 0)).length} of{" "}
-                  {allSpots.length} open spots in reach.
-                </p>
-              )}
             </div>
           )}
 
-          {/* Results */}
-          {stage === "locating" && (
-            <div className="flex flex-col items-center gap-3 py-14 text-neutral-500">
-              <Navigation className="h-10 w-10 animate-pulse text-red-500/60" />
-              <p className="text-sm">Scanning the map for open outlets near you…</p>
-            </div>
-          )}
-
-          {stage === "ready" && nearest.length === 0 && !done && (
-            <div className="rounded-2xl border border-neutral-800 bg-neutral-950/60 p-6 text-center">
-              <BatteryWarning className="mx-auto mb-3 h-10 w-10 text-red-500/60" />
-              <p className="mb-1 font-semibold">No open spots nearby right now</p>
-              <p className="mb-4 text-sm text-neutral-400">
-                {battery
-                  ? "No open spot fits within your battery range. Raise the battery level or widen your search."
-                  : "Every open outlet is booked or closed for the hour. Call a host directly — hosts on ChargePush often make exceptions for stranded riders."}
-              </p>
-              <Link
-                to="/spots"
-                className="inline-flex items-center gap-2 rounded-xl bg-red-600 px-5 py-3 font-semibold text-white transition-transform hover:scale-[1.02]"
-              >
-                <Zap className="h-4 w-4" /> View all spots
-              </Link>
-            </div>
-          )}
-
-          {/* Mini map of the rescue corridor */}
-          {stage === "ready" && mapSpots.length >= 2 && (
-            <div className="mb-5 overflow-hidden rounded-2xl border border-neutral-800">
-              <MapContainer
-                center={[
-                  mapSpots[0].spot.coordinates?.lat ?? city?.lat ?? 0,
-                  mapSpots[0].spot.coordinates?.lng ?? city?.lng ?? 0,
-                ]}
-                zoom={13}
-                style={{ height: 220, width: "100%" }}
-                className="z-0"
-              >
-                <TileLayer
-                  url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
-                  attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a>'
-                />
-                {mapSpots.map((r, i) => {
-                  const lat = r.spot.coordinates?.lat;
-                  const lng = r.spot.coordinates?.lng;
-                  if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null;
-                  return (
-                    <Marker key={r.spot.id} position={[lat, lng]} icon={rescueMarkerIcon(i + 1)}>
-                      <Popup>
-                        <strong>{r.spot.name}</strong>
-                        <br />
-                        {r.distanceLabel}
-                      </Popup>
-                    </Marker>
-                  );
-                })}
-                {mapSpots[0]?.spot.coordinates && (
-                  <Marker
-                    position={[mapSpots[0].spot.coordinates.lat, mapSpots[0].spot.coordinates.lng]}
-                    icon={userDotIcon}
-                  />
-                )}
-              </MapContainer>
+          {/* MapLibre GL Rescue Map */}
+          {stage === "ready" && mapSpots.length >= 1 && (
+            <div className="mb-5 overflow-hidden rounded-2xl border border-neutral-800 shadow-lg">
+              <ChargePushMap
+                spots={mapSpots.map((r) => r.spot)}
+                height="220px"
+                emergencyMode={true}
+              />
             </div>
           )}
 
@@ -478,16 +374,6 @@ export default function EmergencyRescue() {
             </div>
           ))}
 
-          {/* Remaining ranked list */}
-          {allSpots.length > 3 && (
-            <p className="mt-2 mb-4 text-center text-sm text-neutral-500">
-              +{Math.max(0, allSpots.length - 3)} more open spots —{" "}
-              <Link to="/spots" className="font-semibold text-red-400 underline underline-offset-2">
-                see all
-              </Link>
-            </p>
-          )}
-
           {/* Safety tips */}
           {stage === "ready" && (
             <div className="mb-4 rounded-2xl border border-amber-900/40 bg-amber-950/20 p-4">
@@ -501,28 +387,6 @@ export default function EmergencyRescue() {
                 <li>Use your helmet and park facing the street so help can reach you.</li>
                 <li>Share your live location with a friend or family member.</li>
               </ul>
-            </div>
-          )}
-
-          {/* Post-rescue guidance */}
-          {done && (
-            <div className="mt-4 rounded-2xl border border-emerald-800/50 bg-emerald-950/30 p-4 text-sm text-neutral-300">
-              <p className="mb-1 font-semibold text-emerald-400">Help is on the way. Do this now:</p>
-              <ol className="list-decimal space-y-1 pl-4 text-neutral-400">
-                <li>
-                  Call your host — {done.spot.hostName || "them"} — using the button above so they're at the outlet when
-                  you arrive.
-                </li>
-                <li>Keep the bike's battery warm; push-don't-ride if possible.</li>
-                <li>Pay at the spot when charging begins — the request is already reserved under your account.</li>
-                <li>
-                  Check your request in{" "}
-                  <Link to="/dashboard/bookings" className="font-semibold text-emerald-400 underline underline-offset-2">
-                    Dashboard → Bookings
-                  </Link>
-                  .
-                </li>
-              </ol>
             </div>
           )}
         </div>
