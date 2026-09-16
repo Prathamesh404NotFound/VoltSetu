@@ -9,6 +9,7 @@
 import React, { useEffect, useRef, useState, useMemo } from "react";
 import * as maplibregl from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
+import type GeoJSON from "geojson";
 import { MAP_CONFIG, CARTO_RASTER_STYLE, normalizeCoordinates } from "@/lib/mapConfig";
 import { subscribeToAllAvailability, type SpotAvailability } from "@/lib/availabilityService";
 import { getCurrentLocation, getAccuracyLabel, type UserLocationResult } from "@/lib/locationService";
@@ -48,6 +49,15 @@ export function ChargePushMap({
   const [locationLoading, setLocationLoading] = useState(false);
   const [availabilityMap, setAvailabilityMap] = useState<Record<string, SpotAvailability>>({});
   const [activePopupSpot, setActivePopupSpot] = useState<ChargingSpotItem | null>(null);
+  const [geojsonVersion, setGeojsonVersion] = useState(0);
+
+  // Handler refs for safe removal/re-addition after style changes
+  const clusterClickRef = useRef<((e: any) => void) | null>(null);
+  const unclusteredClickRef = useRef<((e: any) => void) | null>(null);
+  const clusterEnterRef = useRef<(() => void) | null>(null);
+  const clusterLeaveRef = useRef<(() => void) | null>(null);
+  const unclusteredEnterRef = useRef<(() => void) | null>(null);
+  const unclusteredLeaveRef = useRef<(() => void) | null>(null);
 
   // Subscribe to live spot availability
   useEffect(() => {
@@ -101,6 +111,11 @@ export function ChargePushMap({
             // ignore fallback retry errors
           }
         }
+      });
+
+      // Re-add GeoJSON layers after any style change (e.g., vector → raster fallback)
+      map.on("style", () => {
+        setGeojsonVersion((v) => v + 1);
       });
 
       mapRef.current = map;
@@ -180,7 +195,18 @@ export function ChargePushMap({
     const map = mapRef.current;
     if (!map || !mapLoaded) return;
 
+    const removeHandlers = () => {
+      if (clusterClickRef.current) { map.off("click", "clusters", clusterClickRef.current); clusterClickRef.current = null; }
+      if (unclusteredClickRef.current) { map.off("click", "unclustered-chargers", unclusteredClickRef.current); unclusteredClickRef.current = null; }
+      if (clusterEnterRef.current) { map.off("mouseenter", "clusters", clusterEnterRef.current); clusterEnterRef.current = null; }
+      if (clusterLeaveRef.current) { map.off("mouseleave", "clusters", clusterLeaveRef.current); clusterLeaveRef.current = null; }
+      if (unclusteredEnterRef.current) { map.off("mouseenter", "unclustered-chargers", unclusteredEnterRef.current); unclusteredEnterRef.current = null; }
+      if (unclusteredLeaveRef.current) { map.off("mouseleave", "unclustered-chargers", unclusteredLeaveRef.current); unclusteredLeaveRef.current = null; }
+    };
+
     if (!map.getSource("chargers-source")) {
+      removeHandlers();
+
       map.addSource("chargers-source", {
         type: "geojson",
         data: geojsonSpots,
@@ -257,7 +283,7 @@ export function ChargePushMap({
       });
 
       // Cluster click -> zoom in
-      map.on("click", "clusters", (e) => {
+      clusterClickRef.current = (e: any) => {
         const features = map.queryRenderedFeatures(e.point, { layers: ["clusters"] });
         const clusterId = features[0]?.properties?.cluster_id;
         if (clusterId !== undefined) {
@@ -270,10 +296,11 @@ export function ChargePushMap({
             }
           );
         }
-      });
+      };
+      map.on("click", "clusters", clusterClickRef.current);
 
       // Individual charger click -> show popup
-      map.on("click", "unclustered-chargers", (e) => {
+      unclusteredClickRef.current = (e: any) => {
         const feature = e.features?.[0];
         if (!feature) return;
         const spotId = feature.properties?.id;
@@ -282,17 +309,22 @@ export function ChargePushMap({
           setActivePopupSpot(matchedSpot);
           if (onSelectSpot) onSelectSpot(matchedSpot);
         }
-      });
+      };
+      map.on("click", "unclustered-chargers", unclusteredClickRef.current);
 
       // Cursor hover feedback
-      map.on("mouseenter", "clusters", () => (map.getCanvas().style.cursor = "pointer"));
-      map.on("mouseleave", "clusters", () => (map.getCanvas().style.cursor = ""));
-      map.on("mouseenter", "unclustered-chargers", () => (map.getCanvas().style.cursor = "pointer"));
-      map.on("mouseleave", "unclustered-chargers", () => (map.getCanvas().style.cursor = ""));
+      clusterEnterRef.current = () => (map.getCanvas().style.cursor = "pointer");
+      clusterLeaveRef.current = () => (map.getCanvas().style.cursor = "");
+      unclusteredEnterRef.current = () => (map.getCanvas().style.cursor = "pointer");
+      unclusteredLeaveRef.current = () => (map.getCanvas().style.cursor = "");
+      map.on("mouseenter", "clusters", clusterEnterRef.current);
+      map.on("mouseleave", "clusters", clusterLeaveRef.current);
+      map.on("mouseenter", "unclustered-chargers", unclusteredEnterRef.current);
+      map.on("mouseleave", "unclustered-chargers", unclusteredLeaveRef.current);
     } else {
       (map.getSource("chargers-source") as maplibregl.GeoJSONSource).setData(geojsonSpots);
     }
-  }, [geojsonSpots, mapLoaded, spots, selectedSpotId, onSelectSpot, emergencyMode]);
+  }, [geojsonSpots, mapLoaded, spots, selectedSpotId, onSelectSpot, emergencyMode, geojsonVersion]);
 
   // Route layer update
   useEffect(() => {
@@ -342,7 +374,7 @@ export function ChargePushMap({
       map.removeLayer("route-line");
       map.removeSource("route-source");
     }
-  }, [routeGeometry, mapLoaded, emergencyMode]);
+  }, [routeGeometry, mapLoaded, emergencyMode, geojsonVersion]);
 
   // User location marker & override handling
   const effectiveUserLoc = userLocationOverride ?? (userLocation ? { lat: userLocation.lat, lng: userLocation.lng } : null);
@@ -375,7 +407,7 @@ export function ChargePushMap({
       userMarkerRef.current.remove();
       userMarkerRef.current = null;
     }
-  }, [effectiveUserLoc, mapLoaded]);
+  }, [effectiveUserLoc, mapLoaded, geojsonVersion]);
 
   // Destination marker handling
   useEffect(() => {
@@ -400,7 +432,7 @@ export function ChargePushMap({
       destMarkerRef.current.remove();
       destMarkerRef.current = null;
     }
-  }, [destination, mapLoaded]);
+  }, [destination, mapLoaded, geojsonVersion]);
 
   // Trigger camera pan on initial valid bounds
   useEffect(() => {
@@ -423,7 +455,7 @@ export function ChargePushMap({
         map.fitBounds(bounds, { padding: 48, maxZoom: 14 });
       }
     }
-  }, [mapLoaded, effectiveUserLoc, spots, routeGeometry]);
+  }, [mapLoaded, effectiveUserLoc, spots, routeGeometry, geojsonVersion]);
 
   // Recenter handler
   const handleRecenter = async () => {
