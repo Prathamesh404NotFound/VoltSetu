@@ -67,6 +67,8 @@ function useCountdown(initialSeconds: number) {
   return `${mm}:${ss}`;
 }
 
+import SEO from "@/components/SEO";
+
 export default function EmergencyRescue() {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
@@ -160,6 +162,11 @@ export default function EmergencyRescue() {
 
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto bg-[#0a0a0a] text-neutral-100">
+      <SEO
+        title="ChargePush Rescue — Emergency EV Charging Access"
+        description="Find urgent EV charging access when your battery is low. Locate nearby hosts and charging points to keep moving."
+        canonical="/rescue"
+      />
       <div className="relative min-h-full">
         {/* Header */}
           <header className="sticky top-0 z-10 flex items-center justify-between border-b border-[#991B1B]/60 bg-[#0a0a0a]/90 px-4 py-3 backdrop-blur">

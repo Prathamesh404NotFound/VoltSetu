@@ -1,4 +1,11 @@
 {
+  "redirects": [
+    { "source": "/about", "destination": "/about-contact", "permanent": true },
+    { "source": "/contact", "destination": "/about-contact", "permanent": true },
+    { "source": "/trip-planner", "destination": "/route", "permanent": true },
+    { "source": "/emergency", "destination": "/rescue", "permanent": true },
+    { "source": "/kolhapur", "destination": "/city/kolhapur", "permanent": true }
+  ],
   "rewrites": [
     {
       "source": "/sitemap.xml",

@@ -7,7 +7,7 @@
  */
 
 import React, { useEffect, useRef, useState, useMemo } from "react";
-import * as maplibregl from "maplibre-gl";
+import maplibregl from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import type GeoJSON from "geojson";
 import { MAP_CONFIG, CARTO_RASTER_STYLE, normalizeCoordinates } from "@/lib/mapConfig";

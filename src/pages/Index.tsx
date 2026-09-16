@@ -660,12 +660,21 @@ const Index = () => {
     </section>
   );
 
+  const orgSchema = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "ChargePush",
+    "url": "https://volt-setu.vercel.app",
+    "logo": "https://volt-setu.vercel.app/logo.png",
+    "description": "ChargePush is a distributed EV charging-access network and marketplace connecting EV riders with nearby charging access from home hosts, local charging spots, and charging networks."
+  };
+
   return (
     <div className="overflow-hidden">
       <SEO 
         title="ChargePush — EV Charging Access That Keeps You Moving"
         description="Find EV charging access near you or along your route. Discover charging spots, compare options, plan charging and keep moving with ChargePush."
-        schema={faqSchema}
+        schema={[orgSchema, faqSchema]}
       />
       
       {heroSection}

@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { CheckCircle, Sparkles } from "lucide-react";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
 import FAQAccordion from "@/components/FAQAccordion";
@@ -103,8 +104,8 @@ export default function Pricing() {
                     </li>
                   ))}
                 </ul>
-                <a
-                  href={plan.href}
+                <Link
+                  to={plan.href}
                   className={cn(
                     "block w-full py-3 rounded-xl font-semibold text-sm text-center transition-all btn-forward",
                     plan.highlighted
@@ -113,7 +114,7 @@ export default function Pricing() {
                   )}
                 >
                   {plan.cta}
-                </a>
+                </Link>
               </div>
             ))}
           </div>

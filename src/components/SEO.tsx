@@ -1,4 +1,8 @@
 import { Helmet } from "react-helmet-async";
+import { useLocation } from "react-router-dom";
+
+export const SITE_URL = "https://volt-setu.vercel.app";
+export const DEFAULT_OG_IMAGE = `${SITE_URL}/og-image.png`;
 
 interface SEOProps {
   title: string;
@@ -7,48 +11,71 @@ interface SEOProps {
   ogImage?: string;
   noindex?: boolean;
   schema?: object;
+  ogType?: "website" | "article" | "profile";
 }
 
-// NOTE: Per-spot detail page SEO/Schema is deferred until dedicated /spots/:spotId 
-// routes exist in src/App.tsx. For now, all spot discovery happens via 
-// modals/map markers on the shared /spots page.
-
 /**
- * Reusable SEO component for per-page metadata.
- * Sets the title, description, and social media tags.
+ * ChargePush Production SEO Component
+ * Ensures clean canonical origin resolution, Open Graph / Twitter metadata,
+ * indexability flags, and structured data injection.
  */
 export default function SEO({
   title,
   description,
   canonical,
-  ogImage = "https://chargepush.netlify.app/og-image.png",
+  ogImage,
   noindex = false,
   schema,
+  ogType = "website",
 }: SEOProps) {
-  const siteUrl = "https://chargepush.netlify.app";
-  const url = canonical ? `${siteUrl}${canonical}` : window.location.href;
+  const location = useLocation();
+
+  // Resolve canonical URL safely without query string noise
+  let canonicalUrl = `${SITE_URL}${location.pathname}`;
+  if (canonical) {
+    if (canonical.startsWith("http://") || canonical.startsWith("https://")) {
+      canonicalUrl = canonical;
+    } else {
+      canonicalUrl = `${SITE_URL}${canonical.startsWith("/") ? canonical : `/${canonical}`}`;
+    }
+  }
+
+  // Resolve social share image URL safely
+  let resolvedOgImage = DEFAULT_OG_IMAGE;
+  if (ogImage) {
+    if (ogImage.startsWith("http://") || ogImage.startsWith("https://")) {
+      resolvedOgImage = ogImage;
+    } else {
+      resolvedOgImage = `${SITE_URL}${ogImage.startsWith("/") ? ogImage : `/${ogImage}`}`;
+    }
+  }
 
   return (
     <Helmet>
-      {/* Basic Meta Tags */}
+      {/* Primary Metadata */}
       <title>{title}</title>
       <meta name="description" content={description} />
-      {noindex && <meta name="robots" content="noindex, nofollow" />}
-      <link rel="canonical" href={url} />
+      <meta
+        name="robots"
+        content={noindex ? "noindex, nofollow" : "index, follow, max-image-preview:large"}
+      />
+      <link rel="canonical" href={canonicalUrl} />
 
       {/* Open Graph / Facebook */}
-      <meta property="og:type" content="website" />
-      <meta property="og:url" content={url} />
+      <meta property="og:site_name" content="ChargePush" />
+      <meta property="og:type" content={ogType} />
+      <meta property="og:url" content={canonicalUrl} />
       <meta property="og:title" content={title} />
       <meta property="og:description" content={description} />
-      <meta property="og:image" content={ogImage} />
+      <meta property="og:image" content={resolvedOgImage} />
+      <meta property="og:locale" content="en_IN" />
 
-      {/* Twitter */}
+      {/* Twitter Card */}
       <meta name="twitter:card" content="summary_large_image" />
-      <meta name="twitter:url" content={url} />
+      <meta name="twitter:url" content={canonicalUrl} />
       <meta name="twitter:title" content={title} />
       <meta name="twitter:description" content={description} />
-      <meta name="twitter:image" content={ogImage} />
+      <meta name="twitter:image" content={resolvedOgImage} />
 
       {/* Structured Data */}
       {schema && (

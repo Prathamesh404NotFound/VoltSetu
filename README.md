@@ -3,7 +3,7 @@
 
 Connecting EV Riders with Nearby Charging Stations
 
-🌐 Live Website: https://voltsetu.netlify.app
+🌐 Live Website: https://volt-setu.vercel.app
 
 VoltSetu is a smart EV charging marketplace that helps electric vehicle owners discover, navigate to, and access nearby charging stations while enabling charging spot hosts to list and manage their charging infrastructure. The platform aims to make EV charging more accessible, reliable, and convenient across Maharashtra, starting with Kolhapur.
 
@@ -165,6 +165,6 @@ Contributions, issues, and feature requests are welcome.
 
 VoltSetu Team
 
-🌐 Website: https://voltsetu.netlify.app
+🌐 Website: https://volt-setu.vercel.app
 
 Helping build a smarter and more connected EV charging

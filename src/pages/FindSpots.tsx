@@ -312,8 +312,8 @@ export default function FindSpots() {
         }
         description={
           selectedSpot
-            ? `Book charging at ${selectedSpot.name}. Located in ${selectedSpot.address || selectedSpot.city}. Rate: Rs ${selectedSpot.pricePerHour || 10}/hr. Verified host on ChargePush.`
-            : "Find nearby charging access on The ChargePush Network. Compare rates, check live availability, book instantly, and keep moving."
+            ? `Book charging at ${selectedSpot.name}. Located in ${selectedSpot.address || selectedSpot.city}. Rate: Rs ${selectedSpot.pricePerHour || 10}/hr. ChargePush host.`
+            : "Find nearby charging access on the ChargePush Network. Compare rates, check availability, reserve charging access, and keep moving."
         }
       />
 
@@ -430,6 +430,7 @@ export default function FindSpots() {
               ))}
             </div>
           </div>
+        </div>
 
           {viewMode === "route" && (
             <div className="mb-8 space-y-4">

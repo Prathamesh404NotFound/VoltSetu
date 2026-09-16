@@ -1,31 +1,12 @@
-# Allow major web crawlers explicitly
-User-agent: Googlebot
-Allow: /
-Disallow: /dashboard/
-Disallow: /admin/
-Disallow: /spots?*
-Disallow: /host/registration
+# ChargePush Robots.txt Configuration
+# Production Domain: https://volt-setu.vercel.app
 
-User-agent: Bingbot
-Allow: /
-Disallow: /dashboard/
-Disallow: /admin/
-Disallow: /spots?*
-Disallow: /host/registration
-
-User-agent: DuckDuckBot
-Allow: /
-Disallow: /dashboard/
-Disallow: /admin/
-Disallow: /spots?*
-Disallow: /host/registration
-
-# Fallback for all other crawlers
 User-agent: *
 Allow: /
 Disallow: /dashboard/
 Disallow: /admin/
-Disallow: /spots?*
-Disallow: /host/registration
+Disallow: /saved
+Disallow: /settings
+Disallow: /loyalty
 
 Sitemap: https://volt-setu.vercel.app/sitemap.xml

@@ -119,7 +119,7 @@ function HostProfileInner() {
             "@context": "https://schema.org",
             "@type": "Person",
             name: profile.displayName,
-            url: `https://chargepush.netlify.app/host/${hostId}`,
+            url: `https://volt-setu.vercel.app/host/${hostId}`,
             jobTitle: "EV Charging Spot Host",
             description: `${profile.activeSpotCount} EV charging spot${profile.activeSpotCount === 1 ? "" : "s"} listed${profile.city ? ` in ${profile.city}` : ""}`,
             knowsAbout: ["EV two-wheeler charging", "home charging points"],

@@ -32,11 +32,13 @@ const staticPages = [
 // Generic city landing pages rendered by /city/:slug — always routable.
 // All 50 cities in the registry get a SEO landing page; launch cities get a
 // higher priority than coming-soon ones.
-const cityPages = require('../src/lib/cities.json').map((c) => ({
-  url: `/city/${c.slug}`,
-  priority: c.active ? '0.8' : '0.6',
-  changefreq: 'weekly',
-}));
+const cityPages = require('../src/lib/cities.json')
+  .filter((c) => c.active)
+  .map((c) => ({
+    url: `/city/${c.slug}`,
+    priority: '0.8',
+    changefreq: 'weekly',
+  }));
 const activeCitySlugs = require('../src/lib/cities.json').map((c) => c.slug);
 
 function fetchJson(url, timeoutMs) {
