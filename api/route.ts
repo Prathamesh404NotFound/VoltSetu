@@ -46,9 +46,35 @@ export default async function handler(req: any, res: any) {
     return res.status(400).json({ error: "Invalid start or end coordinates." });
   }
 
-  const apiKey = process.env.ORS_API_KEY || process.env.OPENROUTE_SERVICE_KEY;
+  // 1. Primary OpenStreetMap OSRM Public API (100% free, zero API key required)
+  try {
+    const osrmUrl = `https://router.project-osrm.org/route/v1/driving/${startLng},${startLat};${endLng},${endLat}?overview=full&geometries=geojson`;
+    const response = await fetch(osrmUrl, {
+      headers: {
+        Accept: "application/json",
+        "User-Agent": "ChargePush-EV-Network/1.0",
+      },
+    });
 
-  // 1. If OpenRouteService API key exists, call current HEIGIT OpenRouteService API
+    if (response.ok) {
+      const data = await response.json();
+      const route = data.routes?.[0];
+      if (route && route.geometry && Array.isArray(route.geometry.coordinates)) {
+        const result: RouteProxyResponse = {
+          distanceMeters: route.distance || 0,
+          durationSeconds: route.duration || 0,
+          geometry: route.geometry,
+          isFallback: false,
+        };
+        return res.status(200).json(result);
+      }
+    }
+  } catch (err) {
+    console.warn("OpenStreetMap OSRM routing call failed, attempting fallback...", err);
+  }
+
+  // 2. OpenRouteService fallback if key exists in environment
+  const apiKey = process.env.ORS_API_KEY || process.env.OPENROUTE_SERVICE_KEY;
   if (apiKey) {
     try {
       const url = `https://api.openrouteservice.org/v2/directions/driving-car?api_key=${apiKey}&start=${startLng},${startLat}&end=${endLng},${endLat}`;
@@ -75,7 +101,7 @@ export default async function handler(req: any, res: any) {
     }
   }
 
-  // 2. Straight-line fallback calculation if ORS is unavailable or key is omitted
+  // 3. Straight-line fallback calculation if OSRM & ORS are both unavailable
   const straightLineDistanceMeters = calculateHaversineMeters(
     startLat,
     startLng,

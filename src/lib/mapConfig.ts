@@ -1,13 +1,44 @@
 /**
  * ChargePush Centralized Map Configuration
  *
- * Uses OpenFreeMap — a zero-cost vector-tile service built on OpenStreetMap and OpenMapTiles.
- * No API keys required. All tile styles and endpoints are configured here.
+ * Uses OpenStreetMap — 100% free open-source mapping without requiring any API keys.
+ * All map tiles, geocoding (Nominatim), and routing (OSRM) use pure OpenStreetMap endpoints.
  */
 
+export const OPENSTREETMAP_STYLE = {
+  version: 8 as const,
+  sources: {
+    "osm-tiles": {
+      type: "raster" as const,
+      tiles: [
+        "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+        "https://a.tile.openstreetmap.org/{z}/{x}/{y}.png",
+        "https://b.tile.openstreetmap.org/{z}/{x}/{y}.png",
+        "https://c.tile.openstreetmap.org/{z}/{x}/{y}.png",
+      ],
+      tileSize: 256,
+      attribution:
+        '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors',
+    },
+  },
+  layers: [
+    {
+      id: "osm-tiles-layer",
+      type: "raster" as const,
+      source: "osm-tiles",
+      minzoom: 0,
+      maxzoom: 19,
+    },
+  ],
+};
+
+export const OSM_RASTER_STYLE = OPENSTREETMAP_STYLE;
+
+export const CARTO_RASTER_STYLE = OPENSTREETMAP_STYLE;
+
 export const MAP_CONFIG = {
-  // Primary Vector Tile Style from OpenFreeMap (Bright street style with clear labels & roads)
-  STYLE_URL: "https://tiles.openfreemap.org/styles/bright",
+  // Primary Map Style: Official OpenStreetMap Tiles (No API key required)
+  STYLE_URL: OPENSTREETMAP_STYLE as any,
 
   // Default regional center: Kolhapur / Maharashtra city center
   DEFAULT_CENTER: [74.2433, 16.7050] as [number, number], // [lng, lat] for MapLibre
@@ -22,66 +53,14 @@ export const MAP_CONFIG = {
   CLUSTER_MAX_ZOOM: 11,
   CLUSTER_RADIUS: 50,
 
-  // Attribution strings (Mandatory OpenStreetMap & OpenFreeMap credits)
+  // Attribution string (Mandatory OpenStreetMap credit)
   ATTRIBUTION:
-    '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors | &copy; <a href="https://openfreemap.org" target="_blank" rel="noopener">OpenFreeMap</a>',
+    '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors',
 
-  // Service Endpoints
+  // Service Endpoints (OpenStreetMap Nominatim & OSRM)
   GEOCODING_ENDPOINT: "https://nominatim.openstreetmap.org",
   ROUTE_PROXY_ENDPOINT: "/api/route",
 } as const;
-
-/**
- * Fallback Raster Tile Style Specifications
- * Guarantees crisp map tiles render even if vector tile server or WebGL glyphs stall.
- */
-export const CARTO_RASTER_STYLE = {
-  version: 8 as const,
-  sources: {
-    "carto-voyager": {
-      type: "raster" as const,
-      tiles: [
-        "https://a.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}@2x.png",
-        "https://b.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}@2x.png",
-        "https://c.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}@2x.png",
-      ],
-      tileSize: 256,
-      attribution:
-        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-    },
-  },
-  layers: [
-    {
-      id: "carto-voyager-layer",
-      type: "raster" as const,
-      source: "carto-voyager",
-      minzoom: 0,
-      maxzoom: 20,
-    },
-  ],
-};
-
-export const OSM_RASTER_STYLE = {
-  version: 8 as const,
-  sources: {
-    "osm-tiles": {
-      type: "raster" as const,
-      tiles: ["https://tile.openstreetmap.org/{z}/{x}/{y}.png"],
-      tileSize: 256,
-      attribution:
-        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-    },
-  },
-  layers: [
-    {
-      id: "osm-tiles-layer",
-      type: "raster" as const,
-      source: "osm-tiles",
-      minzoom: 0,
-      maxzoom: 19,
-    },
-  ],
-};
 
 /**
  * Coordinate Normalization Utility

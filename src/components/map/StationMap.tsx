@@ -19,7 +19,7 @@ import "maplibre-gl/dist/maplibre-gl.css";
 import type GeoJSON from "geojson";
 import { ref, onValue } from "firebase/database";
 import { database } from "@/lib/firebase-services";
-import { CARTO_RASTER_STYLE, OSM_RASTER_STYLE } from "@/lib/mapConfig";
+import { MAP_CONFIG, CARTO_RASTER_STYLE, OSM_RASTER_STYLE } from "@/lib/mapConfig";
 
 export interface EVStation {
   id: string;
@@ -62,7 +62,6 @@ export interface StationMapProps {
 }
 
 const DEFAULT_KOLHAPUR_CENTER: [number, number] = [74.2433, 16.7050]; // [Longitude, Latitude]
-const OPENFREEMAP_BRIGHT_STYLE = "https://tiles.openfreemap.org/styles/bright";
 
 export function StationMap({
   initialStations = [],
@@ -119,13 +118,13 @@ export function StationMap({
     []
   );
 
-  // 1. Initialize MapLibre GL instance with fail-safe tile fallback
+  // 1. Initialize MapLibre GL instance with OpenStreetMap tiles
   useEffect(() => {
     if (!mapContainerRef.current || mapRef.current) return;
 
     const map = new MaplibreMap({
       container: mapContainerRef.current,
-      style: OPENFREEMAP_BRIGHT_STYLE,
+      style: MAP_CONFIG.STYLE_URL,
       center: center,
       zoom: zoom,
       minZoom: 4,
