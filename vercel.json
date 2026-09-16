@@ -8,35 +8,37 @@
   ],
   "rewrites": [
     {
-      "source": "/sitemap.xml",
-      "destination": "/sitemap.xml"
-    },
-    {
-      "source": "/robots.txt",
-      "destination": "/robots.txt"
-    },
-    {
-      "source": "/google90d38b8af13881ab.html",
-      "destination": "/google90d38b8af13881ab.html"
-    },
-    {
-      "source": "/sw.js",
-      "destination": "/sw.js"
-    },
-    {
-      "source": "/assets/(.*)",
-      "destination": "/assets/$1"
-    },
-    {
-      "source": "/api/(.*)",
-      "destination": "/api/$1"
-    },
-    {
-      "source": "/(.*)",
+      "source": "/((?!api/|assets/|sitemap\\.xml|robots\\.txt|google.*\\.html|sw\\.js|manifest\\.json|.*\\..*).*)",
       "destination": "/index.html"
     }
   ],
   "headers": [
+    {
+      "source": "/sitemap.xml",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "application/xml; charset=UTF-8"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=3600, s-maxage=86400, stale-while-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/robots.txt",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "text/plain; charset=UTF-8"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=3600, s-maxage=86400, stale-while-revalidate"
+        }
+      ]
+    },
     {
       "source": "/sw.js",
       "headers": [
@@ -52,22 +54,6 @@
     },
     {
       "source": "/index.html",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "no-cache, no-store, must-revalidate"
-        }
-      ]
-    },
-    {
-      "source": "/(.*)",
-      "has": [
-        {
-          "type": "header",
-          "key": "accept",
-          "value": "text/html"
-        }
-      ],
       "headers": [
         {
           "key": "Cache-Control",
