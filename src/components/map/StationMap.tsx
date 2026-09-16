@@ -8,15 +8,17 @@
  */
 
 import React, { useEffect, useRef, useState, useCallback } from "react";
-import * as maplibregl from "maplibre-gl";
+import {
+  Map as MaplibreMap,
+  NavigationControl,
+  Marker,
+  Popup,
+  type GeoJSONSource,
+} from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import type GeoJSON from "geojson";
 import { ref, onValue } from "firebase/database";
 import { database } from "@/lib/firebase-services";
-
-// ─────────────────────────────────────────────────────────────────────────────
-// TypeScript Interfaces
-// ─────────────────────────────────────────────────────────────────────────────
 
 export interface EVStation {
   id: string;
@@ -58,12 +60,6 @@ export interface StationMapProps {
   className?: string;
 }
 
-// MapLibre constructor resolution for cross-environment safety
-const MapConstructor = maplibregl.Map || (maplibregl as any).default?.Map || (maplibregl as any).default;
-const NavigationControlConstructor = maplibregl.NavigationControl || (maplibregl as any).default?.NavigationControl;
-const MarkerConstructor = maplibregl.Marker || (maplibregl as any).default?.Marker;
-const PopupConstructor = maplibregl.Popup || (maplibregl as any).default?.Popup;
-
 const DEFAULT_KOLHAPUR_CENTER: [number, number] = [74.2433, 16.7050]; // [Longitude, Latitude]
 const OPENFREEMAP_BRIGHT_STYLE = "https://tiles.openfreemap.org/styles/bright";
 
@@ -77,9 +73,9 @@ export function StationMap({
   className = "",
 }: StationMapProps) {
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
-  const mapRef = useRef<maplibregl.Map | null>(null);
-  const htmlMarkersRef = useRef<maplibregl.Marker[]>([]);
-  const popupRef = useRef<maplibregl.Popup | null>(null);
+  const mapRef = useRef<MaplibreMap | null>(null);
+  const htmlMarkersRef = useRef<Marker[]>([]);
+  const popupRef = useRef<Popup | null>(null);
 
   const [mapLoaded, setMapLoaded] = useState(false);
   const [stations, setStations] = useState<EVStation[]>(initialStations);
@@ -124,7 +120,7 @@ export function StationMap({
   useEffect(() => {
     if (!mapContainerRef.current || mapRef.current) return;
 
-    const map = new MapConstructor({
+    const map = new MaplibreMap({
       container: mapContainerRef.current,
       style: OPENFREEMAP_BRIGHT_STYLE,
       center: center,
@@ -134,9 +130,7 @@ export function StationMap({
       attributionControl: true,
     });
 
-    if (NavigationControlConstructor) {
-      map.addControl(new NavigationControlConstructor({ showCompass: true }), "top-right");
-    }
+    map.addControl(new NavigationControl({ showCompass: true }), "top-right");
 
     map.on("load", () => {
       setMapLoaded(true);
@@ -324,7 +318,7 @@ export function StationMap({
       });
     } else {
       // Direct Data Source Update without Context Reloading
-      (map.getSource("ev-stations") as maplibregl.GeoJSONSource).setData(geojsonData);
+      (map.getSource("ev-stations") as GeoJSONSource).setData(geojsonData);
     }
   }, [mapLoaded, stations, markerMode, buildGeoJSONPayload, onSelectStation]);
 
@@ -384,7 +378,7 @@ export function StationMap({
           </div>
         `;
 
-        const marker = new MarkerConstructor({ element: customDiv })
+        const marker = new Marker({ element: customDiv })
           .setLngLat([st.lng, st.lat])
           .addTo(map);
 
@@ -414,7 +408,7 @@ export function StationMap({
 
   // Popup Helper Function
   function openStationPopup(
-    map: maplibregl.Map,
+    map: MaplibreMap,
     coords: [number, number],
     props: EVStationGeoJSONProperties
   ) {
@@ -482,7 +476,7 @@ export function StationMap({
       </div>
     `;
 
-    const popup = new PopupConstructor({
+    const popup = new Popup({
       closeButton: true,
       closeOnClick: false,
       maxWidth: "300px",

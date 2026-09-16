@@ -6,7 +6,12 @@
  */
 
 import { useRef, useEffect } from "react";
-import * as maplibregl from "maplibre-gl";
+import {
+  Map as MaplibreMap,
+  Marker,
+  NavigationControl,
+  AttributionControl,
+} from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { MAP_CONFIG } from "@/lib/mapConfig";
 import { getCityFallbackCoordinates } from "@/lib/hostRegistration";
@@ -31,8 +36,8 @@ export default function LocationPickerMap({
   className = "",
 }: LocationPickerMapProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const mapRef = useRef<maplibregl.Map | null>(null);
-  const markerRef = useRef<maplibregl.Marker | null>(null);
+  const mapRef = useRef<MaplibreMap | null>(null);
+  const markerRef = useRef<Marker | null>(null);
 
   // Compute map center
   let center: [number, number] = MAP_CONFIG.DEFAULT_CENTER;
@@ -55,7 +60,7 @@ export default function LocationPickerMap({
   useEffect(() => {
     if (!containerRef.current || mapRef.current) return;
 
-    const map = new maplibregl.Map({
+    const map = new MaplibreMap({
       container: containerRef.current,
       style: MAP_CONFIG.STYLE_URL,
       center,
@@ -64,11 +69,11 @@ export default function LocationPickerMap({
     });
 
     if (showZoomControl) {
-      map.addControl(new maplibregl.NavigationControl({ showCompass: false }), "bottom-right");
+      map.addControl(new NavigationControl({ showCompass: false }), "bottom-right");
     }
 
     map.addControl(
-      new maplibregl.AttributionControl({
+      new AttributionControl({
         compact: false,
         customAttribution: MAP_CONFIG.ATTRIBUTION,
       }),
@@ -104,7 +109,7 @@ export default function LocationPickerMap({
           </svg>
         `;
 
-        const marker = new maplibregl.Marker({ element: el, draggable: true })
+        const marker = new Marker({ element: el, draggable: true })
           .setLngLat([value.lng, value.lat])
           .addTo(map);
 

@@ -7,7 +7,14 @@
  */
 
 import React, { useEffect, useRef, useState, useMemo } from "react";
-import maplibregl from "maplibre-gl";
+import {
+  Map as MaplibreMap,
+  NavigationControl,
+  AttributionControl,
+  Marker,
+  LngLatBounds,
+  Popup,
+} from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import type GeoJSON from "geojson";
 import { MAP_CONFIG, CARTO_RASTER_STYLE, normalizeCoordinates } from "@/lib/mapConfig";
@@ -16,13 +23,6 @@ import { getCurrentLocation, getAccuracyLabel, type UserLocationResult } from "@
 import type { ChargePushMapProps, ChargingSpotItem, SpotGeoJSONProperties } from "./types";
 import { BadgeCheck, Loader2, Navigation, Zap } from "lucide-react";
 import { cn } from "@/lib/utils";
-
-// Robust constructor resolution across bundler module types
-const MapConstructor = maplibregl.Map || (maplibregl as any).default?.Map || (maplibregl as any).default;
-const NavControlConstructor = maplibregl.NavigationControl || (maplibregl as any).default?.NavigationControl;
-const AttrControlConstructor = maplibregl.AttributionControl || (maplibregl as any).default?.AttributionControl;
-const MarkerConstructor = maplibregl.Marker || (maplibregl as any).default?.Marker;
-const LngLatBoundsConstructor = maplibregl.LngLatBounds || (maplibregl as any).default?.LngLatBounds;
 
 export function ChargePushMap({
   spots,
@@ -39,10 +39,10 @@ export function ChargePushMap({
   emergencyMode = false,
 }: ChargePushMapProps) {
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
-  const mapRef = useRef<maplibregl.Map | null>(null);
-  const popupRef = useRef<maplibregl.Popup | null>(null);
-  const userMarkerRef = useRef<maplibregl.Marker | null>(null);
-  const destMarkerRef = useRef<maplibregl.Marker | null>(null);
+  const mapRef = useRef<MaplibreMap | null>(null);
+  const popupRef = useRef<Popup | null>(null);
+  const userMarkerRef = useRef<Marker | null>(null);
+  const destMarkerRef = useRef<Marker | null>(null);
 
   const [mapLoaded, setMapLoaded] = useState(false);
   const [userLocation, setUserLocation] = useState<UserLocationResult | null>(null);
@@ -72,7 +72,7 @@ export function ChargePushMap({
     if (!mapContainerRef.current || mapRef.current) return;
 
     try {
-      const map = new MapConstructor({
+      const map = new MaplibreMap({
         container: mapContainerRef.current,
         style: MAP_CONFIG.STYLE_URL,
         center: MAP_CONFIG.DEFAULT_CENTER,
@@ -82,19 +82,17 @@ export function ChargePushMap({
         attributionControl: false,
       });
 
-      if (showControls && NavControlConstructor) {
-        map.addControl(new NavControlConstructor({ showCompass: false }), "bottom-right");
+      if (showControls) {
+        map.addControl(new NavigationControl({ showCompass: false }), "bottom-right");
       }
 
-      if (AttrControlConstructor) {
-        map.addControl(
-          new AttrControlConstructor({
-            compact: false,
-            customAttribution: MAP_CONFIG.ATTRIBUTION,
-          }),
-          "bottom-left"
-        );
-      }
+      map.addControl(
+        new AttributionControl({
+          compact: false,
+          customAttribution: MAP_CONFIG.ATTRIBUTION,
+        }),
+        "bottom-left"
+      );
 
       map.on("load", () => {
         setMapLoaded(true);
@@ -365,11 +363,9 @@ export function ChargePushMap({
         (map.getSource("route-source") as maplibregl.GeoJSONSource).setData(routeGeoJSON);
       }
 
-      if (LngLatBoundsConstructor) {
-        const bounds = new LngLatBoundsConstructor();
-        routeGeometry.coordinates.forEach(([lng, lat]) => bounds.extend([lng, lat]));
-        map.fitBounds(bounds, { padding: 48, maxZoom: 15 });
-      }
+      const bounds = new LngLatBounds();
+      routeGeometry.coordinates.forEach(([lng, lat]) => bounds.extend([lng, lat]));
+      map.fitBounds(bounds, { padding: 48, maxZoom: 15 });
     } else if (map.getSource("route-source")) {
       map.removeLayer("route-line");
       map.removeSource("route-source");
@@ -381,7 +377,7 @@ export function ChargePushMap({
 
   useEffect(() => {
     const map = mapRef.current;
-    if (!map || !mapLoaded || !MarkerConstructor) return;
+    if (!map || !mapLoaded) return;
 
     if (effectiveUserLoc) {
       if (!userMarkerRef.current) {
@@ -397,7 +393,7 @@ export function ChargePushMap({
           </div>
         `;
 
-        userMarkerRef.current = new MarkerConstructor({ element: el })
+        userMarkerRef.current = new Marker({ element: el })
           .setLngLat([effectiveUserLoc.lng, effectiveUserLoc.lat])
           .addTo(map);
       } else {
@@ -412,7 +408,7 @@ export function ChargePushMap({
   // Destination marker handling
   useEffect(() => {
     const map = mapRef.current;
-    if (!map || !mapLoaded || !MarkerConstructor) return;
+    if (!map || !mapLoaded) return;
 
     if (destination) {
       if (!destMarkerRef.current) {
@@ -422,7 +418,7 @@ export function ChargePushMap({
             <div style="width:8px;height:8px;background:#FFFFFF;border-radius:50%;transform:rotate(45deg);"></div>
           </div>
         `;
-        destMarkerRef.current = new MarkerConstructor({ element: el })
+        destMarkerRef.current = new Marker({ element: el })
           .setLngLat([destination.lng, destination.lat])
           .addTo(map);
       } else {
@@ -441,8 +437,8 @@ export function ChargePushMap({
 
     if (effectiveUserLoc) {
       map.flyTo({ center: [effectiveUserLoc.lng, effectiveUserLoc.lat], zoom: 14 });
-    } else if (spots.length > 0 && LngLatBoundsConstructor) {
-      const bounds = new LngLatBoundsConstructor();
+    } else if (spots.length > 0) {
+      const bounds = new LngLatBounds();
       let validCount = 0;
       spots.forEach((s) => {
         const norm = normalizeCoordinates(s.coordinates?.lat ?? s.lat, s.coordinates?.lng ?? s.lng);
