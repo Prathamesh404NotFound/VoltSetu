@@ -20,14 +20,14 @@ export default function CTABanner({
         <div
           className={`relative rounded-3xl p-10 md:p-16 text-center overflow-hidden ${
             isDark
-              ? ""
-              : "bg-gradient-to-br from-primary/10 via-slate-900/5 to-primary/10 border border-primary/10"
+              ? "bg-slate-900 border border-slate-800 shadow-2xl"
+              : "bg-gradient-to-br from-white via-blue-50/60 to-slate-100/90 border border-blue-200/80 shadow-[0_12px_36px_-6px_rgba(37,99,235,0.12)]"
           }`}
         >
           {!isDark && (
             <>
-              <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl" />
-              <div className="absolute bottom-0 left-0 w-48 h-48 bg-primary/5 rounded-full translate-y-1/2 -translate-x-1/2 blur-3xl" />
+              <div className="absolute top-0 right-0 w-72 h-72 bg-blue-400/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl pointer-events-none" />
+              <div className="absolute bottom-0 left-0 w-64 h-64 bg-cyan-400/10 rounded-full translate-y-1/2 -translate-x-1/2 blur-3xl pointer-events-none" />
             </>
           )}
 

@@ -303,7 +303,7 @@ export default function FindSpots() {
   );
 
   return (
-    <div className="pt-24">
+    <div className="pt-24 bg-[#F4F6F9] min-h-screen">
       <SEO
         title={
           selectedSpot
@@ -317,7 +317,7 @@ export default function FindSpots() {
         }
       />
 
-      <section className="relative py-16 gradient-hero overflow-hidden">
+      <section className="relative py-16 gradient-hero overflow-hidden border-b border-slate-800">
         <div className="absolute inset-0 opacity-20">
           <img src={spotsMapImg} alt="" className="w-full h-full object-cover" />
         </div>
@@ -340,7 +340,7 @@ export default function FindSpots() {
                   placeholder="Search area, landmark or destination..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-12 pr-4 py-4 rounded-2xl bg-card text-foreground shadow-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary border-0 font-medium"
+                  className="w-full pl-12 pr-4 py-4 rounded-2xl bg-white text-foreground shadow-2xl text-sm focus:outline-none focus:ring-2 focus:ring-primary border-0 font-medium"
                 />
               </div>
               <CitySelector variant="hero" className="shrink-0 h-[52px]" />
@@ -369,15 +369,23 @@ export default function FindSpots() {
         </div>
       </section>
 
-      <section className="py-12 min-h-[50vh]">
+      {/* Sunken Filter Control Bar */}
+      <section className="py-6 bg-[#EAF0F6] border-b border-slate-200/80">
         <div className="container mx-auto px-4">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
-            <div className="flex items-center gap-3 overflow-x-auto pb-2 scrollbar-none flex-1">
-              <SlidersHorizontal className="w-5 h-5 text-muted-foreground flex-shrink-0" />
-              {filters.map((f) => {
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 bg-white/80 p-3.5 rounded-2xl border border-slate-200/80 shadow-xs">
+            {/* Quick Filters */}
+            <div className="flex items-center gap-2 overflow-x-auto pb-2 md:pb-0 scrollbar-none">
+              {(
+                [
+                  "All",
+                  "Verified",
+                  "Under Rs 50",
+                  "Top Rated",
+                  "Nearest",
+                ] as const
+              ).map((f) => {
                 let count: number | null = null;
-                if (f === "Open Now") count = spotsWithDistance.filter((s) => !s.isPaused && isSpotOpen(s.availableHours)).length;
-                else if (f === "Verified") count = spotsWithDistance.filter((s) => s.isVerified).length;
+                if (f === "Verified") count = spotsWithDistance.filter((s) => s.isVerified).length;
                 else if (f === "Under Rs 50") count = spotsWithDistance.filter((s) => s.pricePerHour < 50).length;
                 else if (f === "Top Rated") count = spotsWithDistance.filter((s) => s.rating >= 4.5).length;
                 else if (f === "Nearest") count = spotsWithDistance.filter((s) => s.distance !== null).length;
@@ -387,15 +395,15 @@ export default function FindSpots() {
                     key={f}
                     onClick={() => setActiveFilter(f)}
                     aria-pressed={activeFilter === f}
-                    className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all ${
+                    className={`px-4 py-2 rounded-full text-xs sm:text-sm font-semibold whitespace-nowrap transition-all ${
                       activeFilter === f
                         ? "bg-primary text-primary-foreground shadow-md"
-                        : "bg-card border border-border text-muted-foreground hover:bg-muted"
+                        : "bg-white border border-slate-200/90 text-slate-700 hover:bg-slate-100/80 shadow-2xs"
                     }`}
                   >
                     {f}
                     {count !== null && (
-                      <span className={`ml-1.5 text-[11px] font-bold ${activeFilter === f ? "text-primary-foreground/70" : "text-muted-foreground"}`}>
+                      <span className={`ml-1.5 text-[11px] font-bold ${activeFilter === f ? "text-primary-foreground/80" : "text-slate-500"}`}>
                         {count}
                       </span>
                     )}
@@ -406,32 +414,36 @@ export default function FindSpots() {
 
             <div className="flex items-center gap-2.5 flex-shrink-0">
               <CitySelector variant="filter" />
-              <div className="flex items-center bg-card border border-border p-1 rounded-full w-fit">
-              {(
-                [
-                  { id: "list" as const, label: "List View" },
-                  { id: "map" as const, label: "Map View" },
-                  { id: "route" as const, label: "On My Way" },
-                ] as const
-              ).map(({ id, label }) => (
-                <button
-                  key={id}
-                  onClick={() => setViewMode(id)}
-                  className={cn(
-                    "px-3 sm:px-4 py-2 rounded-full text-xs font-semibold transition-all whitespace-nowrap",
-                    viewMode === id
-                      ? "bg-primary text-primary-foreground shadow-sm"
-                      : "text-muted-foreground hover:text-foreground"
-                  )}
-                >
-                  {id === "route" && <Route className="w-3 h-3 inline mr-1 -mt-0.5" />}
-                  {label}
-                </button>
-              ))}
+              <div className="flex items-center bg-slate-200/70 border border-slate-300/60 p-1 rounded-full w-fit shadow-inner-xs">
+                {(
+                  [
+                    { id: "list" as const, label: "List View" },
+                    { id: "map" as const, label: "Map View" },
+                    { id: "route" as const, label: "On My Way" },
+                  ] as const
+                ).map(({ id, label }) => (
+                  <button
+                    key={id}
+                    onClick={() => setViewMode(id)}
+                    className={cn(
+                      "px-3.5 sm:px-4 py-2 rounded-full text-xs font-bold transition-all whitespace-nowrap",
+                      viewMode === id
+                        ? "bg-white text-primary shadow-xs border border-slate-200/80"
+                        : "text-slate-600 hover:text-foreground"
+                    )}
+                  >
+                    {id === "route" && <Route className="w-3 h-3 inline mr-1 -mt-0.5" />}
+                    {label}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
         </div>
+      </section>
 
+      <section className="py-8 min-h-[50vh]">
+        <div className="container mx-auto px-4">
           {viewMode === "route" && (
             <div className="mb-8 space-y-4">
               <div className="rounded-2xl border border-border bg-card p-5 shadow-sm space-y-4">

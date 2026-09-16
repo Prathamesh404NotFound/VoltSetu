@@ -17,18 +17,18 @@
     --cp-brand-active:   #1E40AF;   /* Active/pressed CTA */
     --cp-brand-soft:     #EFF6FF;   /* Accent backgrounds, selected states */
 
-    --cp-text:           #111827;   /* Primary text, major headings, logo */
-    --cp-text-secondary: #475569;   /* Supporting paragraphs, descriptive text */
+    --cp-text:           #0F172A;   /* Primary text, major headings, logo */
+    --cp-text-secondary: #334155;   /* Supporting paragraphs, descriptive text */
     --cp-text-tertiary:  #64748B;   /* Timestamps, supporting metadata */
     --cp-text-disabled:  #94A3B8;   /* Disabled controls */
     --cp-placeholder:    #94A3B8;   /* Search placeholders, optional hints */
 
-    --cp-background:     #F8FAFC;   /* Main page background */
-    --cp-background-alt: #F1F5F9;   /* Alternating sections, filter areas */
+    --cp-background:     #F4F6F9;   /* Main page canvas — soft slate-tinted base */
+    --cp-background-alt: #EAF0F6;   /* Alternating sections, filter areas */
     --cp-surface:        #FFFFFF;   /* Cards, modals, elevated surfaces */
-    --cp-surface-muted:  #F1F5F9;   /* White card internal hierarchy */
+    --cp-surface-muted:  #EDF2F7;   /* White card internal hierarchy */
 
-    --cp-border:         #E2E8F0;   /* Cards, inputs, separators */
+    --cp-border:         #D8E1EA;   /* Cards, inputs, separators */
     --cp-border-strong:  #CBD5E1;   /* Focused/high-importance separation */
     --cp-border-accent:  #BFDBFE;   /* Selected card, active filters */
 
@@ -69,42 +69,42 @@
     --radius-lg: 20px;
     --radius-full: 9999px;
 
-    /* ── SHADOW TOKENS ── */
-    --shadow-sm: 0 1px 3px rgba(26,26,46,0.08);
-    --shadow-md: 0 4px 16px rgba(26,26,46,0.10);
-    --shadow-lg: 0 12px 40px rgba(26,26,46,0.14);
+    /* ── SHADOW TOKENS (Multi-layered elevation depth) ── */
+    --shadow-sm: 0 1px 3px rgba(15,23,42,0.05), 0 1px 2px rgba(15,23,42,0.03);
+    --shadow-md: 0 4px 14px -2px rgba(15,23,42,0.08), 0 2px 6px -1px rgba(15,23,42,0.04);
+    --shadow-lg: 0 12px 32px -6px rgba(15,23,42,0.12), 0 4px 12px -2px rgba(15,23,42,0.06);
 
-    --background: 210 40% 98%;
-    --foreground: 221 39% 11%;
+    --background: 215 30% 96.5%;
+    --foreground: 222 47% 11%;
 
     --card: 0 0% 100%;
-    --card-foreground: 221 39% 11%;
+    --card-foreground: 222 47% 11%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 221 39% 11%;
+    --popover-foreground: 222 47% 11%;
 
     --primary: 217 83% 53%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 210 18% 96%;
-    --secondary-foreground: 210 13% 30%;
+    --secondary: 215 24% 94%;
+    --secondary-foreground: 215 25% 25%;
 
-    --muted: 210 18% 96%;
-    --muted-foreground: 210 13% 42%;
+    --muted: 215 24% 93.5%;
+    --muted-foreground: 215 16% 38%;
 
-    --accent: 214 100% 97%;
-    --accent-foreground: 221 76% 48%;
+    --accent: 214 95% 96.5%;
+    --accent-foreground: 221 76% 45%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 210 13% 90%;
-    --input: 210 13% 90%;
+    --border: 215 18% 88%;
+    --input: 215 18% 88%;
     --ring: 217 83% 53%;
 
     --radius: 0.75rem;
 
-    --graphite: 221 39% 11%;
+    --graphite: 222 47% 11%;
     --graphite-foreground: 0 0% 100%;
 
     --electric: 217 83% 53%;
@@ -116,16 +116,16 @@
     --warning: 38 92% 45%;
     --warning-foreground: 0 0% 100%;
 
-    --silver: 210 13% 83%;
-    --soft-gray: 210 18% 96%;
+    --silver: 215 16% 82%;
+    --soft-gray: 215 24% 94%;
 
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 210 13% 30%;
+    --sidebar-background: 215 30% 97.5%;
+    --sidebar-foreground: 215 25% 25%;
     --sidebar-primary: 217 83% 53%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 214 100% 97%;
-    --sidebar-accent-foreground: 221 76% 48%;
-    --sidebar-border: 210 13% 90%;
+    --sidebar-accent: 214 95% 96.5%;
+    --sidebar-accent-foreground: 221 76% 45%;
+    --sidebar-border: 215 18% 88%;
     --sidebar-ring: 217 83% 53%;
   }
 }
@@ -145,12 +145,51 @@
 }
 
 @layer utilities {
+  .shadow-xs {
+    box-shadow: 0 1px 2px 0 rgba(15, 23, 42, 0.05);
+  }
+
+  .shadow-2xs {
+    box-shadow: 0 1px 1px 0 rgba(15, 23, 42, 0.03);
+  }
+
   .glass {
-    @apply bg-white/80 backdrop-blur-md border border-slate-200/50 shadow-sm;
+    @apply bg-white/85 backdrop-blur-md border border-slate-200/80 shadow-sm;
   }
 
   .glass-dark {
     @apply bg-slate-900/90 backdrop-blur-md border border-slate-800/60 shadow-md;
+  }
+
+  /* ── DEPTH SURFACE UTILITIES (Tints, Tones & Shades) ── */
+  .surface-card {
+    background: linear-gradient(180deg, #FFFFFF 0%, #FAFCFF 100%);
+    border: 1px solid rgba(216, 225, 234, 0.9);
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04), 0 8px 24px -4px rgba(15, 23, 42, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.95);
+    border-radius: 1rem;
+  }
+
+  .surface-card-interactive {
+    @apply surface-card transition-all duration-300;
+  }
+
+  .surface-card-interactive:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 16px 36px -8px rgba(15, 23, 42, 0.12), 0 4px 12px -2px rgba(15, 23, 42, 0.04), inset 0 1px 0 rgba(255, 255, 255, 1);
+    border-color: rgba(37, 99, 235, 0.35);
+  }
+
+  .surface-sunken {
+    background: linear-gradient(180deg, #EDF2F7 0%, #F4F7FA 100%);
+    border: 1px solid #D8E1EA;
+    border-radius: 0.875rem;
+  }
+
+  .surface-tinted-blue {
+    background: linear-gradient(180deg, #F0F6FF 0%, #F8FAFC 100%);
+    border: 1px solid #BFDBFE;
+    box-shadow: 0 8px 24px -4px rgba(37, 99, 235, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    border-radius: 1rem;
   }
 
   .gradient-primary {
@@ -478,6 +517,15 @@
 .maplibregl-map {
   font-family: 'Inter', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif !important;
   background-color: #F8FAFC !important;
+  width: 100% !important;
+  height: 100% !important;
+  position: relative !important;
+}
+
+.maplibregl-canvas-container,
+.maplibregl-canvas {
+  width: 100% !important;
+  height: 100% !important;
 }
 
 .maplibregl-popup-content {
@@ -511,5 +559,6 @@
   background-color: #EFF6FF !important;
   color: #1D4ED8 !important;
 }
+
 
 

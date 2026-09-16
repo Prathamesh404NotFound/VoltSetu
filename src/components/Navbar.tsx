@@ -99,8 +99,8 @@ export default function Navbar() {
         className={cn(
           "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
           scrolled
-            ? "glass py-2 shadow-md"
-            : "bg-background/80 backdrop-blur-md border-b border-border/40 py-3"
+            ? "bg-white/92 backdrop-blur-xl py-2.5 shadow-[0_4px_24px_-4px_rgba(15,23,42,0.08)] border-b border-slate-200/80"
+            : "bg-slate-50/80 backdrop-blur-md border-b border-slate-200/60 py-3.5"
         )}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
@@ -114,8 +114,8 @@ export default function Navbar() {
             </span>
           </Link>
 
-          {/* Desktop Nav - Floating Pill Style */}
-          <nav aria-label="Main Navigation" className="hidden lg:flex items-center gap-1 bg-muted/60 p-1.5 rounded-full border border-border/50 shadow-inner min-w-0">
+          {/* Desktop Nav - Floating Pill Style with Sunken Slate Depth */}
+          <nav aria-label="Main Navigation" className="hidden lg:flex items-center gap-1 bg-slate-200/60 p-1.5 rounded-full border border-slate-300/50 shadow-inner min-w-0">
             {primaryLinks.map((link) => {
               const isActive = location.pathname === link.to;
               return (
@@ -125,8 +125,8 @@ export default function Navbar() {
                   className={cn(
                     "px-3.5 py-1.5 rounded-full text-xs xl:text-sm font-semibold transition-all duration-200 whitespace-nowrap",
                     isActive
-                      ? "text-primary bg-background shadow-xs font-bold"
-                      : "text-muted-foreground hover:text-foreground hover:bg-background/50"
+                      ? "text-primary bg-white shadow-xs font-bold border border-slate-200/80"
+                      : "text-slate-600 hover:text-foreground hover:bg-white/60"
                   )}
                   aria-current={isActive ? "page" : undefined}
                 >
@@ -138,21 +138,21 @@ export default function Navbar() {
               <DropdownMenuTrigger asChild>
                 <button
                   className={cn(
-                    "inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs xl:text-sm font-semibold text-muted-foreground hover:text-foreground hover:bg-background/50 transition-all"
+                    "inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs xl:text-sm font-semibold text-slate-600 hover:text-foreground hover:bg-white/60 transition-all"
                   )}
                   aria-label="More navigation links"
                 >
                   More <ChevronDown className="w-3.5 h-3.5 opacity-70" />
                 </button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-48 rounded-xl p-1.5 shadow-lg">
+              <DropdownMenuContent align="end" className="w-48 rounded-2xl p-1.5 shadow-xl border border-slate-200/90 bg-white/95 backdrop-blur-md">
                 {secondaryLinks.map((link) => (
-                  <DropdownMenuItem key={link.to} asChild className="rounded-lg">
+                  <DropdownMenuItem key={link.to} asChild className="rounded-xl">
                     <Link
                       to={link.to}
                       className={cn(
-                        "w-full font-medium text-xs xl:text-sm px-3 py-2",
-                        location.pathname === link.to ? "text-primary font-bold bg-primary/10" : "text-foreground"
+                        "w-full font-medium text-xs xl:text-sm px-3 py-2 transition-colors",
+                        location.pathname === link.to ? "text-primary font-bold bg-primary/10" : "text-foreground hover:bg-slate-100/80"
                       )}
                     >
                       {t(link.key)}

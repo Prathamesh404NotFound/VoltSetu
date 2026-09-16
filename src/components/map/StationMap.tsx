@@ -19,6 +19,7 @@ import "maplibre-gl/dist/maplibre-gl.css";
 import type GeoJSON from "geojson";
 import { ref, onValue } from "firebase/database";
 import { database } from "@/lib/firebase-services";
+import { CARTO_RASTER_STYLE, OSM_RASTER_STYLE } from "@/lib/mapConfig";
 
 export interface EVStation {
   id: string;
@@ -76,6 +77,8 @@ export function StationMap({
   const mapRef = useRef<MaplibreMap | null>(null);
   const htmlMarkersRef = useRef<Marker[]>([]);
   const popupRef = useRef<Popup | null>(null);
+  const fallbackTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const styleFallbackAttemptedRef = useRef(false);
 
   const [mapLoaded, setMapLoaded] = useState(false);
   const [stations, setStations] = useState<EVStation[]>(initialStations);
@@ -116,7 +119,7 @@ export function StationMap({
     []
   );
 
-  // 1. Initialize MapLibre GL instance
+  // 1. Initialize MapLibre GL instance with fail-safe tile fallback
   useEffect(() => {
     if (!mapContainerRef.current || mapRef.current) return;
 
@@ -132,14 +135,49 @@ export function StationMap({
 
     map.addControl(new NavigationControl({ showCompass: true }), "top-right");
 
-    map.on("load", () => {
+    const triggerMapReady = () => {
+      if (fallbackTimerRef.current) clearTimeout(fallbackTimerRef.current);
       setMapLoaded(true);
+      setTimeout(() => map.resize(), 50);
+    };
+
+    if (map.isStyleLoaded()) {
+      triggerMapReady();
+    } else {
+      map.once("load", triggerMapReady);
+    }
+
+    map.on("error", (e: any) => {
+      const errStr = String(e?.error?.message || e?.error || e?.message || "");
+      if (!styleFallbackAttemptedRef.current && (errStr.includes("style") || errStr.includes("fetch") || errStr.includes("VectorTile") || errStr.includes("404") || errStr.includes("Failed"))) {
+        styleFallbackAttemptedRef.current = true;
+        console.warn("StationMap vector tile notice, using Carto Voyager style fallback...", errStr);
+        try {
+          map.setStyle(CARTO_RASTER_STYLE as any);
+        } catch {
+          try { map.setStyle(OSM_RASTER_STYLE as any); } catch {}
+        }
+        setMapLoaded(true);
+        setTimeout(() => map.resize(), 50);
+      }
     });
+
+    fallbackTimerRef.current = setTimeout(() => {
+      if (!styleFallbackAttemptedRef.current) {
+        styleFallbackAttemptedRef.current = true;
+        console.warn("StationMap vector load timeout, activating raster tiles fallback...");
+        try {
+          map.setStyle(CARTO_RASTER_STYLE as any);
+        } catch {}
+      }
+      setMapLoaded(true);
+      setTimeout(() => map.resize(), 50);
+    }, 3500);
 
     mapRef.current = map;
 
     return () => {
-      // Clear custom HTML markers
+      if (fallbackTimerRef.current) clearTimeout(fallbackTimerRef.current);
       htmlMarkersRef.current.forEach((m) => m.remove());
       htmlMarkersRef.current = [];
 
@@ -151,6 +189,22 @@ export function StationMap({
       mapRef.current = null;
     };
   }, []);
+
+  // ResizeObserver to handle container size changes
+  useEffect(() => {
+    if (!mapContainerRef.current) return;
+    const observer = new ResizeObserver(() => {
+      if (mapRef.current) {
+        mapRef.current.resize();
+      }
+    });
+    observer.observe(mapContainerRef.current);
+    if (mapRef.current) {
+      mapRef.current.resize();
+    }
+    return () => observer.disconnect();
+  }, [mapLoaded]);
+
 
   // 2. Firebase Realtime Data Listener
   useEffect(() => {

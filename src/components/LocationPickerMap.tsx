@@ -13,7 +13,7 @@ import {
   AttributionControl,
 } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
-import { MAP_CONFIG } from "@/lib/mapConfig";
+import { MAP_CONFIG, CARTO_RASTER_STYLE, OSM_RASTER_STYLE } from "@/lib/mapConfig";
 import { getCityFallbackCoordinates } from "@/lib/hostRegistration";
 
 export interface LocationPickerMapProps {
@@ -38,6 +38,8 @@ export default function LocationPickerMap({
   const containerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<MaplibreMap | null>(null);
   const markerRef = useRef<Marker | null>(null);
+  const fallbackTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const styleFallbackAttemptedRef = useRef(false);
 
   // Compute map center
   let center: [number, number] = MAP_CONFIG.DEFAULT_CENTER;
@@ -56,7 +58,7 @@ export default function LocationPickerMap({
     zoom = MAP_CONFIG.CITY_DEFAULT_ZOOM;
   }
 
-  // Initialize MapLibre GL instance
+  // Initialize MapLibre GL instance with fail-safe fallback
   useEffect(() => {
     if (!containerRef.current || mapRef.current) return;
 
@@ -85,14 +87,61 @@ export default function LocationPickerMap({
       onChange({ lat: e.lngLat.lat, lng: e.lngLat.lng });
     });
 
+    map.on("load", () => {
+      if (fallbackTimerRef.current) clearTimeout(fallbackTimerRef.current);
+      setTimeout(() => map.resize(), 50);
+    });
+
+    map.on("error", (e: any) => {
+      const errStr = String(e?.error?.message || e?.error || e?.message || "");
+      if (!styleFallbackAttemptedRef.current && (errStr.includes("style") || errStr.includes("fetch") || errStr.includes("VectorTile") || errStr.includes("404") || errStr.includes("Failed"))) {
+        styleFallbackAttemptedRef.current = true;
+        console.warn("LocationPickerMap tile notice, switching to Carto Voyager tiles...", errStr);
+        try {
+          map.setStyle(CARTO_RASTER_STYLE as any);
+        } catch {
+          try { map.setStyle(OSM_RASTER_STYLE as any); } catch {}
+        }
+        setTimeout(() => map.resize(), 50);
+      }
+    });
+
+    fallbackTimerRef.current = setTimeout(() => {
+      if (!styleFallbackAttemptedRef.current) {
+        styleFallbackAttemptedRef.current = true;
+        console.warn("LocationPickerMap vector load timeout, activating Carto tiles...");
+        try {
+          map.setStyle(CARTO_RASTER_STYLE as any);
+        } catch {}
+      }
+      setTimeout(() => map.resize(), 50);
+    }, 3500);
+
     mapRef.current = map;
 
     return () => {
+      if (fallbackTimerRef.current) clearTimeout(fallbackTimerRef.current);
       if (markerRef.current) markerRef.current.remove();
       map.remove();
       mapRef.current = null;
     };
   }, []);
+
+  // ResizeObserver to track container resizing
+  useEffect(() => {
+    if (!containerRef.current) return;
+    const observer = new ResizeObserver(() => {
+      if (mapRef.current) {
+        mapRef.current.resize();
+      }
+    });
+    observer.observe(containerRef.current);
+    if (mapRef.current) {
+      mapRef.current.resize();
+    }
+    return () => observer.disconnect();
+  }, []);
+
 
   // Update pin position and marker on value changes
   useEffect(() => {

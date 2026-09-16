@@ -319,9 +319,9 @@ export default function SpotCard({
       onClick={handleCardPress}
       onPointerDown={handleCardPress}
       className={cn(
-        "group relative bg-card rounded-2xl border border-border overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 hover:-translate-y-1 flex flex-col h-full",
+        "group relative bg-gradient-to-b from-white via-white to-slate-50/70 rounded-2xl border border-slate-200/90 overflow-hidden shadow-[0_2px_8px_-2px_rgba(15,23,42,0.06),0_10px_24px_-6px_rgba(15,23,42,0.06)] hover:shadow-[0_20px_40px_-10px_rgba(37,99,235,0.16)] transition-all duration-500 hover:-translate-y-1.5 flex flex-col h-full",
         isPaused && "opacity-70 hover:translate-y-0",
-        isFeatured && "ring-2 ring-primary/30",
+        isFeatured && "ring-2 ring-primary/40 border-primary/30",
         popping && "scale-[1.03] -translate-y-1 shadow-2xl duration-150 z-10"
       )}
       style={{ transformOrigin: "center center" }}
@@ -425,9 +425,9 @@ export default function SpotCard({
           {name}
         </h3>
 
-        {/* Host trust + price emphasis */}
-        <div className="mb-4">
-          <div className="flex items-center gap-1.5 text-sm text-muted-foreground mb-2">
+        {/* Host trust + price emphasis in sunken slate panel */}
+        <div className="mb-4 bg-slate-100/70 p-3.5 rounded-xl border border-slate-200/70 shadow-inner-xs">
+          <div className="flex items-center gap-1.5 text-xs text-muted-foreground mb-1.5">
             {hostId ? (
               <a
                 href={`/host/${encodeURIComponent(hostId)}`}
@@ -444,31 +444,32 @@ export default function SpotCard({
             )}
           </div>
           <div className="flex items-baseline gap-1">
-            <span className="text-2xl font-bold text-foreground tracking-tight">
+            <span className="text-2xl font-black text-foreground tracking-tight">
               ₹{pricePerHour}
             </span>
-            <span className="text-sm font-medium text-muted-foreground">/hr</span>
+            <span className="text-xs font-semibold text-muted-foreground">/hr</span>
+            <span className="ml-auto text-[10px] uppercase font-bold tracking-wider text-muted-foreground bg-background px-2 py-0.5 rounded-md border border-border">Pay at spot</span>
           </div>
-          <p className="text-[11px] text-muted-foreground mt-0.5">Pay at spot</p>
           {showCostPerKm && (() => {
             const perKm = pricePerKmRs(pricePerHour);
             const session = sessionCostRs(pricePerHour);
             if (perKm === null) return null;
             return (
-              <p className="text-[11px] font-medium text-ev-green mt-1">
+              <p className="text-[11px] font-semibold text-ev-green mt-1">
                 ₹{perKm.toFixed(2)}{t("spot.perKm")} · ₹{session.toFixed(2)}/10 {t("spot.minutes")}
               </p>
             );
           })()}
         </div>
 
-        <div className="grid grid-cols-2 gap-y-3 gap-x-2 text-sm text-muted-foreground mb-5 mt-auto">
+        <div className="grid grid-cols-2 gap-y-3 gap-x-2 text-xs font-medium text-muted-foreground mb-5 mt-auto bg-background/60 p-2.5 rounded-xl border border-border/50">
           {distance && (
             <span className="flex items-center gap-1.5" title="Distance">
-              <MapPin className="w-4 h-4 text-primary/70 shrink-0" />
-              <span className="truncate">{distance}</span>
+              <MapPin className="w-3.5 h-3.5 text-primary shrink-0" />
+              <span className="truncate font-semibold text-foreground">{distance}</span>
             </span>
           )}
+
           {displayRating.count > 0 ? (
             <span className="flex items-center gap-1.5" title="Rating">
               <Star className="w-4 h-4 text-yellow-500 fill-yellow-500 shrink-0" />

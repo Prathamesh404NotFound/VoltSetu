@@ -14,10 +14,11 @@ import {
   Marker,
   LngLatBounds,
   Popup,
+  type GeoJSONSource,
 } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import type GeoJSON from "geojson";
-import { MAP_CONFIG, CARTO_RASTER_STYLE, normalizeCoordinates } from "@/lib/mapConfig";
+import { MAP_CONFIG, CARTO_RASTER_STYLE, OSM_RASTER_STYLE, normalizeCoordinates } from "@/lib/mapConfig";
 import { subscribeToAllAvailability, type SpotAvailability } from "@/lib/availabilityService";
 import { getCurrentLocation, getAccuracyLabel, type UserLocationResult } from "@/lib/locationService";
 import type { ChargePushMapProps, ChargingSpotItem, SpotGeoJSONProperties } from "./types";
@@ -43,6 +44,8 @@ export function ChargePushMap({
   const popupRef = useRef<Popup | null>(null);
   const userMarkerRef = useRef<Marker | null>(null);
   const destMarkerRef = useRef<Marker | null>(null);
+  const fallbackTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const styleFallbackAttemptedRef = useRef(false);
 
   const [mapLoaded, setMapLoaded] = useState(false);
   const [userLocation, setUserLocation] = useState<UserLocationResult | null>(null);
@@ -67,7 +70,7 @@ export function ChargePushMap({
     return unsub;
   }, []);
 
-  // Initialize MapLibre GL instance
+  // Initialize MapLibre GL instance with fail-safe tile fallback
   useEffect(() => {
     if (!mapContainerRef.current || mapRef.current) return;
 
@@ -94,27 +97,54 @@ export function ChargePushMap({
         "bottom-left"
       );
 
-      map.on("load", () => {
+      const triggerMapReady = () => {
+        if (fallbackTimerRef.current) clearTimeout(fallbackTimerRef.current);
         setMapLoaded(true);
-        setTimeout(() => map.resize(), 100);
-      });
+        setTimeout(() => map.resize(), 50);
+      };
 
-      // Fallback to raster tiles if vector style loading fails
+      if (map.isStyleLoaded()) {
+        triggerMapReady();
+      } else {
+        map.once("load", triggerMapReady);
+      }
+
+      // Tile loading error fallback handler (OpenFreeMap vector -> Carto -> OSM)
       map.on("error", (e: any) => {
-        if (e?.error?.message?.includes("style") || e?.error?.message?.includes("fetch")) {
-          console.warn("OpenFreeMap vector tile warning, using Carto Voyager style fallback...");
+        const errStr = String(e?.error?.message || e?.error || e?.message || "");
+        if (!styleFallbackAttemptedRef.current && (errStr.includes("style") || errStr.includes("fetch") || errStr.includes("VectorTile") || errStr.includes("404") || errStr.includes("Failed"))) {
+          styleFallbackAttemptedRef.current = true;
+          console.warn("OpenFreeMap vector tile issue, activating Carto Voyager raster tile fallback...", errStr);
           try {
             map.setStyle(CARTO_RASTER_STYLE as any);
           } catch {
-            // ignore fallback retry errors
+            try { map.setStyle(OSM_RASTER_STYLE as any); } catch {}
           }
+          setMapLoaded(true);
+          setTimeout(() => map.resize(), 50);
         }
       });
 
-      // Re-add GeoJSON layers after any style change (e.g., vector → raster fallback)
-      map.on("style", () => {
+      // Style re-load listener (triggers layer re-hydration)
+      map.on("style.load", () => {
         setGeojsonVersion((v) => v + 1);
+        setTimeout(() => map.resize(), 50);
       });
+
+      // Fail-safe load timer: guarantee mapLoaded becomes true within 3.5s
+      fallbackTimerRef.current = setTimeout(() => {
+        if (!styleFallbackAttemptedRef.current) {
+          styleFallbackAttemptedRef.current = true;
+          console.warn("Vector tile load timeout — switching to Carto Voyager tiles...");
+          try {
+            map.setStyle(CARTO_RASTER_STYLE as any);
+          } catch {
+            // ignore
+          }
+        }
+        setMapLoaded(true);
+        setTimeout(() => map.resize(), 50);
+      }, 3500);
 
       mapRef.current = map;
     } catch (err) {
@@ -122,6 +152,7 @@ export function ChargePushMap({
     }
 
     return () => {
+      if (fallbackTimerRef.current) clearTimeout(fallbackTimerRef.current);
       if (popupRef.current) popupRef.current.remove();
       if (mapRef.current) {
         mapRef.current.remove();
@@ -139,8 +170,13 @@ export function ChargePushMap({
       }
     });
     observer.observe(mapContainerRef.current);
+
+    if (mapRef.current) {
+      mapRef.current.resize();
+    }
+
     return () => observer.disconnect();
-  }, []);
+  }, [mapLoaded]);
 
   // Convert spots list to GeoJSON FeatureCollection
   const geojsonSpots = useMemo(() => {
@@ -285,7 +321,7 @@ export function ChargePushMap({
         const features = map.queryRenderedFeatures(e.point, { layers: ["clusters"] });
         const clusterId = features[0]?.properties?.cluster_id;
         if (clusterId !== undefined) {
-          (map.getSource("chargers-source") as maplibregl.GeoJSONSource).getClusterExpansionZoom(
+          (map.getSource("chargers-source") as GeoJSONSource).getClusterExpansionZoom(
             clusterId,
             (err, zoom) => {
               if (err || zoom === null) return;
@@ -320,7 +356,7 @@ export function ChargePushMap({
       map.on("mouseenter", "unclustered-chargers", unclusteredEnterRef.current);
       map.on("mouseleave", "unclustered-chargers", unclusteredLeaveRef.current);
     } else {
-      (map.getSource("chargers-source") as maplibregl.GeoJSONSource).setData(geojsonSpots);
+      (map.getSource("chargers-source") as GeoJSONSource).setData(geojsonSpots);
     }
   }, [geojsonSpots, mapLoaded, spots, selectedSpotId, onSelectSpot, emergencyMode, geojsonVersion]);
 
@@ -360,7 +396,7 @@ export function ChargePushMap({
           "clusters"
         );
       } else {
-        (map.getSource("route-source") as maplibregl.GeoJSONSource).setData(routeGeoJSON);
+        (map.getSource("route-source") as GeoJSONSource).setData(routeGeoJSON);
       }
 
       const bounds = new LngLatBounds();
@@ -469,12 +505,12 @@ export function ChargePushMap({
     }
   };
 
-  const containerStyle = height && height !== "100%" ? { height } : undefined;
+  const containerStyle: React.CSSProperties = height ? { height, minHeight: height } : { height: "500px", minHeight: "350px" };
 
   return (
     <div
       className={cn(
-        "relative w-full rounded-2xl overflow-hidden shadow-md border border-border bg-card min-h-[350px]",
+        "relative w-full rounded-2xl overflow-hidden shadow-md border border-border bg-card",
         className
       )}
       style={containerStyle}
@@ -510,7 +546,7 @@ export function ChargePushMap({
       )}
 
       {/* Map Container Element */}
-      <div ref={mapContainerRef} className="w-full h-full min-h-[350px] relative" />
+      <div ref={mapContainerRef} className="w-full h-full relative" />
 
       {/* Selected Spot Popup / Card Modal */}
       {activePopupSpot && (
@@ -548,3 +584,5 @@ export function ChargePushMap({
 }
 
 export default ChargePushMap;
+
+

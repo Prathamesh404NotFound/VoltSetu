@@ -87,23 +87,23 @@ const Index = () => {
 
   // 1. MOBILITY-FIRST HERO
   const heroSection = (
-    <section className="relative pt-12 pb-20 lg:pt-20 lg:pb-32 bg-background overflow-hidden border-b border-border/40">
-      <div className="absolute inset-0 pointer-events-none opacity-40">
-        <div className="absolute -top-24 -left-24 w-96 h-96 bg-primary/20 rounded-full blur-3xl" />
-        <div className="absolute top-1/2 -right-24 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl" />
+    <section className="relative pt-12 pb-20 lg:pt-20 lg:pb-32 bg-gradient-to-b from-slate-100/90 via-blue-50/40 to-[#F4F6F9] overflow-hidden border-b border-slate-200/80">
+      <div className="absolute inset-0 pointer-events-none opacity-50">
+        <div className="absolute -top-24 -left-24 w-[30rem] h-[30rem] bg-blue-400/15 rounded-full blur-3xl" />
+        <div className="absolute top-1/2 -right-24 w-[30rem] h-[30rem] bg-cyan-400/15 rounded-full blur-3xl" />
       </div>
 
       <div className="container mx-auto px-4 relative z-10">
         <div className="grid lg:grid-cols-12 gap-12 lg:gap-8 items-center">
           {/* Hero Content */}
           <div className="lg:col-span-7 space-y-6 text-left">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-extrabold uppercase tracking-widest">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-extrabold uppercase tracking-widest shadow-xs">
               <Zap className="w-3.5 h-3.5 fill-current" /> Charge. Push. Go.
             </div>
 
             <h1 className="font-display font-black text-4xl sm:text-6xl lg:text-7xl text-foreground tracking-tight leading-[1.08]">
               Never Stop <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-cyan-400 to-teal-300">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-cyan-500 to-teal-400">
                 Moving.
               </span>
             </h1>
@@ -123,7 +123,7 @@ const Index = () => {
 
               <Link
                 to="/host"
-                className="inline-flex items-center justify-center gap-2.5 px-8 py-4 rounded-xl bg-card border border-border text-foreground font-bold text-lg hover:bg-muted transition-all shadow-sm"
+                className="inline-flex items-center justify-center gap-2.5 px-8 py-4 rounded-xl bg-white border border-slate-200/90 text-foreground font-bold text-lg hover:bg-slate-50 transition-all shadow-md"
               >
                 <Home className="w-5 h-5 text-primary" /> Power Your Neighborhood
               </Link>
@@ -141,7 +141,7 @@ const Index = () => {
 
           {/* Hero Visual: Authentic Indian EV Mobility */}
           <div className="lg:col-span-5 relative">
-            <div className="relative rounded-3xl overflow-hidden shadow-2xl border border-border/60 group">
+            <div className="relative rounded-3xl overflow-hidden shadow-2xl border border-slate-200/80 group">
               <img
                 src={riderImg}
                 alt="Electric rider using ChargePush on Indian roads"
@@ -154,10 +154,10 @@ const Index = () => {
               <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/30 to-transparent" />
               
               {/* Floating Overlay Badge */}
-              <div className="absolute bottom-6 left-6 right-6 p-5 rounded-2xl bg-card/90 backdrop-blur-md border border-border/80 shadow-lg">
+              <div className="absolute bottom-6 left-6 right-6 p-5 rounded-2xl bg-white/95 backdrop-blur-md border border-slate-200/80 shadow-xl">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl gradient-primary flex items-center justify-center text-white">
+                    <div className="w-10 h-10 rounded-xl gradient-primary flex items-center justify-center text-white shadow-md">
                       <Zap className="w-5 h-5" />
                     </div>
                     <div>
@@ -165,7 +165,7 @@ const Index = () => {
                       <p className="text-xs text-muted-foreground">Nearby home hosts & charging spots</p>
                     </div>
                   </div>
-                  <span className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-500 bg-emerald-500/10 px-2.5 py-1 rounded-full border border-emerald-500/20">
+                  <span className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-600 bg-emerald-500/10 px-2.5 py-1 rounded-full border border-emerald-500/20">
                     <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" /> Live Network
                   </span>
                 </div>
@@ -179,10 +179,10 @@ const Index = () => {
 
   // 2. BRAND TRUST STRIP
   const trustStrip = (
-    <section aria-label="Network decision highlights" className="py-8 bg-card border-b border-border">
+    <section aria-label="Network decision highlights" className="py-8 bg-[#EAF0F6] border-b border-slate-200/80">
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 lg:gap-6">
-          <div className="flex items-center gap-3.5 p-4 rounded-xl bg-muted/40 border border-border/60">
+          <div className="flex items-center gap-3.5 p-4 rounded-xl bg-white/90 border border-slate-200/80 shadow-xs hover:shadow-md transition-shadow">
             <div className="w-10 h-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0">
               <MapPin className="w-5 h-5" />
             </div>
@@ -192,7 +192,7 @@ const Index = () => {
             </div>
           </div>
 
-          <div className="flex items-center gap-3.5 p-4 rounded-xl bg-muted/40 border border-border/60">
+          <div className="flex items-center gap-3.5 p-4 rounded-xl bg-white/90 border border-slate-200/80 shadow-xs hover:shadow-md transition-shadow">
             <div className="w-10 h-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0">
               <CheckCircle className="w-5 h-5" />
             </div>
@@ -202,7 +202,7 @@ const Index = () => {
             </div>
           </div>
 
-          <div className="flex items-center gap-3.5 p-4 rounded-xl bg-muted/40 border border-border/60">
+          <div className="flex items-center gap-3.5 p-4 rounded-xl bg-white/90 border border-slate-200/80 shadow-xs hover:shadow-md transition-shadow">
             <div className="w-10 h-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0">
               <DollarSign className="w-5 h-5" />
             </div>
@@ -212,7 +212,7 @@ const Index = () => {
             </div>
           </div>
 
-          <div className="flex items-center gap-3.5 p-4 rounded-xl bg-muted/40 border border-border/60">
+          <div className="flex items-center gap-3.5 p-4 rounded-xl bg-white/90 border border-slate-200/80 shadow-xs hover:shadow-md transition-shadow">
             <div className="w-10 h-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0">
               <Navigation className="w-5 h-5" />
             </div>
@@ -228,10 +228,10 @@ const Index = () => {
 
   // 3. BRAND STORY SECTION
   const brandStorySection = (
-    <section className="py-20 lg:py-28 bg-muted/20 border-b border-border">
+    <section className="py-20 lg:py-28 bg-[#F4F6F9] border-b border-slate-200/80">
       <div className="container mx-auto px-4">
         <div className="max-w-4xl mx-auto text-center space-y-6">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold uppercase tracking-wider">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold uppercase tracking-wider">
             Our Purpose
           </div>
           <h2 className="font-display font-black text-3xl sm:text-5xl text-foreground">
@@ -243,20 +243,20 @@ const Index = () => {
 
           {/* Visual relationship: rider -> charge -> road */}
           <div className="grid sm:grid-cols-3 gap-6 pt-10 text-left">
-            <div className="p-6 rounded-2xl bg-card border border-border shadow-sm">
-              <div className="w-10 h-10 rounded-lg bg-blue-500/10 text-blue-500 flex items-center justify-center font-bold text-lg mb-4">1</div>
+            <div className="p-6 rounded-2xl bg-gradient-to-b from-white to-slate-50/80 border border-slate-200/90 shadow-md">
+              <div className="w-10 h-10 rounded-lg bg-blue-500/10 text-blue-600 font-black text-lg mb-4 flex items-center justify-center border border-blue-500/20">1</div>
               <h3 className="font-bold text-lg text-foreground mb-1">Rider Needs Power</h3>
               <p className="text-sm text-muted-foreground leading-relaxed">Riders on daily commutes or longer journeys need reliable charging access nearby.</p>
             </div>
 
-            <div className="p-6 rounded-2xl bg-card border border-border shadow-sm">
-              <div className="w-10 h-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center font-bold text-lg mb-4">2</div>
+            <div className="p-6 rounded-2xl bg-gradient-to-b from-white to-blue-50/40 border border-blue-200/80 shadow-md">
+              <div className="w-10 h-10 rounded-lg bg-primary/10 text-primary font-black text-lg mb-4 flex items-center justify-center border border-primary/20">2</div>
               <h3 className="font-bold text-lg text-foreground mb-1">Connect & Charge</h3>
               <p className="text-sm text-muted-foreground leading-relaxed">ChargePush connects riders to verified home hosts, local spots, and commercial stations.</p>
             </div>
 
-            <div className="p-6 rounded-2xl bg-card border border-border shadow-sm">
-              <div className="w-10 h-10 rounded-lg bg-emerald-500/10 text-emerald-500 flex items-center justify-center font-bold text-lg mb-4">3</div>
+            <div className="p-6 rounded-2xl bg-gradient-to-b from-white to-emerald-50/40 border border-emerald-200/80 shadow-md">
+              <div className="w-10 h-10 rounded-lg bg-emerald-500/10 text-emerald-600 font-black text-lg mb-4 flex items-center justify-center border border-emerald-500/20">3</div>
               <h3 className="font-bold text-lg text-foreground mb-1">Keep Moving</h3>
               <p className="text-sm text-muted-foreground leading-relaxed">Plug in, charge with confidence, and continue down the road to your real destination.</p>
             </div>
@@ -268,10 +268,10 @@ const Index = () => {
 
   // 4. THE NETWORK SECTION
   const networkSection = (
-    <section className="py-20 lg:py-28 bg-card border-b border-border">
+    <section className="py-20 lg:py-28 bg-[#EAF0F6] border-b border-slate-200/80">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold uppercase tracking-wider mb-4">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold uppercase tracking-wider mb-4">
             <Layers className="w-4 h-4" /> Three Access Layers
           </div>
           <h2 className="font-display font-black text-3xl sm:text-5xl text-foreground mb-4">
@@ -284,43 +284,43 @@ const Index = () => {
 
         <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
           {/* Layer 1 */}
-          <div className="p-8 rounded-3xl bg-muted/40 border border-border hover:border-primary/40 transition-all duration-300">
-            <div className="w-14 h-14 rounded-2xl bg-primary/10 text-primary flex items-center justify-center mb-6">
+          <div className="p-8 rounded-3xl bg-gradient-to-b from-white via-white to-blue-50/40 border border-blue-200/70 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+            <div className="w-14 h-14 rounded-2xl bg-primary/10 text-primary flex items-center justify-center mb-6 border border-primary/20 shadow-xs">
               <Home className="w-7 h-7" />
             </div>
             <h3 className="font-display font-bold text-2xl text-foreground mb-2">Home Hosts</h3>
             <p className="text-sm text-muted-foreground leading-relaxed mb-4">
               Residential outlets and private home setups opened by homeowners to support neighborhood riders.
             </p>
-            <span className="inline-block text-xs font-semibold text-primary bg-primary/10 px-3 py-1 rounded-full">
+            <span className="inline-block text-xs font-semibold text-primary bg-primary/10 px-3 py-1 rounded-full border border-primary/20">
               Connected through ChargePush
             </span>
           </div>
 
           {/* Layer 2 */}
-          <div className="p-8 rounded-3xl bg-muted/40 border border-border hover:border-primary/40 transition-all duration-300">
-            <div className="w-14 h-14 rounded-2xl bg-cyan-500/10 text-cyan-500 flex items-center justify-center mb-6">
+          <div className="p-8 rounded-3xl bg-gradient-to-b from-white via-white to-cyan-50/40 border border-cyan-200/70 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+            <div className="w-14 h-14 rounded-2xl bg-cyan-500/10 text-cyan-600 flex items-center justify-center mb-6 border border-cyan-500/20 shadow-xs">
               <MapPin className="w-7 h-7" />
             </div>
             <h3 className="font-display font-bold text-2xl text-foreground mb-2">Local Spots</h3>
             <p className="text-sm text-muted-foreground leading-relaxed mb-4">
               Shops, cafes, societies, and local businesses providing charging access for visitors and community riders.
             </p>
-            <span className="inline-block text-xs font-semibold text-cyan-500 bg-cyan-500/10 px-3 py-1 rounded-full">
+            <span className="inline-block text-xs font-semibold text-cyan-600 bg-cyan-500/10 px-3 py-1 rounded-full border border-cyan-500/20">
               Connected through ChargePush
             </span>
           </div>
 
           {/* Layer 3 */}
-          <div className="p-8 rounded-3xl bg-muted/40 border border-border hover:border-primary/40 transition-all duration-300">
-            <div className="w-14 h-14 rounded-2xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center mb-6">
+          <div className="p-8 rounded-3xl bg-gradient-to-b from-white via-white to-emerald-50/40 border border-emerald-200/70 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+            <div className="w-14 h-14 rounded-2xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center mb-6 border border-emerald-500/20 shadow-xs">
               <Zap className="w-7 h-7" />
             </div>
             <h3 className="font-display font-bold text-2xl text-foreground mb-2">Network Stations</h3>
             <p className="text-sm text-muted-foreground leading-relaxed mb-4">
               Commercial charging networks and fast station hubs integrated into one search map.
             </p>
-            <span className="inline-block text-xs font-semibold text-emerald-500 bg-emerald-500/10 px-3 py-1 rounded-full">
+            <span className="inline-block text-xs font-semibold text-emerald-600 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">
               Connected through ChargePush
             </span>
           </div>
@@ -337,10 +337,10 @@ const Index = () => {
 
   // 5. RIDER EXPERIENCE SECTION
   const riderExperienceSection = (
-    <section className="py-20 lg:py-28 bg-muted/20 border-b border-border">
+    <section className="py-20 lg:py-28 bg-[#F4F6F9] border-b border-slate-200/80">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold uppercase tracking-wider mb-4">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold uppercase tracking-wider mb-4">
             Rider Flow
           </div>
           <h2 className="font-display font-black text-3xl sm:text-5xl text-foreground mb-4">
@@ -359,9 +359,9 @@ const Index = () => {
             { step: "4", title: "CHARGE", text: "Arrive at the verified host location and plug in safely." },
             { step: "5", title: "GO", text: "Unplug and continue your journey with full confidence." },
           ].map((item, i) => (
-            <div key={i} className="p-6 rounded-2xl bg-card border border-border shadow-sm flex flex-col justify-between">
+            <div key={i} className="p-6 rounded-2xl bg-gradient-to-b from-white to-slate-50/80 border border-slate-200/90 shadow-md flex flex-col justify-between hover:shadow-lg transition-shadow">
               <div>
-                <span className="w-8 h-8 rounded-lg gradient-primary text-white font-bold text-sm flex items-center justify-center mb-4">
+                <span className="w-8 h-8 rounded-lg gradient-primary text-white font-bold text-sm flex items-center justify-center mb-4 shadow-sm">
                   {item.step}
                 </span>
                 <h3 className="font-display font-bold text-xl text-foreground mb-2">{item.title}</h3>
