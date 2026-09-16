@@ -12,23 +12,44 @@
 @layer base {
   :root {
     /* ── CHARGEPUSH BRAND & COLOR TOKENS ── */
-    --cp-electric:       #0066FF;   /* Electric blue — primary brand accent */
-    --cp-electric-light: #E8F0FF;   /* Tinted blue surface */
-    --cp-electric-dim:   #004DCC;   /* Pressed/hover state */
+    --cp-brand:          #2563EB;   /* Electric blue — primary brand accent */
+    --cp-brand-hover:    #1D4ED8;   /* Hover/pressed CTA */
+    --cp-brand-active:   #1E40AF;   /* Active/pressed CTA */
+    --cp-brand-soft:     #EFF6FF;   /* Accent backgrounds, selected states */
 
-    --cp-ink:            #1A1A2E;   /* Deep graphite — primary text */
-    --cp-ink-secondary:  #4A4A65;   /* Secondary text */
-    --cp-ink-tertiary:   #7A7A99;   /* Captions */
+    --cp-text:           #111827;   /* Primary text, major headings, logo */
+    --cp-text-secondary: #475569;   /* Supporting paragraphs, descriptive text */
+    --cp-text-tertiary:  #64748B;   /* Timestamps, supporting metadata */
+    --cp-text-disabled:  #94A3B8;   /* Disabled controls */
+    --cp-placeholder:    #94A3B8;   /* Search placeholders, optional hints */
 
-    --cp-white:          #FFFFFF;   /* Card surfaces */
-    --cp-canvas:         #F7F6F3;   /* Warm off-white page background */
-    --cp-grey-100:       #F0EFF0;   /* Light dividers */
-    --cp-grey-200:       #E0DFE2;   /* Input borders */
-    --cp-grey-300:       #C8C7CB;   /* Disabled state */
+    --cp-background:     #F8FAFC;   /* Main page background */
+    --cp-background-alt: #F1F5F9;   /* Alternating sections, filter areas */
+    --cp-surface:        #FFFFFF;   /* Cards, modals, elevated surfaces */
+    --cp-surface-muted:  #F1F5F9;   /* White card internal hierarchy */
+
+    --cp-border:         #E2E8F0;   /* Cards, inputs, separators */
+    --cp-border-strong:  #CBD5E1;   /* Focused/high-importance separation */
+    --cp-border-accent:  #BFDBFE;   /* Selected card, active filters */
+
+    --cp-energy:         #06B6D4;   /* Energy/motion accent, route graphics */
+    --cp-energy-soft:    #ECFEFF;   /* Very soft energy background */
 
     --cp-success:        #16A34A;   /* Available / confirmed */
-    --cp-warning:        #D97706;   /* Pending / limited */
+    --cp-success-soft:   #DCFCE7;   /* Success background */
+    --cp-success-text:   #166534;   /* Success badge text */
+
+    --cp-warning:        #D97706;   /* Pending / occupied / caution */
+    --cp-warning-soft:   #FEF3C7;   /* Warning background */
+    --cp-warning-text:   #92400E;   /* Warning badge text */
+
     --cp-error:          #DC2626;   /* Error / unavailable */
+    --cp-error-soft:     #FEE2E2;   /* Error background */
+    --cp-error-text:     #991B1B;   /* Error badge text */
+
+    --cp-info:           #2563EB;   /* Explanations, informational alerts */
+    --cp-info-soft:      #EFF6FF;   /* Info background */
+    --cp-info-text:      #1E3A8A;   /* Info text */
 
     /* ── SPACING TOKENS ── */
     --space-1: 4px;
@@ -53,40 +74,40 @@
     --shadow-md: 0 4px 16px rgba(26,26,46,0.10);
     --shadow-lg: 0 12px 40px rgba(26,26,46,0.14);
 
-    --background: 40 14% 96%;
-    --foreground: 240 28% 15%;
+    --background: 210 40% 98%;
+    --foreground: 221 39% 11%;
 
     --card: 0 0% 100%;
-    --card-foreground: 240 28% 15%;
+    --card-foreground: 221 39% 11%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 240 28% 15%;
+    --popover-foreground: 221 39% 11%;
 
-    --primary: 215 100% 50%;
+    --primary: 217 83% 53%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 220 14% 92%;
-    --secondary-foreground: 240 28% 15%;
+    --secondary: 210 18% 96%;
+    --secondary-foreground: 210 13% 30%;
 
-    --muted: 220 14% 92%;
-    --muted-foreground: 240 15% 35%;
+    --muted: 210 18% 96%;
+    --muted-foreground: 210 13% 42%;
 
-    --accent: 215 100% 50%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 214 100% 97%;
+    --accent-foreground: 221 76% 48%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 220 14% 88%;
-    --input: 220 14% 88%;
-    --ring: 215 100% 50%;
+    --border: 210 13% 90%;
+    --input: 210 13% 90%;
+    --ring: 217 83% 53%;
 
     --radius: 0.75rem;
 
-    --graphite: 240 28% 15%;
+    --graphite: 221 39% 11%;
     --graphite-foreground: 0 0% 100%;
 
-    --electric: 215 100% 50%;
+    --electric: 217 83% 53%;
     --electric-foreground: 0 0% 100%;
 
     --ev-green: 142 71% 45%;
@@ -95,17 +116,17 @@
     --warning: 38 92% 45%;
     --warning-foreground: 0 0% 100%;
 
-    --silver: 220 10% 75%;
-    --soft-gray: 40 14% 96%;
+    --silver: 210 13% 83%;
+    --soft-gray: 210 18% 96%;
 
     --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 215 100% 50%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 240 4.8% 95.9%;
-    --sidebar-accent-foreground: 240 5.9% 10%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 215 100% 50%;
+    --sidebar-foreground: 210 13% 30%;
+    --sidebar-primary: 217 83% 53%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 214 100% 97%;
+    --sidebar-accent-foreground: 221 76% 48%;
+    --sidebar-border: 210 13% 90%;
+    --sidebar-ring: 217 83% 53%;
   }
 }
 
@@ -133,16 +154,16 @@
   }
 
   .gradient-primary {
-    background: linear-gradient(135deg, hsl(215 100% 50%), hsl(190 100% 46%));
+    background: linear-gradient(135deg, #2563EB, #06B6D4);
   }
 
   .gradient-hero {
-    background: linear-gradient(135deg, hsl(220 24% 8%) 0%, hsl(220 28% 14%) 60%, hsl(215 80% 18%) 100%);
+    background: #111827;
   }
 
   .text-gradient {
     @apply bg-clip-text text-transparent;
-    background-image: linear-gradient(135deg, hsl(215 100% 60%), hsl(190 100% 50%));
+    background-image: linear-gradient(135deg, #2563EB, #06B6D4);
   }
 
   .animate-float {
@@ -320,7 +341,7 @@
 }
 
 @media (max-width: 640px) {
-  .gradient-hero { background: linear-gradient(160deg, hsl(228 40% 16%) 0%, hsl(217 60% 25%) 72%, hsl(228 40% 16%) 100%); }
+  .gradient-hero { background: linear-gradient(160deg, #111827 0%, #1E293B 72%, #111827 100%); }
 }
 
 /* === Round 11: global responsive safety layer ===
@@ -488,7 +509,7 @@
 }
 
 .leaflet-control-zoom a:hover {
-  background-color: var(--cp-electric-light) !important;
-  color: var(--cp-electric) !important;
+  background-color: #EFF6FF !important;
+  color: #1D4ED8 !important;
 }
 

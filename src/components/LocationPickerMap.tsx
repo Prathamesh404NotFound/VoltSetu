@@ -100,7 +100,7 @@ export default function LocationPickerMap({
         el.className = "location-picker-pin";
         el.innerHTML = `
           <svg xmlns="http://www.w3.org/2000/svg" width="28" height="36" viewBox="0 0 30 38" fill="none" style="filter:drop-shadow(0 3px 5px rgba(0,0,0,.25));">
-            <path d="M15 0C6.71 0 0 6.71 0 15C0 26.25 15 38 15 38C15 38 30 26.25 30 15C30 6.71 23.29 0 15 0Z M15 20.5C11.96 20.5 9.5 18.04 9.5 15C9.5 11.96 11.96 9.5 15 9.5C18.04 9.5 20.5 11.96 20.5 15C20.5 18.04 18.04 20.5 15 20.5Z" fill="#0066FF" stroke="white" stroke-width="2"/>
+            <path d="M15 0C6.71 0 0 6.71 0 15C0 26.25 15 38 15 38C15 38 30 26.25 30 15C30 6.71 23.29 0 15 0Z M15 20.5C11.96 20.5 9.5 18.04 9.5 15C9.5 11.96 11.96 9.5 15 9.5C18.04 9.5 20.5 11.96 20.5 15C20.5 18.04 18.04 20.5 15 20.5Z" fill="#2563EB" stroke="white" stroke-width="2"/>
           </svg>
         `;
 
@@ -137,8 +137,8 @@ export default function LocationPickerMap({
 
       <div
         className={`rounded-2xl overflow-hidden border shadow-sm w-full transition-colors ${
-          quality === "approximate" ? "border-amber-300" :
-          quality === "imprecise" ? "border-orange-400" :
+          quality === "approximate" ? "border-[#D97706]/30" :
+          quality === "imprecise" ? "border-[#D97706]/30" :
           "border-border"
         }`}
         style={{ height }}

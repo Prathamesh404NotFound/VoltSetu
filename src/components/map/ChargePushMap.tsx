@@ -196,7 +196,7 @@ export function ChargePushMap({
         source: "chargers-source",
         filter: ["has", "point_count"],
         paint: {
-          "circle-color": emergencyMode ? "#DC2626" : "#0066FF",
+          "circle-color": emergencyMode ? "#DC2626" : "#2563EB",
           "circle-radius": [
             "step",
             ["get", "point_count"],
@@ -238,12 +238,12 @@ export function ChargePushMap({
             "match",
             ["get", "statusColor"],
             "green",
-            "#10B981",
+            "#16A34A",
             "amber",
-            "#F59E0B",
+            "#D97706",
             "gray",
-            "#9CA3AF",
-            /* default electric */ "#0066FF",
+            "#64748B",
+            /* default electric */ "#2563EB",
           ],
           "circle-radius": [
             "case",
@@ -322,7 +322,7 @@ export function ChargePushMap({
               "line-cap": "round",
             },
             paint: {
-              "line-color": emergencyMode ? "#EF4444" : "#0066FF",
+              "line-color": emergencyMode ? "#DC2626" : "#2563EB",
               "line-width": 5,
               "line-opacity": 0.85,
             },
@@ -360,8 +360,8 @@ export function ChargePushMap({
             <style>
               @keyframes user-pulse { 0% { transform: scale(0.6); opacity: 0.8; } 100% { transform: scale(2.4); opacity: 0; } }
             </style>
-            <div style="position:absolute;width:24px;height:24px;background:#10B981;border-radius:50%;opacity:0.4;animation:user-pulse 1.8s infinite ease-out;"></div>
-            <div style="position:absolute;top:4px;left:4px;width:16px;height:16px;background:#10B981;border:2.5px solid #FFFFFF;border-radius:50%;box-shadow:0 2px 6px rgba(0,0,0,0.25);"></div>
+            <div style="position:absolute;width:24px;height:24px;background:#2563EB;border-radius:50%;opacity:0.12;animation:user-pulse 1.8s infinite ease-out;"></div>
+            <div style="position:absolute;top:4px;left:4px;width:16px;height:16px;background:#2563EB;border:2.5px solid #FFFFFF;border-radius:50%;box-shadow:0 2px 6px rgba(0,0,0,0.25);"></div>
           </div>
         `;
 
@@ -386,7 +386,7 @@ export function ChargePushMap({
       if (!destMarkerRef.current) {
         const el = document.createElement("div");
         el.innerHTML = `
-          <div style="width:28px;height:28px;background:#EF4444;border:2px solid #FFFFFF;border-radius:50% 50% 50% 0;transform:rotate(-45deg);box-shadow:0 3px 8px rgba(0,0,0,0.3);display:flex;align-items:center;justify-content:center;">
+            <div style="width:28px;height:28px;background:#111827;border:2px solid #FFFFFF;border-radius:50% 50% 50% 0;transform:rotate(-45deg);box-shadow:0 3px 8px rgba(0,0,0,0.3);display:flex;align-items:center;justify-content:center;">
             <div style="width:8px;height:8px;background:#FFFFFF;border-radius:50%;transform:rotate(45deg);"></div>
           </div>
         `;

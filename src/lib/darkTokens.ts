@@ -1,8 +1,3 @@
-// Round 19: dark-safe utility color classes.
-// Tailwind arbitrary fixed colors (text-green-600, hover:bg-red-50 ...) are nearly
-// invisible on dark backgrounds. These helpers use HSL theme tokens so badges and
-// status text stay legible in both light and dark mode.
-
 import { isDark } from "@/lib/theme";
 
 // Booking / payout / status text colors — works in light AND dark mode.
@@ -12,14 +7,14 @@ export function statusTextColor(status: string): string {
     case "completed":
     case "approved":
     case "paid_out":
-      return dark ? "text-[hsl(var(--ev-green))]" : "text-green-600";
+      return dark ? "text-[#16A34A]" : "text-[#16A34A]";
     case "pending":
     case "requested":
     case "processing":
-      return dark ? "text-[hsl(var(--warning))]" : "text-amber-600";
+      return dark ? "text-[#D97706]" : "text-[#D97706]";
     case "cancelled":
     case "rejected":
-      return dark ? "text-[hsl(var(--destructive))]" : "text-red-600";
+      return dark ? "text-[#DC2626]" : "text-[#DC2626]";
     default:
       return "text-muted-foreground";
   }
@@ -27,20 +22,15 @@ export function statusTextColor(status: string): string {
 
 // Danger button outline (cancel payout / reject) — works in light AND dark mode.
 export function dangerOutlineClasses(): string {
-  const dark = isDark();
-  return dark
-    ? "border-red-500/40 text-red-400 hover:bg-red-500/10"
-    : "border-red-200 text-red-600 hover:bg-red-50";
+  return "border-[#DC2626]/40 text-[#DC2626] hover:bg-[#FEE2E2]";
 }
 
 // Success money amounts (earnings, CO2, refunds) — works in light AND dark mode.
 export function successTextClasses(): string {
-  const dark = isDark();
-  return dark ? "text-[hsl(var(--ev-green))]" : "text-green-600";
+  return "text-[#16A34A]";
 }
 
 // Small red notification dot — works in light AND dark mode.
 export function dotRedClasses(): string {
-  const dark = isDark();
-  return dark ? "bg-red-500 text-white" : "bg-red-500 text-white";
+  return "bg-[#DC2626] text-white";
 }

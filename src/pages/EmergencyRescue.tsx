@@ -153,7 +153,7 @@ export default function EmergencyRescue() {
   if (loading) {
     return (
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#0a0a0a] text-neutral-100">
-        <Loader2 className="h-8 w-8 animate-spin text-red-500" />
+        <Loader2 className="h-8 w-8 animate-spin text-[#DC2626]" />
       </div>
     );
   }
@@ -162,11 +162,11 @@ export default function EmergencyRescue() {
     <div className="fixed inset-0 z-50 overflow-y-auto bg-[#0a0a0a] text-neutral-100">
       <div className="relative min-h-full">
         {/* Header */}
-        <header className="sticky top-0 z-10 flex items-center justify-between border-b border-red-950/60 bg-[#0a0a0a]/90 px-4 py-3 backdrop-blur">
-          <div className="flex items-center gap-2">
-            <BatteryWarning className="h-6 w-6 text-red-500" />
-            <span className="font-display text-lg font-bold tracking-tight">CHARGEPUSH RESCUE</span>
-            <span className="animate-pulse rounded-full bg-red-600/20 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wider text-red-400">
+          <header className="sticky top-0 z-10 flex items-center justify-between border-b border-[#991B1B]/60 bg-[#0a0a0a]/90 px-4 py-3 backdrop-blur">
+            <div className="flex items-center gap-2">
+              <BatteryWarning className="h-6 w-6 text-[#DC2626]" />
+              <span className="font-display text-lg font-bold tracking-tight">CHARGEPUSH RESCUE</span>
+              <span className="animate-pulse rounded-full bg-[#DC2626]/20 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wider text-[#FECACA]">
               SOS
             </span>
           </div>
@@ -182,7 +182,7 @@ export default function EmergencyRescue() {
         <div className="mx-auto max-w-xl px-4 pb-24 pt-6">
           {/* Urgency panel */}
           <div className="mb-5 rounded-2xl border border-red-950/60 bg-gradient-to-b from-red-950/40 to-transparent p-5">
-            <div className="mb-2 flex items-center gap-2 text-red-400">
+            <div className="mb-2 flex items-center gap-2 text-[#FECACA]">
               <AlertTriangle className="h-4 w-4" />
               <span className="text-xs font-semibold uppercase tracking-wider">ChargePush Rescue</span>
             </div>
@@ -193,7 +193,7 @@ export default function EmergencyRescue() {
               Find a nearby charging option when you need one most.
             </p>
             <div className="flex items-baseline gap-3 pt-2 border-t border-red-950/60">
-              <span className="font-display text-3xl font-bold tabular-nums text-red-500">{display}</span>
+              <span className="font-display text-3xl font-bold tabular-nums text-[#DC2626]">{display}</span>
               <span className="text-xs text-neutral-400">rescue window remaining</span>
             </div>
             <p className="mt-2 text-xs text-neutral-400">
@@ -201,7 +201,7 @@ export default function EmergencyRescue() {
             </p>
             <a
               href="tel:112"
-              className="mt-3 flex items-center justify-center gap-2 rounded-xl border border-red-800/60 bg-red-950/30 px-4 py-2.5 text-sm font-semibold text-red-300 transition-colors hover:bg-red-950/60"
+              className="mt-3 flex items-center justify-center gap-2 rounded-xl border border-[#991B1B]/60 bg-[#991B1B]/30 px-4 py-2.5 text-sm font-semibold text-[#FECACA] transition-colors hover:bg-[#991B1B]/60"
             >
               <PhoneCall className="h-4 w-4" /> In grave danger? Call 112 (National Emergency)
             </a>
@@ -209,7 +209,7 @@ export default function EmergencyRescue() {
 
           {/* Location status + manual city picker */}
           <div className="mb-4 flex flex-wrap items-center gap-2 text-sm text-neutral-400">
-            <MapPin className="h-4 w-4 text-red-400" />
+            <MapPin className="h-4 w-4 text-[#DC2626]" />
             {stage === "locating" ? (
               <span>Locating you…</span>
             ) : (
@@ -229,8 +229,8 @@ export default function EmergencyRescue() {
                   onClick={() => setCity(c)}
                   className={`rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors ${
                     city?.slug === c.slug
-                      ? "border-red-600 bg-red-600/20 text-red-300"
-                      : "border-neutral-800 text-neutral-400 hover:border-neutral-600 hover:text-neutral-200"
+                      ? "border-[#DC2626] bg-[#DC2626]/20 text-[#FECACA]"
+                      : "border-[#1E293B] text-[#94A3B8] hover:border-[#475569] hover:text-[#CBD5E1]"
                   }`}
                 >
                   {c.name}
@@ -241,9 +241,9 @@ export default function EmergencyRescue() {
 
           {/* Battery level selector */}
           {stage === "ready" && (
-            <div className="mb-5 rounded-2xl border border-neutral-800 bg-neutral-950/60 p-4">
-              <div className="mb-3 flex items-center gap-2 text-sm font-semibold text-neutral-200">
-                <Battery className="h-4 w-4 text-red-400" />
+            <div className="mb-5 rounded-2xl border border-[#1E293B] bg-[#0F172A]/60 p-4">
+              <div className="mb-3 flex items-center gap-2 text-sm font-semibold text-[#E2E8F0]">
+                <Battery className="h-4 w-4 text-[#DC2626]" />
                 How much battery is left?
                 <span className="text-xs font-normal text-neutral-500">(we'll only show spots within reach)</span>
               </div>
@@ -256,8 +256,8 @@ export default function EmergencyRescue() {
                       onClick={() => setBattery(pct)}
                       className={`flex items-center gap-2 rounded-xl border px-3 py-2 text-sm font-semibold transition-all ${
                         battery === pct
-                          ? "border-red-600 bg-red-600/20 text-red-300"
-                          : "border-neutral-800 text-neutral-300 hover:border-neutral-600"
+                          ? "border-[#DC2626] bg-[#DC2626]/20 text-[#FECACA]"
+                          : "border-[#1E293B] text-[#CBD5E1] hover:border-[#475569]"
                       }`}
                     >
                       <span>{pct}%</span>
@@ -279,7 +279,7 @@ export default function EmergencyRescue() {
 
           {/* MapLibre GL Rescue Map */}
           {stage === "ready" && mapSpots.length >= 1 && (
-            <div className="mb-5 overflow-hidden rounded-2xl border border-neutral-800 shadow-lg">
+            <div className="mb-5 overflow-hidden rounded-2xl border border-[#1E293B] shadow-lg">
               <ChargePushMap
                 spots={mapSpots.map((r) => r.spot)}
                 height="220px"
@@ -306,38 +306,38 @@ export default function EmergencyRescue() {
                   <h3 className="font-display text-lg font-semibold leading-tight">
                     {rescue.spot.name || "Charging spot"}
                   </h3>
-                  <span className="whitespace-nowrap rounded-full bg-red-600/15 px-2 py-0.5 text-xs font-semibold text-red-400">
+                  <span className="whitespace-nowrap rounded-full bg-[#DC2626]/15 px-2 py-0.5 text-xs font-semibold text-[#FECACA]">
                     {rescue.distanceLabel}
                   </span>
                 </div>
-                <p className="mb-3 text-sm text-neutral-400">
+                <p className="mb-3 text-sm text-[#94A3B8]">
                   {rescue.spot.hostName ? `${rescue.spot.hostName} · ` : ""}
                   {rescue.spot.address || rescue.spot.city || "India"}
                 </p>
-                <div className="mb-4 flex flex-wrap items-center gap-3 text-sm text-neutral-300">
+                <div className="mb-4 flex flex-wrap items-center gap-3 text-sm text-[#CBD5E1]">
                   <span className="flex items-center gap-1.5">
-                    <Zap className="h-4 w-4 text-amber-400" />
+                    <Zap className="h-4 w-4 text-[#D97706]" />
                     ₹{rescue.spot.pricePerHour ?? "—"}{rescue.spot.pricePerHour ? "/hr" : ""}
                   </span>
                   <span className="flex items-center gap-1.5">
-                    <Clock className="h-4 w-4 text-neutral-500" />
+                    <Clock className="h-4 w-4 text-[#64748B]" />
                     {rescue.spot.openHours || "24/7"}
                   </span>
-                  <span className="flex items-center gap-1.5 rounded-full bg-emerald-500/10 px-2 py-0.5 text-xs font-semibold text-emerald-400">
+                  <span className="flex items-center gap-1.5 rounded-full bg-[#16A34A]/10 px-2 py-0.5 text-xs font-semibold text-[#16A34A]">
                     Open now
                   </span>
                 </div>
 
                 <div className="flex items-center gap-2">
                   {done?.spot.id === rescue.spot.id ? (
-                    <div className="flex-1 rounded-xl bg-emerald-600/15 px-4 py-3 text-center text-sm font-semibold text-emerald-400">
+                    <div className="flex-1 rounded-xl bg-[#16A34A]/15 px-4 py-3 text-center text-sm font-semibold text-[#16A34A]">
                       ✓ Rescue request sent — host will confirm
                     </div>
                   ) : (
                     <button
                       onClick={() => handleRescue(rescue)}
                       disabled={bookingSpot !== null}
-                      className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-red-600 px-4 py-3.5 text-base font-bold text-white shadow-lg shadow-red-900/40 transition-all hover:bg-red-500 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60"
+                      className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-[#DC2626] px-4 py-3.5 text-base font-bold text-white shadow-lg shadow-[#991B1B]/40 transition-all hover:bg-[#DC2626] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60"
                     >
                       {bookingSpot?.spot.id === rescue.spot.id ? (
                         <Loader2 className="h-5 w-5 animate-spin" />
@@ -350,7 +350,7 @@ export default function EmergencyRescue() {
                   {rescue.spot.hostPhone && (
                     <a
                       href={`tel:${rescue.spot.hostPhone}`}
-                      className="rounded-xl border border-neutral-700 p-3.5 text-neutral-200 transition-colors hover:border-red-700 hover:text-red-400"
+                      className="rounded-xl border border-[#1E293B] p-3.5 text-[#E2E8F0] transition-colors hover:border-[#991B1B]/60 hover:text-[#FECACA]"
                       aria-label={`Call ${rescue.spot.hostName || "host"}`}
                     >
                       <Phone className="h-5 w-5" />
@@ -363,7 +363,7 @@ export default function EmergencyRescue() {
                       )}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="rounded-xl border border-neutral-700 p-3.5 text-neutral-200 transition-colors hover:border-emerald-600 hover:text-emerald-400"
+                      className="rounded-xl border border-[#1E293B] p-3.5 text-[#E2E8F0] transition-colors hover:border-[#16A34A] hover:text-[#16A34A]"
                       aria-label="Message host on WhatsApp"
                     >
                       <MessageCircle className="h-5 w-5" />
@@ -376,8 +376,8 @@ export default function EmergencyRescue() {
 
           {/* Safety tips */}
           {stage === "ready" && (
-            <div className="mb-4 rounded-2xl border border-amber-900/40 bg-amber-950/20 p-4">
-              <div className="mb-2 flex items-center gap-2 text-amber-400">
+            <div className="mb-4 rounded-2xl border border-[#D97706]/30 bg-[#D97706]/10 p-4">
+              <div className="mb-2 flex items-center gap-2 text-[#D97706]">
                 <LifeBuoy className="h-4 w-4" />
                 <span className="text-xs font-bold uppercase tracking-wider">While you wait — safety first</span>
               </div>

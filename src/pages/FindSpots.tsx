@@ -351,12 +351,12 @@ export default function FindSpots() {
                 </>
               ) : userLocation ? (
                 <>
-                  <MapPin className="w-3.5 h-3.5 text-emerald-400" />
+                  <MapPin className="w-3.5 h-3.5 text-[#16A34A]" />
                   <span>{getAccuracyLabel(userLocation.accuracyTier, userLocation.accuracy)}</span>
                 </>
               ) : (
                 <>
-                  <MapPin className="w-3.5 h-3.5 text-amber-400" />
+                  <MapPin className="w-3.5 h-3.5 text-[#D97706]" />
                   <span>Location unavailable — showing all active network spots</span>
                 </>
               )}
@@ -488,7 +488,7 @@ export default function FindSpots() {
               </div>
 
               {!userLocation && (
-                <div className="flex flex-col gap-3 rounded-xl border border-amber-200 bg-amber-50 dark:bg-amber-950/30 dark:border-amber-800 px-4 py-3 text-sm text-amber-900 dark:text-amber-100">
+                <div className="flex flex-col gap-3 rounded-xl border border-[#D97706]/30 bg-[#FEF3C7] px-4 py-3 text-sm text-[#92400E]">
                   <div className="flex items-start gap-2">
                     <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
                     <span>
@@ -518,7 +518,7 @@ export default function FindSpots() {
                         setLocationError(null);
                         toast.success("Starting point set");
                       }}
-                      className="inline-flex items-center gap-1.5 rounded-lg bg-amber-100 dark:bg-amber-900/50 px-3 py-1.5 font-medium text-amber-900 dark:text-amber-100 hover:bg-amber-200 dark:hover:bg-amber-800/50 transition-colors"
+                      className="inline-flex items-center gap-1.5 rounded-lg bg-[#FEF3C7] px-3 py-1.5 font-medium text-[#92400E] hover:bg-[#FDE68A] transition-colors"
                     >
                       <MapPin className="w-3.5 h-3.5" />
                       Set starting point by coordinates
@@ -529,7 +529,7 @@ export default function FindSpots() {
                       placeholder="Latitude"
                       value={manualLat}
                       onChange={(e) => setManualLat(e.target.value)}
-                      className="w-32 rounded-lg border border-amber-300 dark:border-amber-700 bg-white dark:bg-slate-900 px-2.5 py-1.5 text-sm text-slate-900 dark:text-slate-100 focus:outline-none"
+                      className="w-32 rounded-lg border border-[#D97706]/40 bg-white px-2.5 py-1.5 text-sm text-[#111827] focus:outline-none focus:ring-2 focus:ring-[#2563EB]"
                     />
                     <input
                       type="text"
@@ -537,7 +537,7 @@ export default function FindSpots() {
                       placeholder="Longitude"
                       value={manualLng}
                       onChange={(e) => setManualLng(e.target.value)}
-                      className="w-32 rounded-lg border border-amber-300 dark:border-amber-700 bg-white dark:bg-slate-900 px-2.5 py-1.5 text-sm text-slate-900 dark:text-slate-100 focus:outline-none"
+                      className="w-32 rounded-lg border border-[#D97706]/40 bg-white px-2.5 py-1.5 text-sm text-[#111827] focus:outline-none focus:ring-2 focus:ring-[#2563EB]"
                     />
                   </div>
                 </div>
