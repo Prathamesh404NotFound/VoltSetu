@@ -107,7 +107,7 @@ export default function Navbar() {
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2.5 group flex-shrink-0 mr-4">
             <div className="w-8 h-8 rounded-xl bg-white flex items-center justify-center shadow-md shadow-primary/20 group-hover:scale-105 transition-transform p-0.5 border border-primary/20">
-              <img src="/logo.png" alt="ChargePush Logo" className="w-full h-full object-contain rounded-lg" />
+              <img src="/logo.png" alt="ChargePush Logo" width={32} height={32} className="w-full h-full object-contain rounded-lg" />
             </div>
             <span className="font-display font-black text-xl tracking-tight text-foreground">
               CHARGE<span className="text-primary">PUSH</span>
@@ -115,7 +115,7 @@ export default function Navbar() {
           </Link>
 
           {/* Desktop Nav - Floating Pill Style */}
-          <nav className="hidden lg:flex items-center gap-1 bg-muted/60 p-1.5 rounded-full border border-border/50 shadow-inner min-w-0">
+          <nav aria-label="Main Navigation" className="hidden lg:flex items-center gap-1 bg-muted/60 p-1.5 rounded-full border border-border/50 shadow-inner min-w-0">
             {primaryLinks.map((link) => {
               const isActive = location.pathname === link.to;
               return (

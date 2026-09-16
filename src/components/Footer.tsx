@@ -10,7 +10,7 @@ export default function Footer() {
           <div className="lg:col-span-2 space-y-4">
             <Link to="/" className="inline-flex items-center gap-2.5 group">
               <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform p-1 border border-primary/30">
-                <img src="/logo.png" alt="ChargePush Logo" className="w-full h-full object-contain rounded-lg" />
+                <img src="/logo.png" alt="ChargePush Logo" width={40} height={40} className="w-full h-full object-contain rounded-lg" />
               </div>
               <span className="font-display font-black text-2xl tracking-tight text-white">
                 CHARGE<span className="text-primary">PUSH</span>

@@ -145,6 +145,10 @@ const Index = () => {
               <img
                 src={riderImg}
                 alt="Electric rider using ChargePush on Indian roads"
+                width={800}
+                height={500}
+                fetchPriority="high"
+                decoding="async"
                 className="w-full h-[420px] sm:h-[500px] object-cover group-hover:scale-105 transition-transform duration-700"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/30 to-transparent" />
@@ -412,6 +416,10 @@ const Index = () => {
               <img
                 src={spotsMapImg}
                 alt="ChargePush Route planner preview"
+                width={640}
+                height={360}
+                loading="lazy"
+                decoding="async"
                 className="w-full h-[360px] object-cover"
               />
               <div className="absolute inset-0 bg-slate-950/40 flex items-center justify-center p-6 text-center">
@@ -458,6 +466,10 @@ const Index = () => {
               <img
                 src={hostHomeownerImg}
                 alt="ChargePush Home Host"
+                width={800}
+                height={450}
+                loading="lazy"
+                decoding="async"
                 className="w-full h-[450px] object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent" />
@@ -617,7 +629,7 @@ const Index = () => {
         </div>
 
         {loadingSpots ? (
-          <div className="flex flex-col items-center justify-center py-20 text-muted-foreground">
+          <div className="flex flex-col items-center justify-center py-20 min-h-[440px] text-muted-foreground">
             <Loader2 className="w-10 h-10 animate-spin text-primary mb-4" />
             <p>Loading active charging access points...</p>
           </div>

@@ -23,9 +23,9 @@ export default defineConfig(({ mode }) => ({
     rollupOptions: {
       output: {
         manualChunks(id) {
-          if (id.includes("node_modules/leaflet") || id.includes("node_modules/react-leaflet")) return "leaflet";
           if (id.includes("node_modules/recharts")) return "recharts";
           if (id.includes("node_modules/firebase") || id.includes("node_modules/@firebase")) return "firebase";
+          if (id.includes("node_modules/maplibre-gl")) return "maplibre";
           if (id.includes("node_modules/lucide-react")) return "lucide";
         },
       },
