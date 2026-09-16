@@ -1,5 +1,5 @@
 # ChargePush Robots.txt Configuration
-# Production Domain: https://volt-setu.vercel.app
+# Production Domain: https://chargepush.vercel.app
 
 User-agent: *
 Allow: /
@@ -9,4 +9,4 @@ Disallow: /saved
 Disallow: /settings
 Disallow: /loyalty
 
-Sitemap: https://volt-setu.vercel.app/sitemap.xml
+Sitemap: https://chargepush.vercel.app/sitemap.xml

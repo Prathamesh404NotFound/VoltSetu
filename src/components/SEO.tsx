@@ -1,7 +1,7 @@
 import { Helmet } from "react-helmet-async";
 import { useLocation } from "react-router-dom";
 
-export const SITE_URL = "https://volt-setu.vercel.app";
+export const SITE_URL = "https://chargepush.vercel.app";
 export const DEFAULT_OG_IMAGE = `${SITE_URL}/og-image.png`;
 
 interface SEOProps {

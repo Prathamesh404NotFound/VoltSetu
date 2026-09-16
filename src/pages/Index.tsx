@@ -664,8 +664,8 @@ const Index = () => {
     "@context": "https://schema.org",
     "@type": "Organization",
     "name": "ChargePush",
-    "url": "https://volt-setu.vercel.app",
-    "logo": "https://volt-setu.vercel.app/logo.png",
+    "url": "https://chargepush.vercel.app",
+    "logo": "https://chargepush.vercel.app/logo.png",
     "description": "ChargePush is a distributed EV charging-access network and marketplace connecting EV riders with nearby charging access from home hosts, local charging spots, and charging networks."
   };
 
