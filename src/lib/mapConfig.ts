@@ -6,12 +6,12 @@
  */
 
 export const MAP_CONFIG = {
-  // Primary Vector Tile Style from OpenFreeMap
-  STYLE_URL: "https://tiles.openfreemap.org/styles/liberty",
+  // Primary Vector Tile Style from OpenFreeMap (Bright street style with clear labels & roads)
+  STYLE_URL: "https://tiles.openfreemap.org/styles/bright",
 
-  // Default regional center: India centroid
-  DEFAULT_CENTER: [78.9629, 20.5937] as [number, number], // [lng, lat] for MapLibre
-  DEFAULT_ZOOM: 5,
+  // Default regional center: Kolhapur / Maharashtra city center
+  DEFAULT_CENTER: [74.2433, 16.7050] as [number, number], // [lng, lat] for MapLibre
+  DEFAULT_ZOOM: 12,
   CITY_DEFAULT_ZOOM: 13,
   SPOT_DETAIL_ZOOM: 16,
 

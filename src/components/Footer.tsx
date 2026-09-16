@@ -8,11 +8,11 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 lg:gap-12 mb-12">
           {/* Brand Column */}
           <div className="lg:col-span-2 space-y-4">
-            <Link to="/" className="inline-flex items-center gap-2 group">
-              <div className="w-10 h-10 rounded-xl gradient-primary flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform">
-                <Zap className="w-6 h-6 text-primary-foreground fill-current" />
+            <Link to="/" className="inline-flex items-center gap-2.5 group">
+              <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform p-1 border border-primary/30">
+                <img src="/logo.png" alt="ChargePush Logo" className="w-full h-full object-contain rounded-lg" />
               </div>
-              <span className="font-display font-black text-2xl tracking-tight">
+              <span className="font-display font-black text-2xl tracking-tight text-white">
                 CHARGE<span className="text-primary">PUSH</span>
               </span>
             </Link>

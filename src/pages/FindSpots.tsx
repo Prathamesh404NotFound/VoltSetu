@@ -23,6 +23,7 @@ import { getAllNetworkStations, mergeNetworkStations } from "@/lib/networkStatio
 import { getHostSettings, isHostPaused } from "@/lib/hostSettingsService";
 import { toast } from "sonner";
 import SpotsMap from "@/components/SpotsMap";
+import CitySelector from "@/components/CitySelector";
 import SEO from "@/components/SEO";
 import { getCurrentLocation, getAccuracyLabel, type UserLocationResult } from "@/lib/locationService";
 import { fetchRoute, type RouteResult } from "@/lib/routingService";
@@ -330,16 +331,19 @@ export default function FindSpots() {
             </p>
           </div>
 
-          <div className="max-w-2xl mx-auto space-y-3">
-            <div className="relative">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-              <input
-                type="text"
-                placeholder="Search area, landmark or destination..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-12 pr-4 py-4 rounded-2xl bg-card text-foreground shadow-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary border-0 font-medium"
-              />
+          <div className="max-w-3xl mx-auto space-y-3">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
+              <div className="relative flex-1 w-full">
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                <input
+                  type="text"
+                  placeholder="Search area, landmark or destination..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full pl-12 pr-4 py-4 rounded-2xl bg-card text-foreground shadow-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary border-0 font-medium"
+                />
+              </div>
+              <CitySelector variant="hero" className="shrink-0 h-[52px]" />
             </div>
 
             {/* Location UX Status Banner */}
@@ -400,7 +404,9 @@ export default function FindSpots() {
               })}
             </div>
 
-            <div className="flex items-center bg-card border border-border p-1 rounded-full w-fit flex-shrink-0">
+            <div className="flex items-center gap-2.5 flex-shrink-0">
+              <CitySelector variant="filter" />
+              <div className="flex items-center bg-card border border-border p-1 rounded-full w-fit">
               {(
                 [
                   { id: "list" as const, label: "List View" },

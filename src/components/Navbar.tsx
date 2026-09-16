@@ -106,8 +106,8 @@ export default function Navbar() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2.5 group flex-shrink-0 mr-4">
-            <div className="w-8 h-8 rounded-xl bg-primary flex items-center justify-center shadow-md shadow-primary/20 group-hover:scale-105 transition-transform">
-              <Zap className="w-4 h-4 text-primary-foreground fill-current" />
+            <div className="w-8 h-8 rounded-xl bg-white flex items-center justify-center shadow-md shadow-primary/20 group-hover:scale-105 transition-transform p-0.5 border border-primary/20">
+              <img src="/logo.png" alt="ChargePush Logo" className="w-full h-full object-contain rounded-lg" />
             </div>
             <span className="font-display font-black text-xl tracking-tight text-foreground">
               CHARGE<span className="text-primary">PUSH</span>
@@ -165,7 +165,6 @@ export default function Navbar() {
 
           {/* Right Action Bar */}
           <div className="hidden lg:flex items-center gap-2 xl:gap-2.5 min-w-0">
-            <CitySelector onNavigate={navigate} />
             <InstallPwaButton />
 
             {user ? (
@@ -214,8 +213,7 @@ export default function Navbar() {
         {mobileOpen && (
           <div id="mobile-navigation" className="lg:hidden absolute top-full left-0 right-0 glass border-b border-border animate-slide-down shadow-xl">
             <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col gap-1.5">
-              <div className="flex items-center justify-between pb-2 border-b border-border/50">
-                <CitySelector onNavigate={navigate} compact />
+              <div className="flex items-center justify-end pb-2 border-b border-border/50">
                 <button
                   type="button"
                   onClick={() => setLang(lang === "hi" ? "en" : "hi")}
@@ -289,57 +287,5 @@ export default function Navbar() {
 }
 
 /**
- * City selector dropdown: switches between active ChargePush cities.
- */
-export function CitySelector({
-  onNavigate,
-  compact = false,
-}: {
-  onNavigate: (path: string) => void;
-  compact?: boolean;
-}) {
-  const currentSlug = CITIES.find((c) => c.active && window.location.pathname === `/city/${c.slug}`)?.slug ?? "kolhapur";
-  const current = getCityBySlug(currentSlug) ?? CITIES[0];
-
-  return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <button
-          className={cn(
-            "inline-flex items-center gap-1.5 rounded-full border border-border/70 bg-card/80 backdrop-blur-xs px-3 py-1.5 text-xs font-semibold text-foreground hover:border-primary/40 hover:bg-card transition-all shadow-2xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary",
-            compact && "w-auto justify-start rounded-xl text-sm"
-          )}
-          aria-label="Choose a city"
-        >
-          <MapPin className="w-3.5 h-3.5 text-primary" />
-          <span>{current.name}</span>
-          <ChevronDown className="w-3 h-3 opacity-60" />
-        </button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-52 max-h-80 overflow-y-auto rounded-xl p-1.5 shadow-lg">
-        {CITIES.map((city) =>
-          city.active ? (
-            <DropdownMenuItem
-              key={city.slug}
-              onClick={() => onNavigate(`/city/${city.slug}`)}
-              className="cursor-pointer rounded-lg text-xs py-2"
-            >
-              <MapPin className="w-3.5 h-3.5 mr-1.5 text-primary" />
-              {city.name}
-              {city.launch && (
-                <span className="ml-auto text-[10px] font-bold text-ev-green bg-ev-green/15 px-1.5 py-0.5 rounded-full">Active</span>
-              )}
-            </DropdownMenuItem>
-          ) : (
-            <div key={city.slug} className="px-2 py-1.5 text-xs text-muted-foreground/70 flex items-center gap-1.5">
-              <MapPin className="w-3.5 h-3.5 opacity-60" />
-              {city.name}
-              <span className="ml-auto text-[10px] bg-muted px-1.5 py-0.5 rounded-full">Coming soon</span>
-            </div>
-          )
-        )}
-      </DropdownMenuContent>
-    </DropdownMenu>
-  );
-}
+export { CitySelector } from "./CitySelector";
 
