@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -24,14 +24,15 @@ import {
 } from 'lucide-react';
 import { useAdminPermissions } from '@/hooks/useAdminAuth';
 import { NetworkChargingStation } from '@/types';
-import { adminCreateNetworkStation } from '@/services/networkStationService';
+import { adminCreateNetworkStation, adminUpdateNetworkStation } from '@/services/networkStationService';
 import { validateForm, validationRules } from '@/lib/validation';
 import { LoadingSpinner } from '@/components/ui/loading-states';
 
 interface AddStationModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSuccess?: (station: NetworkChargingStation) => void;
+  onSuccess?: (station?: NetworkChargingStation) => void;
+  initialData?: NetworkChargingStation | null;
 }
 
 const GOVERNMENT_DEPARTMENTS = [
@@ -133,11 +134,54 @@ const defaultFormData: StationFormData = {
   googleMapsUrl: ''
 };
 
-export default function AddStationModal({ isOpen, onClose, onSuccess }: AddStationModalProps) {
+export default function AddStationModal({ isOpen, onClose, onSuccess, initialData }: AddStationModalProps) {
   const { canEditSpots } = useAdminPermissions();
   const [formData, setFormData] = useState<StationFormData>(defaultFormData);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    if (isOpen) {
+      if (initialData) {
+        setFormData({
+          stationName: initialData.stationName || '',
+          stationType: initialData.stationType || '',
+          networkOperator: initialData.networkOperator || '',
+          address: initialData.address || '',
+          city: initialData.city || '',
+          state: initialData.state || '',
+          pincode: initialData.pincode || '',
+          coordinates: initialData.coordinates || { lat: 0, lng: 0 },
+          numberOfChargers: initialData.numberOfChargers || 1,
+          chargerTypes: initialData.chargerTypes || [],
+          availabilityStatus: initialData.availabilityStatus || 'active',
+          pricing: {
+            pricePerHour: initialData.pricing?.pricePerHour ?? 0,
+            pricePerMinute: initialData.pricing?.pricePerMinute,
+            freeCharging: initialData.pricing?.freeCharging || false
+          },
+          workingHours: {
+            weekdays: initialData.workingHours?.weekdays || '24/7',
+            weekends: initialData.workingHours?.weekends || '24/7',
+            holidays: initialData.workingHours?.holidays
+          },
+          contact: {
+            phone: initialData.contact?.phone || '',
+            email: initialData.contact?.email || '',
+            website: initialData.contact?.website || ''
+          },
+          description: initialData.description || '',
+          notes: initialData.notes || '',
+          verificationStatus: initialData.verificationStatus || 'pending',
+          isFeatured: initialData.isFeatured || false,
+          googleMapsUrl: initialData.googleMapsUrl || ''
+        });
+      } else {
+        setFormData(defaultFormData);
+      }
+      setErrors({});
+    }
+  }, [isOpen, initialData]);
 
   const handleInputChange = (field: keyof StationFormData, value: any) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -213,34 +257,51 @@ export default function AddStationModal({ isOpen, onClose, onSuccess }: AddStati
 
     setIsSubmitting(true);
     try {
-      // Create station
-      const stationData: Omit<NetworkChargingStation, 'id' | 'createdAt' | 'updatedAt'> = {
-        ...formData,
-        images: [],
-        logo: '',
-        amenities: [],
-        technical: {
-          powerRating: '50kW',
-          voltage: '400V',
-          current: '125A',
-          connectorTypes: formData.chargerTypes
-        },
-        usage: {
-          totalCharges: 0,
-          averageDailyUsage: 0,
-          lastMaintenance: undefined,
-          nextMaintenance: undefined
-        }
-      };
+      if (initialData) {
+        // Update existing station
+        const updates: Partial<NetworkChargingStation> = {
+          ...formData,
+          technical: {
+            powerRating: initialData.technical?.powerRating || '50kW',
+            voltage: initialData.technical?.voltage || '400V',
+            current: initialData.technical?.current || '125A',
+            connectorTypes: formData.chargerTypes
+          }
+        };
+        await adminUpdateNetworkStation(initialData.id, updates);
+        toast.success('Network station updated successfully!');
+        onSuccess?.();
+        handleClose();
+      } else {
+        // Create station
+        const stationData: Omit<NetworkChargingStation, 'id' | 'createdAt' | 'updatedAt'> = {
+          ...formData,
+          images: [],
+          logo: '',
+          amenities: [],
+          technical: {
+            powerRating: '50kW',
+            voltage: '400V',
+            current: '125A',
+            connectorTypes: formData.chargerTypes
+          },
+          usage: {
+            totalCharges: 0,
+            averageDailyUsage: 0,
+            lastMaintenance: undefined,
+            nextMaintenance: undefined
+          }
+        };
 
-      const createdStation = await adminCreateNetworkStation(stationData);
+        const createdStation = await adminCreateNetworkStation(stationData);
 
-      toast.success('Network station created successfully!');
-      onSuccess?.(createdStation);
-      handleClose();
+        toast.success('Network station created successfully!');
+        onSuccess?.(createdStation);
+        handleClose();
+      }
     } catch (error) {
-      console.error('Error creating station:', error);
-      toast.error('Failed to create network station');
+      console.error('Error saving station:', error);
+      toast.error(initialData ? 'Failed to update network station' : 'Failed to create network station');
     } finally {
       setIsSubmitting(false);
     }
@@ -259,7 +320,7 @@ export default function AddStationModal({ isOpen, onClose, onSuccess }: AddStati
           <div className="text-center py-8">
             <AlertCircle className="w-12 h-12 text-destructive mx-auto mb-4" />
             <h3 className="text-lg font-semibold mb-2">Access Denied</h3>
-            <p className="text-muted-foreground">You don't have permission to create network stations.</p>
+            <p className="text-muted-foreground">You don't have permission to edit network stations.</p>
           </div>
         </DialogContent>
       </Dialog>
@@ -270,7 +331,7 @@ export default function AddStationModal({ isOpen, onClose, onSuccess }: AddStati
     <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Add New Network Charging Station</DialogTitle>
+          <DialogTitle>{initialData ? 'Edit Network Charging Station' : 'Add New Network Charging Station'}</DialogTitle>
         </DialogHeader>
 
         <div className="space-y-6">
@@ -624,10 +685,10 @@ export default function AddStationModal({ isOpen, onClose, onSuccess }: AddStati
               {isSubmitting ? (
                 <>
                   <LoadingSpinner size="sm" className="mr-2" />
-                  Creating...
+                  {initialData ? 'Updating...' : 'Creating...'}
                 </>
               ) : (
-                'Create Station'
+                initialData ? 'Update Station' : 'Create Station'
               )}
             </Button>
           </div>

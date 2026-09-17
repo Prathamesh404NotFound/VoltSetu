@@ -32,6 +32,7 @@ import {
 import { useAdminPermissions } from '@/hooks/useAdminAuth';
 import { NetworkChargingStation } from '@/types';
 import AddStationModal from '@/components/Admin/AddStationModal';
+import ViewStationModal from '@/components/Admin/ViewStationModal';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import {
@@ -107,6 +108,8 @@ const AdminNetworkStationsPage: React.FC = () => {
   const [error, setError] = useState<string>('');
   const [actionLoading, setActionLoading] = useState(false);
   const [addStationModalOpen, setAddStationModalOpen] = useState(false);
+  const [viewStation, setViewStation] = useState<NetworkChargingStation | null>(null);
+  const [editStation, setEditStation] = useState<NetworkChargingStation | null>(null);
   const [importDialogOpen, setImportDialogOpen] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [importPreview, setImportPreview] = useState<any[]>([]);
@@ -965,13 +968,13 @@ const AdminNetworkStationsPage: React.FC = () => {
                               </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
-                              <DropdownMenuItem>
+                              <DropdownMenuItem onClick={() => setViewStation(station)}>
                                 <Eye className="w-4 h-4 mr-2" />
                                 View Details
                               </DropdownMenuItem>
                               {canEditSpots && (
                                 <>
-                                  <DropdownMenuItem>
+                                  <DropdownMenuItem onClick={() => setEditStation(station)}>
                                     <Edit className="w-4 h-4 mr-2" />
                                     Edit Station
                                   </DropdownMenuItem>
@@ -1184,11 +1187,30 @@ const AdminNetworkStationsPage: React.FC = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Add Station Modal */}
+      {/* View Station Modal */}
+      <ViewStationModal
+        station={viewStation}
+        isOpen={!!viewStation}
+        onClose={() => setViewStation(null)}
+        onEdit={(st) => {
+          setViewStation(null);
+          setEditStation(st);
+        }}
+      />
+
+      {/* Add / Edit Station Modal */}
       <AddStationModal
-        isOpen={addStationModalOpen}
-        onClose={() => setAddStationModalOpen(false)}
-        onSuccess={handleStationCreated}
+        isOpen={addStationModalOpen || !!editStation}
+        onClose={() => {
+          setAddStationModalOpen(false);
+          setEditStation(null);
+        }}
+        initialData={editStation}
+        onSuccess={() => {
+          fetchStations();
+          setAddStationModalOpen(false);
+          setEditStation(null);
+        }}
       />
 
       {/* Floating Batch Actions Bar */}
