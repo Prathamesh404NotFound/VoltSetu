@@ -25,25 +25,56 @@ const ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
   wrench: Wrench,
 };
 
+function normalizeAmenity(item: unknown): { id?: string; icon?: string; name: string } | null {
+  if (!item) return null;
+  if (typeof item === "string") {
+    const trimmed = item.trim();
+    return trimmed ? { id: trimmed, name: trimmed } : null;
+  }
+  if (typeof item === "object" && item !== null) {
+    const obj = item as Record<string, unknown>;
+    let nameStr = "";
+    if (typeof obj.name === "string") {
+      nameStr = obj.name.trim();
+    } else if (typeof obj.name === "object" && obj.name !== null && typeof (obj.name as any).name === "string") {
+      nameStr = (obj.name as any).name.trim();
+    } else if (typeof obj.name === "number") {
+      nameStr = String(obj.name).trim();
+    } else if (typeof obj.id === "string") {
+      nameStr = obj.id.trim();
+    }
+    if (!nameStr) return null;
+    const iconStr = typeof obj.icon === "string" ? obj.icon : (typeof obj.id === "string" ? obj.id : undefined);
+    const idStr = typeof obj.id === "string" ? obj.id : nameStr;
+    return { id: idStr, icon: iconStr, name: nameStr };
+  }
+  return null;
+}
+
 /** Rider-facing display of a spot's facilities as icon chips. */
 export default function FacilitiesChips({
   amenities,
   limit,
 }: {
-  amenities?: Array<{ id?: string; icon?: string; name?: string }>;
+  amenities?: Array<{ id?: string; icon?: string; name?: string } | string | any>;
   limit?: number;
 }) {
-  const items = (amenities ?? []).filter((a) => a?.name?.trim());
+  if (!Array.isArray(amenities)) return null;
+
+  const items = amenities
+    .map(normalizeAmenity)
+    .filter((a): a is { id?: string; icon?: string; name: string } => a !== null);
+
   if (items.length === 0) return null;
   const shown = limit ? items.slice(0, limit) : items;
   const extra = items.length - shown.length;
   return (
     <div className="flex flex-wrap items-center gap-1.5">
-      {shown.map((a) => {
-        const Icon = (a.icon ? ICON_MAP[a.icon] : undefined) ?? DefaultIcon;
+      {shown.map((a, idx) => {
+        const Icon = (a.icon ? ICON_MAP[a.icon] : undefined) ?? (a.id ? ICON_MAP[a.id] : undefined) ?? DefaultIcon;
         return (
           <span
-            key={a.id || a.name}
+            key={a.id || a.name || idx}
             className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-2.5 py-1 text-[11px] sm:text-xs font-medium text-muted-foreground"
             title={a.name}
           >
