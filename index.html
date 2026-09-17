@@ -10,13 +10,37 @@
     <link rel="preconnect" href="https://tiles.openfreemap.org" crossorigin />
     <link rel="dns-prefetch" href="https://tiles.openfreemap.org" />
 
+    <!-- Primary Meta Tags -->
     <meta name="description" content="ChargePush is a distributed EV charging-access network connecting EV riders with nearby charging access from home hosts and local spots. Charge. Push. Go." />
-    <meta name="keywords" content="ChargePush, charge push go, EV charging network, electric vehicle charging spot, host EV charging, EV scooter charger, find EV charger, book charging spot, power your neighborhood" />
+    <meta name="keywords" content="ChargePush, charge push go, EV charging network, electric vehicle charging spot, host EV charging, EV scooter charger, find EV charger, book charging spot, power your neighborhood, EV charging India, electric scooter charging" />
     <meta name="author" content="ChargePush Network" />
-    <meta name="robots" content="index, follow" />
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+    <meta name="rating" content="general" />
+    <meta name="revisit-after" content="7 days" />
+    <meta name="language" content="English" />
+
+    <!-- Geo / Local SEO (India) -->
+    <meta name="geo.region" content="IN" />
+    <meta name="geo.country" content="India" />
+    <meta name="geo.placename" content="India" />
+    <meta name="ICBM" content="20.5937, 78.9629" />
+
+    <!-- Google Search Console Verification -->
+    <meta name="google-site-verification" content="90d38b8af13881ab" />
+
+    <!-- Favicons -->
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
     <link rel="icon" type="image/png" href="/favicon.png" />
-    <link rel="apple-touch-icon" href="/logo192.png" />
+    <link rel="apple-touch-icon" sizes="192x192" href="/logo192.png" />
+    <link rel="apple-touch-icon" sizes="512x512" href="/logo512.png" />
+
+    <!-- Canonical & Language Alternates -->
     <link rel="canonical" href="https://chargepush.vercel.app/" />
+    <link rel="alternate" href="https://chargepush.vercel.app/" hreflang="en-IN" />
+    <link rel="alternate" href="https://chargepush.vercel.app/" hreflang="en" />
+    <link rel="alternate" href="https://chargepush.vercel.app/" hreflang="x-default" />
+
     <link rel="manifest" href="/manifest.json" />
     <meta name="theme-color" content="#2563EB" />
 
@@ -99,11 +123,62 @@
       "@context": "https://schema.org",
       "@type": "LocalBusiness",
       "name": "ChargePush",
-      "image": "https://volt-setu.vercel.app/og-image.png",
-      "url": "https://volt-setu.vercel.app/",
+      "image": "https://chargepush.vercel.app/og-image.png",
+      "url": "https://chargepush.vercel.app/",
       "email": "hello@chargepush.com",
-      "areaServed": "India",
-      "serviceType": "Distributed EV Charging Access Network"
+      "areaServed": {
+        "@type": "Country",
+        "name": "India"
+      },
+      "serviceType": "Distributed EV Charging Access Network",
+      "priceRange": "₹",
+      "currenciesAccepted": "INR",
+      "paymentAccepted": "Cash, Credit Card, UPI"
+    }
+    </script>
+
+    <!-- SiteLinksSearchBox — enables Google search box in search results -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "url": "https://chargepush.vercel.app/",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": {
+          "@type": "EntryPoint",
+          "urlTemplate": "https://chargepush.vercel.app/spots?q={search_term_string}"
+        },
+        "query-input": "required name=search_term_string"
+      }
+    }
+    </script>
+
+    <!-- BreadcrumbList -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://chargepush.vercel.app/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Find a Charger",
+          "item": "https://chargepush.vercel.app/spots"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "Become a Host",
+          "item": "https://chargepush.vercel.app/host"
+        }
+      ]
     }
     </script>
 

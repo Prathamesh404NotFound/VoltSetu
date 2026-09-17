@@ -1,6 +1,30 @@
 # ChargePush Robots.txt Configuration
 # Production Domain: https://chargepush.vercel.app
 
+# Google Search Bot — full access to public pages
+User-agent: Googlebot
+Allow: /
+Allow: /*.png$
+Allow: /*.jpg$
+Allow: /*.webp$
+Allow: /og-image.png
+Disallow: /dashboard/
+Disallow: /admin/
+Disallow: /saved
+Disallow: /settings
+Disallow: /loyalty
+
+# Google Image Bot — allow all images for rich results
+User-agent: Googlebot-Image
+Allow: /
+
+# Google Ads Bot — allow landing pages
+User-agent: AdsBot-Google
+Allow: /
+Allow: /host
+Allow: /spots
+
+# All other crawlers
 User-agent: *
 Allow: /
 Disallow: /dashboard/
@@ -8,5 +32,6 @@ Disallow: /admin/
 Disallow: /saved
 Disallow: /settings
 Disallow: /loyalty
+Crawl-delay: 5
 
 Sitemap: https://chargepush.vercel.app/sitemap.xml
