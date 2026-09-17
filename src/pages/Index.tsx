@@ -657,7 +657,11 @@ const Index = () => {
                   isFeatured={i === 0}
                   outletType={spot.outletType}
                   availableHours={spot.availableHours}
-                  amenities={spot.amenities}
+                  amenities={
+                    Array.isArray(spot.amenities)
+                      ? (spot.amenities as string[]).map((a) => ({ name: a }))
+                      : spot.amenities
+                  }
                   image={spot.photos?.[0]}
                   onBook={() => setSelectedSpot(spot)}
                 />

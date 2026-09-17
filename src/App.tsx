@@ -47,10 +47,10 @@ const lazyAdminVerifications = () => import("./pages/Admin/AdminVerificationsPag
 const lazyAdminListingReviews = () => import("./pages/Admin/AdminListingReviewsPage");
 const lazyAdminAnomaly = () => import("./pages/Admin/AdminAnomalyPage");
 const lazyAdminNetworkStations = () => import("./pages/Admin/AdminNetworkStationsPage");
-const lazyReferralAdmin = () => import("./pages/admin/ReferralAdmin");
-const lazyAdminHeatmap = () => import("./pages/admin/DemandHeatmap");
-const lazyAdminModeration = () => import("./pages/admin/AdminModerationPage");
-const lazyAdminNotifications = () => import("./pages/admin/AdminNotificationsPage");
+const lazyReferralAdmin = () => import("./pages/Admin/ReferralAdmin");
+const lazyAdminHeatmap = () => import("./pages/Admin/DemandHeatmap");
+const lazyAdminModeration = () => import("./pages/Admin/AdminModerationPage");
+const lazyAdminNotifications = () => import("./pages/Admin/AdminNotificationsPage");
 const lazyAdminCityWaitlist = () => import("./pages/Admin/AdminCityWaitlistPage");
 const lazyLoyalty = () => import("./pages/Loyalty");
 const lazyTripPlanner = () => import("./pages/TripPlannerPage");

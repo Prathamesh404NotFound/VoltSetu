@@ -53,10 +53,11 @@ export default defineConfig(({ mode }) => ({
           ) {
             return "vendor-firebase";
           }
-          // Recharts — chart library used only on admin/earnings pages
-          if (id.includes("node_modules/recharts") || id.includes("node_modules/d3-")) {
-            return "vendor-recharts";
-          }
+          // ⚠️ recharts + d3-* are intentionally NOT split here.
+          // recharts imports many d3-* sub-packages which Rollup puts in
+          // vendor-misc, creating a circular init order that causes a
+          // "Cannot access 'X' before initialization" crash at runtime.
+          // Keeping them together in vendor-misc avoids this entirely.
           // Framer Motion — animation library — ~40 KB gzip
           if (id.includes("node_modules/framer-motion")) {
             return "vendor-framer";
@@ -80,10 +81,10 @@ export default defineConfig(({ mode }) => ({
           ) {
             return "vendor-router";
           }
-          // React core — keep as vendor-react for fine-grained caching
-          if (id.includes("node_modules/react-dom") || id.includes("node_modules/react/")) {
-            return "vendor-react";
-          }
+          // ⚠️ react-dom is intentionally NOT split separately.
+          // Splitting react-dom from vendor-misc can produce a circular init
+          // order with packages that depend on react-dom internals.
+          // Rollup handles react + react-dom fine in vendor-misc.
           // Everything else from node_modules goes into a shared misc chunk
           if (id.includes("node_modules")) {
             return "vendor-misc";
