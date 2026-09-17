@@ -33,14 +33,43 @@ export async function getHostSettings(hostUid: string): Promise<HostSettings> {
   return (snap.val() as HostSettings) ?? { listingPaused: false, commercial: false };
 }
 
-export async function setListingPaused(hostUid: string, paused: boolean, pausedUntil?: string | null): Promise<void> {
+/**
+ * Batch-fetch host settings for multiple hosts in parallel (one read per
+ * unique hostId, all fired simultaneously). This eliminates the N+1 pattern
+ * where the old code called getHostSettings() individually for each host,
+ * causing O(N) sequential Firebase round-trips on every FindSpots load.
+ *
+ * Returns a map of hostId → HostSettings so callers can do O(1) lookups.
+ */
+export async function getBatchHostSettings(
+  hostIds: string[]
+): Promise<Record<string, HostSettings>> {
+  if (!hostIds.length) return {};
+  const uniqueIds = Array.from(new Set(hostIds.filter(Boolean)));
+  const results = await Promise.all(
+    uniqueIds.map(async (id) => {
+      const snap = await get(ref(database, `hostSettings/${id}`));
+      return [id, (snap.val() as HostSettings) ?? { listingPaused: false, commercial: false }] as const;
+    })
+  );
+  return Object.fromEntries(results);
+}
+
+export async function setListingPaused(
+  hostUid: string,
+  paused: boolean,
+  pausedUntil?: string | null
+): Promise<void> {
   if (!hostUid) return;
   // Expired pause auto-clears on read; writing false always wins here.
-  await update(ref(database, `hostSettings/${hostUid}`), sanitizeForDb({
-    listingPaused: paused,
-    pausedUntil: pausedUntil || null,
-    updatedAt: serverTimestamp(),
-  }));
+  await update(
+    ref(database, `hostSettings/${hostUid}`),
+    sanitizeForDb({
+      listingPaused: paused,
+      pausedUntil: pausedUntil || null,
+      updatedAt: serverTimestamp(),
+    })
+  );
 }
 
 export async function setCommercialDetails(
@@ -48,11 +77,14 @@ export async function setCommercialDetails(
   details: NonNullable<HostSettings["commercialDetails"]>
 ): Promise<void> {
   if (!hostUid) return;
-  await update(ref(database, `hostSettings/${hostUid}`), sanitizeForDb({
-    commercial: true,
-    commercialDetails: details,
-    updatedAt: serverTimestamp(),
-  }));
+  await update(
+    ref(database, `hostSettings/${hostUid}`),
+    sanitizeForDb({
+      commercial: true,
+      commercialDetails: details,
+      updatedAt: serverTimestamp(),
+    })
+  );
 }
 
 /** Rider-side helper: a paused (and unexpired) host's spots stay visible but

@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import {
   Search,
   MapPin,
@@ -9,6 +9,7 @@ import {
   Route,
   AlertCircle,
   Battery,
+  ChevronDown,
 } from "lucide-react";
 import { calculateDistanceKm, cn } from "@/lib/utils";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
@@ -18,10 +19,6 @@ import CTABanner from "@/components/CTABanner";
 import DestinationSearch, { type Destination } from "@/components/DestinationSearch";
 import { TripPlannerPanel } from "@/components/TripPlannerPanel";
 import spotsMapImg from "@/assets/spots-map.jpg";
-import { getAllChargingSpots } from "@/lib/hostRegistration";
-import { getAllNetworkStations, mergeNetworkStations } from "@/lib/networkStationsService";
-import { getHostSettings, isHostPaused } from "@/lib/hostSettingsService";
-import { toast } from "sonner";
 import SpotsMap from "@/components/SpotsMap";
 import CitySelector from "@/components/CitySelector";
 import SEO from "@/components/SEO";
@@ -35,17 +32,23 @@ import {
   DESTINATION_FALLBACK_RADIUS_KM,
   type GeoJSONLineString,
 } from "@/lib/routeUtils";
+import { toast } from "sonner";
+import { useSpots } from "@/hooks/useSpots";
+import SpotCardSkeleton from "@/components/SpotCardSkeleton.tsx";
 
-const filters = ["All", "Open Now", "Verified", "Under Rs 50", "Top Rated", "Nearest"];
+const PAGE_SIZE = 12;
 
 type ViewMode = "list" | "map" | "route";
 
 export default function FindSpots() {
   useScrollReveal();
   const [activeFilter, setActiveFilter] = useState("All");
+  // Raw search input (unthrottled — for the controlled input)
+  const [searchInputValue, setSearchInputValue] = useState("");
+  // Debounced value used for filtering (updated 300ms after typing stops)
   const [searchQuery, setSearchQuery] = useState("");
-  const [spots, setSpots] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   const [selectedSpot, setSelectedSpot] = useState<any | null>(null);
   const [userLocation, setUserLocation] = useState<UserLocationResult | null>(null);
   const [locationLoading, setLocationLoading] = useState(true);
@@ -53,6 +56,7 @@ export default function FindSpots() {
   const [manualLat, setManualLat] = useState("");
   const [manualLng, setManualLng] = useState("");
   const [viewMode, setViewMode] = useState<ViewMode>("list");
+  const [page, setPage] = useState(1);
 
   // Route mode state
   const [destination, setDestination] = useState<Destination | null>(null);
@@ -63,23 +67,10 @@ export default function FindSpots() {
   const [routeFallback, setRouteFallback] = useState(false);
   const [routeLoading, setRouteLoading] = useState(false);
 
-  useEffect(() => {
-    Promise.all([getAllChargingSpots(), getAllNetworkStations()])
-      .then(async ([data, net]) => {
-        const merged = mergeNetworkStations(data, net);
-        const hostIds = Array.from(new Set(merged.map((s: any) => s.hostId).filter(Boolean)));
-        const settings = await Promise.all(hostIds.map(getHostSettings));
-        const settingsByHost = Object.fromEntries(hostIds.map((h, i) => [h, settings[i]]));
-        setSpots(merged.map((s: any) => ({ ...s, isPaused: isHostPaused(settingsByHost[s.hostId ?? ""] ?? null) })));
-      })
-      .catch((err) => {
-        console.error(err);
-        toast.error("Failed to load charging spots");
-      })
-      .finally(() => setLoading(false));
-  }, []);
+  // ─── React Query: cached spot list (N+1 fix + cross-page caching) ───────────
+  const { data: spots = [], isLoading: loading } = useSpots();
 
-  // Fetch Location using Unified locationService
+  // ─── Location ────────────────────────────────────────────────────────────────
   useEffect(() => {
     let cancelled = false;
     (async () => {
@@ -96,12 +87,27 @@ export default function FindSpots() {
         }
       }
     })();
-    return () => {
-      cancelled = true;
-    };
+    return () => { cancelled = true; };
   }, []);
 
-  // Route fetch when route mode + destination + user location
+  // ─── Debounce search input (300 ms) ─────────────────────────────────────────
+  const handleSearchChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value;
+    setSearchInputValue(val);
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => {
+      setSearchQuery(val);
+      setPage(1); // Reset pagination on new search
+    }, 300);
+  }, []);
+
+  // Cleanup debounce on unmount
+  useEffect(() => () => { if (debounceRef.current) clearTimeout(debounceRef.current); }, []);
+
+  // Reset page when filter changes
+  useEffect(() => { setPage(1); }, [activeFilter, viewMode]);
+
+  // ─── Route fetch ─────────────────────────────────────────────────────────────
   useEffect(() => {
     if (viewMode !== "route" || !destination || !userLocation) {
       setRouteGeometry(null);
@@ -131,12 +137,11 @@ export default function FindSpots() {
         setRouteLoading(false);
       });
 
-    return () => {
-      cancelled = true;
-    };
+    return () => { cancelled = true; };
   }, [viewMode, destination, userLocation]);
 
-  function parseTimeRange(range: string): { start: number; end: number } | null {
+  // ─── Pure helper functions (stable references, no deps change) ───────────────
+  const parseTimeRange = useCallback((range: string): { start: number; end: number } | null => {
     const parts = range.split("-").map((p) => p.trim());
     if (parts.length !== 2) return null;
     const toMinutes = (t: string): number => {
@@ -150,9 +155,9 @@ export default function FindSpots() {
       return hour * 60 + minute;
     };
     return { start: toMinutes(parts[0]), end: toMinutes(parts[1]) };
-  }
+  }, []);
 
-  function isSpotOpen(availableHours: string | undefined): boolean {
+  const isSpotOpen = useCallback((availableHours: string | undefined): boolean => {
     if (!availableHours) return true;
     const range = parseTimeRange(availableHours);
     if (!range) return true;
@@ -162,21 +167,34 @@ export default function FindSpots() {
       return nowMins >= range.start && nowMins <= range.end;
     }
     return nowMins >= range.start || nowMins <= range.end;
-  }
+  }, [parseTimeRange]);
 
-  const spotsWithDistance = spots.map((spot) => {
-    let distance: number | null = null;
-    if (userLocation && spot.coordinates) {
-      distance = calculateDistanceKm(
-        userLocation.lat,
-        userLocation.lng,
-        spot.coordinates.lat,
-        spot.coordinates.lng
-      );
-    }
-    return { ...spot, distance, lat: spot.coordinates?.lat, lng: spot.coordinates?.lng };
-  });
+  // ─── spotsWithDistance — memoized, only recalculates when spots or location change ──
+  const spotsWithDistance = useMemo(() => {
+    return spots.map((spot) => {
+      let distance: number | null = null;
+      if (userLocation && spot.coordinates) {
+        distance = calculateDistanceKm(
+          userLocation.lat,
+          userLocation.lng,
+          spot.coordinates.lat,
+          spot.coordinates.lng
+        );
+      }
+      return { ...spot, distance, lat: spot.coordinates?.lat, lng: spot.coordinates?.lng };
+    });
+  }, [spots, userLocation]);
 
+  // ─── Filter counts — separated from filtering so they're stable ──────────────
+  const filterCounts = useMemo(() => ({
+    All: spotsWithDistance.length,
+    Verified: spotsWithDistance.filter((s) => s.isVerified).length,
+    "Under Rs 50": spotsWithDistance.filter((s) => (s.pricePerHour ?? 0) < 50).length,
+    "Top Rated": spotsWithDistance.filter((s) => (s.rating ?? 0) >= 4.5).length,
+    Nearest: spotsWithDistance.filter((s) => s.distance !== null).length,
+  }), [spotsWithDistance]);
+
+  // ─── Base filter (search + active filter tab) ─────────────────────────────────
   const baseFilteredSpots = useMemo(() => {
     let result = spotsWithDistance.filter((spot) => {
       if (searchQuery.trim()) {
@@ -192,8 +210,8 @@ export default function FindSpots() {
 
       if (activeFilter === "Open Now") return isSpotOpen(spot.availableHours);
       if (activeFilter === "Verified") return spot.isVerified;
-      if (activeFilter === "Under Rs 50") return spot.pricePerHour < 50;
-      if (activeFilter === "Top Rated") return spot.rating >= 4.5;
+      if (activeFilter === "Under Rs 50") return (spot.pricePerHour ?? 0) < 50;
+      if (activeFilter === "Top Rated") return (spot.rating ?? 0) >= 4.5;
       return true;
     });
 
@@ -204,8 +222,9 @@ export default function FindSpots() {
     }
 
     return result;
-  }, [spotsWithDistance, searchQuery, activeFilter, userLocation]);
+  }, [spotsWithDistance, searchQuery, activeFilter, userLocation, isSpotOpen]);
 
+  // ─── Route filter ─────────────────────────────────────────────────────────────
   const routeFilteredSpots = useMemo(() => {
     if (viewMode !== "route" || !destination) return [];
 
@@ -229,8 +248,8 @@ export default function FindSpots() {
         destDistanceKm: calculateDistanceKm(
           destination.lat,
           destination.lng,
-          spot.coordinates.lat,
-          spot.coordinates.lng
+          spot.coordinates!.lat,
+          spot.coordinates!.lng
         ),
       }))
       .filter((s) => s.destDistanceKm <= DESTINATION_FALLBACK_RADIUS_KM)
@@ -266,7 +285,14 @@ export default function FindSpots() {
     routeFilteredSpots,
   ]);
 
-  const renderSpotCard = (spot: any, i: number) => (
+  // ─── Pagination ───────────────────────────────────────────────────────────────
+  const paginatedSpots = useMemo(
+    () => filteredSpots.slice(0, page * PAGE_SIZE),
+    [filteredSpots, page]
+  );
+  const hasMore = paginatedSpots.length < filteredSpots.length;
+
+  const renderSpotCard = useCallback((spot: any, i: number) => (
     <div
       key={spot.id || i}
       className="reveal"
@@ -300,7 +326,7 @@ export default function FindSpots() {
         onBook={() => setSelectedSpot(spot)}
       />
     </div>
-  );
+  ), [viewMode, suggestedStopId, isSpotOpen]);
 
   return (
     <div className="pt-24 bg-[#F4F6F9] min-h-screen">
@@ -319,7 +345,14 @@ export default function FindSpots() {
 
       <section className="relative py-16 gradient-hero overflow-hidden border-b border-slate-800">
         <div className="absolute inset-0 opacity-20">
-          <img src={spotsMapImg} alt="" className="w-full h-full object-cover" />
+          <img
+            src={spotsMapImg}
+            alt=""
+            aria-hidden="true"
+            loading="eager"
+            decoding="async"
+            className="w-full h-full object-cover"
+          />
         </div>
         <div className="container mx-auto px-4 relative z-10">
           <div className="text-center mb-8">
@@ -338,8 +371,8 @@ export default function FindSpots() {
                 <input
                   type="text"
                   placeholder="Search area, landmark or destination..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
+                  value={searchInputValue}
+                  onChange={handleSearchChange}
                   className="w-full pl-12 pr-4 py-4 rounded-2xl bg-white text-foreground shadow-2xl text-sm focus:outline-none focus:ring-2 focus:ring-primary border-0 font-medium"
                 />
               </div>
@@ -384,12 +417,7 @@ export default function FindSpots() {
                   "Nearest",
                 ] as const
               ).map((f) => {
-                let count: number | null = null;
-                if (f === "Verified") count = spotsWithDistance.filter((s) => s.isVerified).length;
-                else if (f === "Under Rs 50") count = spotsWithDistance.filter((s) => s.pricePerHour < 50).length;
-                else if (f === "Top Rated") count = spotsWithDistance.filter((s) => s.rating >= 4.5).length;
-                else if (f === "Nearest") count = spotsWithDistance.filter((s) => s.distance !== null).length;
-                else if (f === "All") count = spotsWithDistance.length;
+                const count = filterCounts[f] ?? null;
                 return (
                   <button
                     key={f}
@@ -458,7 +486,13 @@ export default function FindSpots() {
 
                 <DestinationSearch value={destination} onChange={setDestination} />
                 <TripPlannerPanel
-                  spots={spotsWithDistance}
+                  spots={spotsWithDistance.map((s) => ({
+                    ...s,
+                    // TripSpot requires name: string; EnrichedSpot has name?: string.
+                    // Spots always have a name in practice — fall back to empty string
+                    // so the type contract is satisfied without a runtime error.
+                    name: s.name ?? "",
+                  }))}
                   onPickSpot={(tripSpot) => {
                     const match = spotsWithDistance.find((s) => s.id === tripSpot.id);
                     setSelectedSpot(match ?? tripSpot);
@@ -602,14 +636,34 @@ export default function FindSpots() {
           )}
 
           {loading ? (
-            <div className="flex flex-col items-center justify-center py-20 text-muted-foreground">
-              <Loader2 className="w-10 h-10 animate-spin text-primary mb-4" />
-              <p>Searching for nearby EV spots...</p>
+            /* ── Skeleton grid (12 cards) replaces the old spinner ── */
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {Array.from({ length: 6 }).map((_, i) => (
+                <SpotCardSkeleton key={i} />
+              ))}
             </div>
           ) : viewMode === "list" ? (
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredSpots.map((spot, i) => renderSpotCard(spot, i))}
-            </div>
+            <>
+              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {paginatedSpots.map((spot, i) => renderSpotCard(spot, i))}
+              </div>
+
+              {/* Load More button */}
+              {hasMore && (
+                <div className="mt-10 flex justify-center">
+                  <button
+                    onClick={() => setPage((p) => p + 1)}
+                    className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl border border-primary/30 bg-white text-primary font-semibold text-sm hover:bg-primary/5 transition-all shadow-sm"
+                  >
+                    Load more spots
+                    <ChevronDown className="w-4 h-4" />
+                    <span className="text-muted-foreground font-normal">
+                      ({filteredSpots.length - paginatedSpots.length} remaining)
+                    </span>
+                  </button>
+                </div>
+              )}
+            </>
           ) : (
             <div className="w-full min-h-[400px]">
               <SpotsMap

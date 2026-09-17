@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { 
   ArrowRight, 
@@ -28,23 +28,26 @@ import hostHomeownerImg from "@/assets/host-homeowner.jpg";
 import aboutCommunityImg from "@/assets/about-community.jpg";
 
 import SpotCard from "@/components/SpotCard";
+import SpotCardSkeleton from "@/components/SpotCardSkeleton";
 import FeatureCard from "@/components/FeatureCard";
 import TestimonialCarousel from "@/components/TestimonialCarousel";
 import FAQAccordion from "@/components/FAQAccordion";
 import CTABanner from "@/components/CTABanner";
-import { getAllChargingSpots } from "@/lib/hostRegistration";
 import BookingModal from "@/components/BookingModal";
 import { useAuth } from "@/components/Auth/AuthProvider";
 import GoogleLoginModal from "@/components/Auth/GoogleLoginModal";
 import SEO from "@/components/SEO";
+import { useSpots } from "@/hooks/useSpots";
 
 const Index = () => {
   useScrollReveal();
   const { user } = useAuth();
-  const [featuredSpots, setFeaturedSpots] = useState<any[]>([]);
-  const [loadingSpots, setLoadingSpots] = useState(true);
   const [selectedSpot, setSelectedSpot] = useState<any | null>(null);
   const [showLoginModal, setShowLoginModal] = useState(false);
+
+  // Reuse the same React Query cache as FindSpots — zero extra Firebase reads
+  const { data: allSpots = [], isLoading: loadingSpots } = useSpots();
+  const featuredSpots = allSpots.slice(0, 3);
 
   const faqSchema = {
     "@context": "https://schema.org",
@@ -77,13 +80,6 @@ const Index = () => {
     ]
   };
 
-  useEffect(() => {
-    getAllChargingSpots().then(spots => {
-      setFeaturedSpots(spots.slice(0, 3));
-    }).finally(() => {
-      setLoadingSpots(false);
-    });
-  }, []);
 
   // 1. MOBILITY-FIRST HERO
   const heroSection = (
@@ -629,9 +625,10 @@ const Index = () => {
         </div>
 
         {loadingSpots ? (
-          <div className="flex flex-col items-center justify-center py-20 min-h-[440px] text-muted-foreground">
-            <Loader2 className="w-10 h-10 animate-spin text-primary mb-4" />
-            <p>Loading active charging access points...</p>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <SpotCardSkeleton key={i} />
+            ))}
           </div>
         ) : featuredSpots.length === 0 ? (
           <div className="text-center py-16 bg-muted/30 rounded-3xl border border-border">

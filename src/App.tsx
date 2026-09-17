@@ -59,7 +59,21 @@ const lazyPrivacy = () => import("./pages/Privacy");
 const lazyTerms = () => import("./pages/Terms");
 const lazyHelp = () => import("./pages/Help");
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      // Spots data is stable for 5 minutes — no refetch on every mount/focus
+      staleTime: 5 * 60 * 1000,
+      // Keep cached data for 30 minutes to make navigation instant
+      gcTime: 30 * 60 * 1000,
+      // One automatic retry on transient network errors
+      retry: 1,
+      // Don't refetch just because the user switched tabs
+      refetchOnWindowFocus: false,
+    },
+  },
+});
+
 
 function ScrollToTop() {
   const { pathname } = useLocation();

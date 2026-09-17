@@ -44,11 +44,43 @@ export function LazyPage({ load, fullScreen = false }: { load: () => Promise<{ d
   const LazyComponent = getOrCreateLazyComponent(load);
 
   const fallback = (
-    <div className={`flex flex-col items-center justify-center ${fullScreen ? "min-h-screen" : "min-h-[50vh]"}`} aria-live="polite">
-      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mb-4" />
-      <p className="text-sm text-muted-foreground">Loading…</p>
+    <div
+      className={`${fullScreen ? "min-h-screen" : "min-h-[50vh]"} flex flex-col`}
+      aria-live="polite"
+      aria-label="Loading page…"
+    >
+      {/* Top bar shimmer */}
+      <div className="w-full px-4 pt-8 pb-6 space-y-4 max-w-6xl mx-auto">
+        <div className="h-8 w-48 rounded-xl bg-slate-100 overflow-hidden">
+          <div className="h-full w-full animate-[shimmer_1.4s_ease-in-out_infinite] bg-gradient-to-r from-transparent via-white/70 to-transparent bg-[length:200%_100%]" />
+        </div>
+        <div className="h-4 w-72 rounded-lg bg-slate-100 overflow-hidden">
+          <div className="h-full w-full animate-[shimmer_1.4s_ease-in-out_infinite] bg-gradient-to-r from-transparent via-white/70 to-transparent bg-[length:200%_100%]" />
+        </div>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 pt-4">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <div key={i} className="rounded-2xl border border-slate-200/80 bg-white overflow-hidden h-64">
+              <div className="h-32 bg-slate-100 overflow-hidden">
+                <div className="h-full w-full animate-[shimmer_1.4s_ease-in-out_infinite] bg-gradient-to-r from-transparent via-white/70 to-transparent bg-[length:200%_100%]" />
+              </div>
+              <div className="p-4 space-y-2">
+                <div className="h-4 w-3/4 rounded bg-slate-100 overflow-hidden">
+                  <div className="h-full w-full animate-[shimmer_1.4s_ease-in-out_infinite] bg-gradient-to-r from-transparent via-white/70 to-transparent bg-[length:200%_100%]" />
+                </div>
+                <div className="h-3 w-1/2 rounded bg-slate-100 overflow-hidden">
+                  <div className="h-full w-full animate-[shimmer_1.4s_ease-in-out_infinite] bg-gradient-to-r from-transparent via-white/70 to-transparent bg-[length:200%_100%]" />
+                </div>
+                <div className="h-8 w-full rounded-xl bg-slate-100 overflow-hidden mt-3">
+                  <div className="h-full w-full animate-[shimmer_1.4s_ease-in-out_infinite] bg-gradient-to-r from-transparent via-white/70 to-transparent bg-[length:200%_100%]" />
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
+
 
   return (
     <Suspense fallback={fallback}>
