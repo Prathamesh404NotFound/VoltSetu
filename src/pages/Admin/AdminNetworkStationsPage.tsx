@@ -77,6 +77,7 @@ import {
   adminDeleteNetworkStation,
   adminSearchNetworkStations,
   adminImportNetworkStations,
+  adminBatchUpdateNetworkStations,
 } from '@/services/networkStationService';
 import { toast } from 'sonner';
 import ResponsiveContainer from '@/components/ui/responsive-container';
@@ -99,6 +100,119 @@ const AdminNetworkStationsPage: React.FC = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [importPreview, setImportPreview] = useState<any[]>([]);
   const [importResult, setImportResult] = useState<any>(null);
+
+  // Batch edit & selection state
+  const [selectedStationIds, setSelectedStationIds] = useState<string[]>([]);
+  const [batchEditDialogOpen, setBatchEditDialogOpen] = useState(false);
+  const [batchEditForm, setBatchEditForm] = useState<{
+    availabilityStatus?: NetworkChargingStation['availabilityStatus'] | '';
+    verificationStatus?: NetworkChargingStation['verificationStatus'] | '';
+    networkOperator?: string;
+    city?: string;
+    state?: string;
+    googleMapsUrl?: string;
+    notes?: string;
+  }>({
+    availabilityStatus: '',
+    verificationStatus: '',
+    networkOperator: '',
+    city: '',
+    state: '',
+    googleMapsUrl: '',
+    notes: '',
+  });
+
+  const toggleSelectAll = () => {
+    if (selectedStationIds.length === filteredStations.length && filteredStations.length > 0) {
+      setSelectedStationIds([]);
+    } else {
+      setSelectedStationIds(filteredStations.map((s) => s.id));
+    }
+  };
+
+  const toggleSelectStation = (id: string) => {
+    setSelectedStationIds((prev) =>
+      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
+    );
+  };
+
+  const handleBatchStatusChange = async (newStatus: NetworkChargingStation['availabilityStatus']) => {
+    if (!selectedStationIds.length || !canEditSpots) return;
+    try {
+      setActionLoading(true);
+      setError('');
+      await adminBatchUpdateNetworkStations(selectedStationIds, { availabilityStatus: newStatus });
+      setStations((prev) =>
+        prev.map((s) => (selectedStationIds.includes(s.id) ? { ...s, availabilityStatus: newStatus } : s))
+      );
+      toast.success(`Updated status for ${selectedStationIds.length} stations!`);
+      setSelectedStationIds([]);
+    } catch (err) {
+      toast.error('Failed to update status in batch');
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const handleBatchVerificationChange = async (newStatus: NetworkChargingStation['verificationStatus']) => {
+    if (!selectedStationIds.length || !canEditSpots) return;
+    try {
+      setActionLoading(true);
+      setError('');
+      await adminBatchUpdateNetworkStations(selectedStationIds, { verificationStatus: newStatus });
+      setStations((prev) =>
+        prev.map((s) => (selectedStationIds.includes(s.id) ? { ...s, verificationStatus: newStatus } : s))
+      );
+      toast.success(`Updated verification for ${selectedStationIds.length} stations!`);
+      setSelectedStationIds([]);
+    } catch (err) {
+      toast.error('Failed to update verification in batch');
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const handleBatchEditSubmit = async () => {
+    if (!selectedStationIds.length || !canEditSpots) return;
+    try {
+      setActionLoading(true);
+      setError('');
+      const updates: Partial<NetworkChargingStation> = {};
+      if (batchEditForm.availabilityStatus) updates.availabilityStatus = batchEditForm.availabilityStatus as any;
+      if (batchEditForm.verificationStatus) updates.verificationStatus = batchEditForm.verificationStatus as any;
+      if (batchEditForm.networkOperator?.trim()) updates.networkOperator = batchEditForm.networkOperator.trim();
+      if (batchEditForm.city?.trim()) updates.city = batchEditForm.city.trim();
+      if (batchEditForm.state?.trim()) updates.state = batchEditForm.state.trim();
+      if (batchEditForm.googleMapsUrl?.trim()) updates.googleMapsUrl = batchEditForm.googleMapsUrl.trim();
+      if (batchEditForm.notes?.trim()) updates.notes = batchEditForm.notes.trim();
+
+      if (Object.keys(updates).length === 0) {
+        toast.info('No fields to update.');
+        return;
+      }
+
+      await adminBatchUpdateNetworkStations(selectedStationIds, updates);
+      setStations((prev) =>
+        prev.map((s) => (selectedStationIds.includes(s.id) ? { ...s, ...updates } : s))
+      );
+      toast.success(`Successfully batch edited ${selectedStationIds.length} stations!`);
+      setBatchEditDialogOpen(false);
+      setSelectedStationIds([]);
+      setBatchEditForm({
+        availabilityStatus: '',
+        verificationStatus: '',
+        networkOperator: '',
+        city: '',
+        state: '',
+        googleMapsUrl: '',
+        notes: '',
+      });
+    } catch (err) {
+      toast.error('Failed to execute batch edit');
+    } finally {
+      setActionLoading(false);
+    }
+  };
 
   useEffect(() => {
     if (!canManageSpots) return;
@@ -418,6 +532,13 @@ const AdminNetworkStationsPage: React.FC = () => {
                 case 'isfeatured':
                   station.isFeatured = value;
                   break;
+                case 'googlemapsurl':
+                case 'googlemapslink':
+                case 'googlemaps':
+                case 'mapsurl':
+                case 'mapslink':
+                  station.googleMapsUrl = value;
+                  break;
                 default:
                   station[headerKey] = value;
               }
@@ -461,6 +582,7 @@ const AdminNetworkStationsPage: React.FC = () => {
               ...(station.notes ? { notes: station.notes } : {}),
               verificationStatus: (String(station.verificationStatus || 'pending').toLowerCase() === 'verified') ? 'verified' : ((String(station.verificationStatus || '').toLowerCase() === 'rejected') ? 'rejected' : 'pending'),
               isFeatured: String(station.isFeatured || '').toLowerCase() === 'true',
+              googleMapsUrl: station.googleMapsUrl || '',
               amenities: [],
               technical: { powerRating: '50kW', voltage: '400V', current: '125A', connectorTypes: station.chargerTypes || ['CCS'] },
               usage: { totalCharges: 0, averageDailyUsage: 0 }
@@ -726,6 +848,14 @@ const AdminNetworkStationsPage: React.FC = () => {
                 <Table>
                   <TableHeader>
                     <TableRow>
+                      <TableHead className="w-10">
+                        <input
+                          type="checkbox"
+                          checked={selectedStationIds.length === filteredStations.length && filteredStations.length > 0}
+                          onChange={toggleSelectAll}
+                          className="rounded border-gray-300"
+                        />
+                      </TableHead>
                       <TableHead>Station</TableHead>
                       <TableHead>Department</TableHead>
                       <TableHead>Location</TableHead>
@@ -737,7 +867,15 @@ const AdminNetworkStationsPage: React.FC = () => {
                   </TableHeader>
                   <TableBody>
                     {filteredStations.map((station) => (
-                      <TableRow key={station.id}>
+                      <TableRow key={station.id} className={selectedStationIds.includes(station.id) ? 'bg-primary/5' : ''}>
+                        <TableCell className="w-10">
+                          <input
+                            type="checkbox"
+                            checked={selectedStationIds.includes(station.id)}
+                            onChange={() => toggleSelectStation(station.id)}
+                            className="rounded border-gray-300"
+                          />
+                        </TableCell>
                         <TableCell>
                           <div className="flex items-center gap-3">
                             <div className="w-12 h-12 rounded-lg bg-primary/10 overflow-hidden">
@@ -772,7 +910,17 @@ const AdminNetworkStationsPage: React.FC = () => {
                         <TableCell>
                           <div>
                             <div className="font-medium">{station.city}, {station.state}</div>
-                            <div className="text-sm text-muted-foreground">{station.address}</div>
+                            <div className="text-sm text-muted-foreground truncate max-w-[180px]">{station.address}</div>
+                            {station.googleMapsUrl && (
+                              <a
+                                href={station.googleMapsUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-1 text-xs text-cyan-600 dark:text-cyan-400 font-semibold hover:underline mt-0.5"
+                              >
+                                <Globe className="w-3 h-3" /> Maps Link
+                              </a>
+                            )}
                           </div>
                         </TableCell>
                         <TableCell>
@@ -1031,6 +1179,168 @@ const AdminNetworkStationsPage: React.FC = () => {
         onClose={() => setAddStationModalOpen(false)}
         onSuccess={handleStationCreated}
       />
+
+      {/* Floating Batch Actions Bar */}
+      {selectedStationIds.length > 0 && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-slate-900/95 backdrop-blur-md text-white px-6 py-3.5 rounded-2xl shadow-2xl border border-slate-700 flex items-center gap-4 animate-in fade-in slide-in-from-bottom-5">
+          <span className="text-sm font-bold text-cyan-400">
+            {selectedStationIds.length} station{selectedStationIds.length > 1 ? 's' : ''} selected
+          </span>
+
+          <div className="h-4 w-px bg-slate-700" />
+
+          {canEditSpots && (
+            <>
+              <Button
+                size="sm"
+                onClick={() => setBatchEditDialogOpen(true)}
+                className="bg-primary text-white hover:bg-primary/90 font-semibold"
+              >
+                <Settings className="w-4 h-4 mr-1.5" /> Batch Edit
+              </Button>
+
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button size="sm" variant="outline" className="border-slate-700 text-white bg-slate-800 hover:bg-slate-700">
+                    Set Status
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="center">
+                  <DropdownMenuItem onClick={() => handleBatchStatusChange('active')}>Set Active</DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => handleBatchStatusChange('maintenance')}>Set Maintenance</DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => handleBatchStatusChange('inactive')}>Set Inactive</DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => handleBatchStatusChange('coming_soon')}>Set Coming Soon</DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button size="sm" variant="outline" className="border-slate-700 text-white bg-slate-800 hover:bg-slate-700">
+                    Set Verification
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="center">
+                  <DropdownMenuItem onClick={() => handleBatchVerificationChange('verified')}>Verify All</DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => handleBatchVerificationChange('pending')}>Set Pending</DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => handleBatchVerificationChange('rejected')}>Set Rejected</DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </>
+          )}
+
+          <Button size="sm" variant="ghost" onClick={() => setSelectedStationIds([])} className="text-slate-400 hover:text-white">
+            <X className="w-4 h-4" />
+          </Button>
+        </div>
+      )}
+
+      {/* Batch Edit Modal */}
+      <Dialog open={batchEditDialogOpen} onOpenChange={setBatchEditDialogOpen}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Batch Edit {selectedStationIds.length} Stations</DialogTitle>
+            <DialogDescription>
+              Apply bulk edits across all selected stations. Leave fields blank if you don't want to change them.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4 py-2">
+            <div>
+              <Label htmlFor="batchOperator">Network Operator</Label>
+              <Input
+                id="batchOperator"
+                placeholder="e.g. Tata Power, BPCL, Ather Energy"
+                value={batchEditForm.networkOperator || ''}
+                onChange={(e) => setBatchEditForm((prev) => ({ ...prev, networkOperator: e.target.value }))}
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <Label htmlFor="batchCity">City</Label>
+                <Input
+                  id="batchCity"
+                  placeholder="e.g. Kolhapur"
+                  value={batchEditForm.city || ''}
+                  onChange={(e) => setBatchEditForm((prev) => ({ ...prev, city: e.target.value }))}
+                />
+              </div>
+              <div>
+                <Label htmlFor="batchState">State</Label>
+                <Input
+                  id="batchState"
+                  placeholder="e.g. Maharashtra"
+                  value={batchEditForm.state || ''}
+                  onChange={(e) => setBatchEditForm((prev) => ({ ...prev, state: e.target.value }))}
+                />
+              </div>
+            </div>
+
+            <div>
+              <Label htmlFor="batchMapsUrl">Google Maps Link</Label>
+              <Input
+                id="batchMapsUrl"
+                placeholder="https://maps.google.com/?q=..."
+                value={batchEditForm.googleMapsUrl || ''}
+                onChange={(e) => setBatchEditForm((prev) => ({ ...prev, googleMapsUrl: e.target.value }))}
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="batchStatus">Availability Status</Label>
+              <Select
+                value={batchEditForm.availabilityStatus || 'no_change'}
+                onValueChange={(val) => setBatchEditForm((prev) => ({ ...prev, availabilityStatus: val === 'no_change' ? '' : (val as any) }))}
+              >
+                <SelectTrigger><SelectValue placeholder="Keep current status" /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="no_change">Do Not Change</SelectItem>
+                  <SelectItem value="active">Active</SelectItem>
+                  <SelectItem value="maintenance">Maintenance</SelectItem>
+                  <SelectItem value="inactive">Inactive</SelectItem>
+                  <SelectItem value="coming_soon">Coming Soon</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div>
+              <Label htmlFor="batchVerification">Verification Status</Label>
+              <Select
+                value={batchEditForm.verificationStatus || 'no_change'}
+                onValueChange={(val) => setBatchEditForm((prev) => ({ ...prev, verificationStatus: val === 'no_change' ? '' : (val as any) }))}
+              >
+                <SelectTrigger><SelectValue placeholder="Keep current verification" /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="no_change">Do Not Change</SelectItem>
+                  <SelectItem value="verified">Verified</SelectItem>
+                  <SelectItem value="pending">Pending</SelectItem>
+                  <SelectItem value="rejected">Rejected</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div>
+              <Label htmlFor="batchNotes">Notes</Label>
+              <Textarea
+                id="batchNotes"
+                placeholder="Batch note added to selected stations"
+                value={batchEditForm.notes || ''}
+                onChange={(e) => setBatchEditForm((prev) => ({ ...prev, notes: e.target.value }))}
+                rows={2}
+              />
+            </div>
+          </div>
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setBatchEditDialogOpen(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handleBatchEditSubmit} disabled={actionLoading}>
+              {actionLoading ? 'Updating...' : 'Apply Batch Changes'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

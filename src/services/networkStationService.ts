@@ -112,6 +112,28 @@ export const adminUpdateNetworkStation = async (id: string, updates: Partial<Net
   }
 };
 
+export const adminBatchUpdateNetworkStations = async (
+  stationIds: string[],
+  updates: Partial<NetworkChargingStation>
+): Promise<number> => {
+  try {
+    let updatedCount = 0;
+    const batchPromises = stationIds.map(async (id) => {
+      const stationRef = ref(database, `networkStations/${id}`);
+      await update(stationRef, {
+        ...updates,
+        updatedAt: serverTimestamp(),
+      });
+      updatedCount++;
+    });
+    await Promise.all(batchPromises);
+    return updatedCount;
+  } catch (error) {
+    console.error('Error batch updating network stations:', error);
+    throw new Error('Failed to perform batch update on network stations');
+  }
+};
+
 export const adminDeleteNetworkStation = async (id: string): Promise<void> => {
   try {
     await remove(ref(database, `networkStations/${id}`));

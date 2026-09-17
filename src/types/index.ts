@@ -405,6 +405,7 @@ export interface NetworkChargingStation {
   updatedAt: Date;
   lastVerified?: Date;
   verifiedBy?: string;
+  googleMapsUrl?: string;
   amenities: Array<{
     id: string;
     name: string;

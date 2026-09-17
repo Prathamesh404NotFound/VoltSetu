@@ -50,6 +50,9 @@ interface SpotCardProps {
   showLiveStatus?: boolean;
   /** ₹/km cost line shown under the price. */
   showCostPerKm?: boolean;
+  /** Optional direct Google Maps navigation URL. */
+  googleMapsUrl?: string;
+  googleMapsLink?: string;
 }
 
 const MAX_VISIBLE_BADGES = 2;
@@ -94,6 +97,7 @@ export default function SpotCard({
   isPaused, isNetworkStation,
   showLiveStatus = true,
   showCostPerKm = true,
+  googleMapsUrl, googleMapsLink,
 }: SpotCardProps) {
   const { user } = useAuth();
   const { toast } = useToast();
@@ -534,17 +538,40 @@ export default function SpotCard({
         </div>
 
         <div className="flex gap-2 mt-auto">
-          <Button
-            onClick={handleBookNow}
-            disabled={isOpen === false}
-            aria-disabled={isOpen === false}
-            className={cn(
-              "flex-1 rounded-xl font-semibold shadow-md gradient-primary text-white border-0 hover:opacity-90 hover:-translate-y-0.5 transition-all",
-              isOpen === false && "opacity-60 cursor-not-allowed hover:translate-y-0"
-            )}
-          >
-            {isOpen === false ? "Currently Closed" : isPaused ? "Temporarily Paused" : "Book / Request"}
-          </Button>
+          {isNetworkStation && (googleMapsUrl || googleMapsLink) ? (
+            <a
+              href={googleMapsUrl || googleMapsLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={(e) => e.stopPropagation()}
+              className="flex-1 inline-flex items-center justify-center gap-2 rounded-xl font-bold text-xs py-2.5 px-3 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white shadow-md hover:shadow-lg transition-all hover:-translate-y-0.5"
+            >
+              <Navigation className="w-3.5 h-3.5 fill-current" /> Navigate on Maps
+            </a>
+          ) : (
+            <Button
+              onClick={handleBookNow}
+              disabled={isOpen === false}
+              aria-disabled={isOpen === false}
+              className={cn(
+                "flex-1 rounded-xl font-semibold shadow-md gradient-primary text-white border-0 hover:opacity-90 hover:-translate-y-0.5 transition-all",
+                isOpen === false && "opacity-60 cursor-not-allowed hover:translate-y-0"
+              )}
+            >
+              {isOpen === false ? "Currently Closed" : isPaused ? "Temporarily Paused" : "Book / Request"}
+            </Button>
+          )}
+
+          {isNetworkStation && !(googleMapsUrl || googleMapsLink) && (
+            <Button
+              onClick={handleBookNow}
+              disabled={isOpen === false}
+              className="flex-1 rounded-xl font-semibold shadow-md bg-gradient-to-r from-cyan-600 to-blue-600 text-white border-0 hover:opacity-90"
+            >
+              Station Details
+            </Button>
+          )}
+
           {hostPhone && (
             <>
               <a

@@ -97,6 +97,7 @@ interface StationFormData {
   notes?: string;
   verificationStatus: 'verified' | 'pending' | 'rejected';
   isFeatured: boolean;
+  googleMapsUrl?: string;
 }
 
 const defaultFormData: StationFormData = {
@@ -128,7 +129,8 @@ const defaultFormData: StationFormData = {
   description: '',
   notes: '',
   verificationStatus: 'pending',
-  isFeatured: false
+  isFeatured: false,
+  googleMapsUrl: ''
 };
 
 export default function AddStationModal({ isOpen, onClose, onSuccess }: AddStationModalProps) {
@@ -429,6 +431,16 @@ export default function AddStationModal({ isOpen, onClose, onSuccess }: AddStati
                 </div>
               </div>
               {errors.coordinates && <p className="text-sm text-destructive">{errors.coordinates}</p>}
+            </div>
+
+            <div>
+              <Label htmlFor="googleMapsUrl">Google Maps Link (Optional)</Label>
+              <Input
+                id="googleMapsUrl"
+                value={formData.googleMapsUrl || ''}
+                onChange={(e) => handleInputChange('googleMapsUrl', e.target.value)}
+                placeholder="e.g., https://maps.google.com/?q=16.705,74.243 or https://goo.gl/maps/..."
+              />
             </div>
           </div>
 
