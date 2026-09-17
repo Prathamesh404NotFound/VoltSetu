@@ -129,7 +129,7 @@ export function StationMap({
       zoom: zoom,
       minZoom: 4,
       maxZoom: 19,
-      attributionControl: true,
+      attributionControl: { compact: true },
     });
 
     map.addControl(new NavigationControl({ showCompass: true }), "top-right");

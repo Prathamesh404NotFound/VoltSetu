@@ -181,7 +181,7 @@ export function ChargePushMap({
   // Convert spots list to GeoJSON FeatureCollection
   const geojsonSpots = useMemo(() => {
     const features: GeoJSON.Feature<GeoJSON.Point, SpotGeoJSONProperties>[] = spots
-      .map((spot) => {
+      .map((spot): GeoJSON.Feature<GeoJSON.Point, SpotGeoJSONProperties> | null => {
         const rawLat = spot.coordinates?.lat ?? spot.lat;
         const rawLng = spot.coordinates?.lng ?? spot.lng;
         const norm = normalizeCoordinates(rawLat, rawLng);
@@ -238,41 +238,52 @@ export function ChargePushMap({
       if (unclusteredLeaveRef.current) { map.off("mouseleave", "unclustered-chargers", unclusteredLeaveRef.current); unclusteredLeaveRef.current = null; }
     };
 
-    if (!map.getSource("chargers-source")) {
-      removeHandlers();
+    removeHandlers();
 
+    const geoSource = map.getSource("chargers-source") as GeoJSONSource;
+    if (geoSource) {
+      geoSource.setData(geojsonSpots);
+    } else {
       map.addSource("chargers-source", {
         type: "geojson",
         data: geojsonSpots,
         cluster: true,
-        clusterMaxZoom: MAP_CONFIG.CLUSTER_MAX_ZOOM,
-        clusterRadius: MAP_CONFIG.CLUSTER_RADIUS,
+        clusterMaxZoom: 14,
+        clusterRadius: 50,
       });
 
-      // Cluster Circle Layer
+      // Cluster circles
       map.addLayer({
         id: "clusters",
         type: "circle",
         source: "chargers-source",
         filter: ["has", "point_count"],
         paint: {
-          "circle-color": emergencyMode ? "#DC2626" : "#2563EB",
+          "circle-color": [
+            "step",
+            ["get", "point_count"],
+            "#06b6d4",
+            10,
+            "#3b82f6",
+            30,
+            "#8b5cf6",
+          ],
           "circle-radius": [
             "step",
             ["get", "point_count"],
-            18,
-            5,
-            24,
-            15,
+            20,
+            10,
+            25,
+            30,
             30,
           ],
-          "circle-stroke-width": 2,
-          "circle-stroke-color": "#FFFFFF",
+          "circle-stroke-width": 3,
+          "circle-stroke-color": "#ffffff",
           "circle-opacity": 0.9,
         },
       });
 
-      // Cluster Count Text Layer
+      // Cluster count text
       map.addLayer({
         id: "cluster-count",
         type: "symbol",
@@ -280,14 +291,15 @@ export function ChargePushMap({
         filter: ["has", "point_count"],
         layout: {
           "text-field": "{point_count_abbreviated}",
-          "text-size": 13,
+          "text-font": ["DIN Offc Pro Medium", "Arial Unicode MS Bold"],
+          "text-size": 14,
         },
         paint: {
-          "text-color": "#FFFFFF",
+          "text-color": "#ffffff",
         },
       });
 
-      // Unclustered Chargers Point Layer
+      // Unclustered charger circles
       map.addLayer({
         id: "unclustered-chargers",
         type: "circle",
@@ -297,13 +309,15 @@ export function ChargePushMap({
           "circle-color": [
             "match",
             ["get", "statusColor"],
+            "electric",
+            "#06b6d4",
             "green",
-            "#16A34A",
+            "#10b981",
             "amber",
-            "#D97706",
+            "#f59e0b",
             "gray",
-            "#64748B",
-            /* default electric */ "#2563EB",
+            "#6b7280",
+            "#06b6d4",
           ],
           "circle-radius": [
             "case",
@@ -321,14 +335,16 @@ export function ChargePushMap({
         const features = map.queryRenderedFeatures(e.point, { layers: ["clusters"] });
         const clusterId = features[0]?.properties?.cluster_id;
         if (clusterId !== undefined) {
-          (map.getSource("chargers-source") as GeoJSONSource).getClusterExpansionZoom(
-            clusterId,
-            (err, zoom) => {
-              if (err || zoom === null) return;
+          (map.getSource("chargers-source") as GeoJSONSource)
+            .getClusterExpansionZoom(clusterId)
+            .then((zoom) => {
+              if (zoom === null || zoom === undefined) return;
               const coords = (features[0].geometry as GeoJSON.Point).coordinates;
               map.easeTo({ center: [coords[0], coords[1]], zoom: zoom + 1 });
-            }
-          );
+            })
+            .catch((err) => {
+              console.error("Error getting cluster expansion zoom:", err);
+            });
         }
       };
       map.on("click", "clusters", clusterClickRef.current);
@@ -355,8 +371,6 @@ export function ChargePushMap({
       map.on("mouseleave", "clusters", clusterLeaveRef.current);
       map.on("mouseenter", "unclustered-chargers", unclusteredEnterRef.current);
       map.on("mouseleave", "unclustered-chargers", unclusteredLeaveRef.current);
-    } else {
-      (map.getSource("chargers-source") as GeoJSONSource).setData(geojsonSpots);
     }
   }, [geojsonSpots, mapLoaded, spots, selectedSpotId, onSelectSpot, emergencyMode, geojsonVersion]);
 
