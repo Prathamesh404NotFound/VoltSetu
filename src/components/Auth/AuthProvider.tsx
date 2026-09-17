@@ -24,9 +24,39 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+const LOCAL_STORAGE_USER_KEY = "chargepush_cached_user";
+
+function loadCachedUser(): User | null {
+  try {
+    const raw = localStorage.getItem(LOCAL_STORAGE_USER_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    return {
+      ...parsed,
+      createdAt: parsed.createdAt ? new Date(parsed.createdAt) : new Date(),
+      lastLoginAt: parsed.lastLoginAt ? new Date(parsed.lastLoginAt) : new Date(),
+    };
+  } catch {
+    return null;
+  }
+}
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState<User | null>(loadCachedUser);
+  const [loading, setLoading] = useState(!loadCachedUser());
+
+  const saveUserToCache = (userData: User | null) => {
+    setUser(userData);
+    if (userData) {
+      try {
+        localStorage.setItem(LOCAL_STORAGE_USER_KEY, JSON.stringify(userData));
+      } catch (err) {
+        console.warn("Failed to cache user profile in localStorage:", err);
+      }
+    } else {
+      localStorage.removeItem(LOCAL_STORAGE_USER_KEY);
+    }
+  };
 
   // Fetch user data from database when Firebase auth state changes
   useEffect(() => {
@@ -39,7 +69,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
           if (snapshot.exists()) {
             const userData = snapshot.val();
-            setUser({
+            saveUserToCache({
               id: firebaseUser.uid,
               email: firebaseUser.email || '',
               displayName: firebaseUser.displayName || userData.displayName || '',
@@ -110,7 +140,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             };
 
             await update(userRef, newUserData);
-            setUser({
+            saveUserToCache({
               id: firebaseUser.uid,
               ...newUserData,
               createdAt: new Date(newUserData.createdAt),
@@ -120,7 +150,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         } catch (error) {
           console.error('Error fetching user data:', error);
           // Fallback to basic user data
-          setUser({
+          saveUserToCache({
             id: firebaseUser.uid,
             email: firebaseUser.email || '',
             displayName: firebaseUser.displayName || '',
@@ -156,7 +186,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           });
         }
       } else {
-        setUser(null);
+        saveUserToCache(null);
       }
       setLoading(false);
     });
@@ -207,6 +237,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         await FirebaseAuthentication.signOut();
       }
       await signOut(auth);
+      saveUserToCache(null);
     } catch (error) {
       throw new Error("Logout failed.");
     }

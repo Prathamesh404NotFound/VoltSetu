@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { createPortal } from "react-dom";
 import { X, Mail, Lock, Eye, EyeOff, User } from "lucide-react";
 import { useAuth } from "./AuthProvider";
 import { Button } from "@/components/ui/button";
@@ -52,31 +53,36 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
 
   if (!isOpen) return null;
 
-  return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <div className="bg-background rounded-2xl shadow-2xl w-full max-w-md relative">
+  return createPortal(
+    <div 
+      className="fixed inset-0 bg-black/60 backdrop-blur-md z-[9999] flex items-center justify-center p-4 sm:p-6 overflow-y-auto animate-in fade-in-0 duration-200"
+      onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
+    >
+      <div className="bg-background rounded-3xl shadow-2xl w-full max-w-md relative border border-border/80 p-6 sm:p-8 animate-in zoom-in-95 duration-200 my-auto">
         <button
+          type="button"
           onClick={onClose}
-          className="absolute top-4 right-4 p-2 rounded-lg hover:bg-muted transition-colors"
+          className="absolute top-4 right-4 p-2 rounded-full text-muted-foreground hover:text-foreground hover:bg-muted/80 transition-colors"
+          aria-label="Close modal"
         >
           <X className="w-5 h-5" />
         </button>
 
-        <div className="p-6">
+        <div>
           <div className="text-center mb-6">
-            <div className="w-12 h-12 bg-primary rounded-xl flex items-center justify-center mx-auto mb-4">
+            <div className="w-12 h-12 bg-primary rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-md shadow-primary/25">
               <User className="w-6 h-6 text-primary-foreground" />
             </div>
-            <h2 className="font-display font-bold text-2xl text-card-foreground">
+            <h2 className="font-display font-bold text-2xl text-foreground">
               Welcome to ChargePush
             </h2>
-            <p className="text-muted-foreground mt-2">
+            <p className="text-sm text-muted-foreground mt-1">
               Sign in to book charging spots
             </p>
           </div>
 
           <Tabs defaultValue="login" className="w-full">
-            <TabsList className="grid w-full grid-cols-2">
+            <TabsList className="grid w-full grid-cols-2 mb-4">
               <TabsTrigger value="login">Sign In</TabsTrigger>
               <TabsTrigger value="signup">Sign Up</TabsTrigger>
             </TabsList>
@@ -123,12 +129,12 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                 </div>
 
                 {error && (
-                  <div className="text-sm text-destructive bg-destructive/10 p-3 rounded-lg">
+                  <div className="text-xs font-medium text-destructive bg-destructive/10 border border-destructive/20 p-3 rounded-xl">
                     {error}
                   </div>
                 )}
 
-                <Button type="submit" className="w-full" disabled={loading}>
+                <Button type="submit" className="w-full font-bold" disabled={loading}>
                   {loading ? "Signing in..." : "Sign In"}
                 </Button>
               </form>
@@ -177,12 +183,12 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                 </div>
 
                 {error && (
-                  <div className="text-sm text-destructive bg-destructive/10 p-3 rounded-lg">
+                  <div className="text-xs font-medium text-destructive bg-destructive/10 border border-destructive/20 p-3 rounded-xl">
                     {error}
                   </div>
                 )}
 
-                <Button type="submit" className="w-full" disabled={loading}>
+                <Button type="submit" className="w-full font-bold" disabled={loading}>
                   {loading ? "Creating account..." : "Create Account"}
                 </Button>
               </form>
@@ -190,6 +196,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
           </Tabs>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
