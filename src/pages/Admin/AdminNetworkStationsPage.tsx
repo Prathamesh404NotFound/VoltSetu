@@ -308,55 +308,36 @@ const AdminNetworkStationsPage: React.FC = () => {
           // Parse CSV file
           const text = await file.text();
           const lines = text.split('\n').filter(line => line.trim());
-          const headers = parseCsvRow(lines[0]).map(h => h.trim().toLowerCase());
+          const cleanHeaderKey = (h: string) => h.trim().toLowerCase().replace(/[^a-z0-9]/g, '');
+          const headers = parseCsvRow(lines[0]).map(cleanHeaderKey);
+
+          const formatPhoneFromCsv = (val: string): string => {
+            let v = (val || '').trim();
+            if (!v) return '+910000000000';
+            if (/^\d+(\.\d+)?e\+\d+$/i.test(v)) {
+              const num = Math.round(Number(v));
+              return '+' + num.toString();
+            }
+            return v;
+          };
 
           parsedData = lines.slice(1).map((line, index) => {
             const values = parseCsvRow(line).map(v => v.trim());
             const station: any = {};
 
-            headers.forEach((header, i) => {
+            headers.forEach((headerKey, i) => {
               const value = values[i] || '';
-              switch (header.toLowerCase()) {
+              switch (headerKey) {
                 case 'stationname':
                   station.stationName = value;
-                  break;
-                case 'governmentdepartment':
-                case 'networkoperator':
-                case 'network':
-                  station.networkOperator = value;
                   break;
                 case 'stationtype':
                   station.stationType = value;
                   break;
-                case 'priceperminute':
-                  station.pricePerMinute = value;
-                  break;
-                case 'freecharging':
-                  station.freeCharging = value;
-                  break;
-                case 'weekdayshours':
-                  station.weekdaysHours = value;
-                  break;
-                case 'weekendshours':
-                  station.weekendsHours = value;
-                  break;
-                case 'holidayshours':
-                  station.holidaysHours = value;
-                  break;
-                case 'contactemail':
-                  station.contactEmail = value;
-                  break;
-                case 'contactwebsite':
-                  station.contactWebsite = value;
-                  break;
-                case 'notes':
-                  station.notes = value;
-                  break;
-                case 'verificationstatus':
-                  station.verificationStatus = value;
-                  break;
-                case 'isfeatured':
-                  station.isFeatured = value;
+                case 'networkoperator':
+                case 'network':
+                case 'governmentdepartment':
+                  station.networkOperator = value;
                   break;
                 case 'address':
                   station.address = value;
@@ -368,6 +349,8 @@ const AdminNetworkStationsPage: React.FC = () => {
                   station.state = value;
                   break;
                 case 'pincode':
+                case 'zipcode':
+                case 'zip':
                   station.pincode = value;
                   break;
                 case 'latitude':
@@ -379,40 +362,85 @@ const AdminNetworkStationsPage: React.FC = () => {
                   station.lng = parseFloat(value) || 0;
                   break;
                 case 'numberofchargers':
+                case 'chargers':
                   station.numberOfChargers = parseInt(value) || 1;
                   break;
                 case 'chargertypes':
-                  station.chargerTypes = value.split(/[;,]/).map(t => t.trim()).filter(t => t);
+                case 'chargertype':
+                  station.chargerTypes = value.split(/[;,]/).map(t => t.trim()).filter(Boolean);
                   break;
                 case 'availabilitystatus':
+                case 'status':
                   station.availabilityStatus = value.toLowerCase() || 'active';
                   break;
                 case 'priceperhour':
                   station.pricePerHour = parseFloat(value) || 0;
                   break;
-                case 'phone':
+                case 'priceperminute':
+                  station.pricePerMinute = value;
+                  break;
+                case 'freecharging':
+                  station.freeCharging = value;
+                  break;
+                case 'weekdayshours':
+                case 'weekdays':
+                  station.weekdaysHours = value;
+                  break;
+                case 'weekendshours':
+                case 'weekends':
+                  station.weekendsHours = value;
+                  break;
+                case 'holidayshours':
+                case 'holidays':
+                  station.holidaysHours = value;
+                  break;
                 case 'contactphone':
+                case 'phone':
                   station.phone = value;
+                  break;
+                case 'contactemail':
+                case 'email':
+                  station.contactEmail = value;
+                  break;
+                case 'contactwebsite':
+                case 'website':
+                  station.contactWebsite = value;
                   break;
                 case 'description':
                   station.description = value;
                   break;
+                case 'notes':
+                  station.notes = value;
+                  break;
+                case 'verificationstatus':
+                  station.verificationStatus = value;
+                  break;
+                case 'isfeatured':
+                  station.isFeatured = value;
+                  break;
                 default:
-                  station[header] = value;
+                  station[headerKey] = value;
               }
             });
 
+            const city = station.city || 'Kolhapur';
+            const state = station.state || 'Maharashtra';
+            const network = station.networkOperator || 'Public Network';
+            const name = station.stationName || `${network} Charging Station`;
+            const address = station.address || (station.city ? `${station.city}, ${state}` : 'Kolhapur, Maharashtra');
+
             // Create proper structure
             return {
-              stationName: station.stationName || `Station ${index + 1}`,
-              networkOperator: station.networkOperator || 'Unknown',
-              address: station.address || 'Unknown Address',
-              city: station.city || 'Unknown City',
-              state: station.state || 'Unknown State',
-              pincode: station.pincode || '000000',
-              coordinates: { lat: station.lat || 0, lng: station.lng || 0 },
+              stationName: name,
+              stationType: station.stationType || 'Public Charging Station',
+              networkOperator: network,
+              address: address,
+              city: city,
+              state: state,
+              pincode: station.pincode || '416001',
+              coordinates: { lat: station.lat || 16.7, lng: station.lng || 74.2 },
               numberOfChargers: station.numberOfChargers || 1,
-              chargerTypes: station.chargerTypes || ['Type 2'],
+              chargerTypes: (station.chargerTypes && station.chargerTypes.length > 0) ? station.chargerTypes : ['CCS'],
               availabilityStatus: station.availabilityStatus || 'active',
               pricing: {
                 pricePerHour: station.pricePerHour ?? 0,
@@ -420,21 +448,21 @@ const AdminNetworkStationsPage: React.FC = () => {
                 ...(String(station.freeCharging || '').toLowerCase() === 'true' ? { freeCharging: true } : {}),
               },
               workingHours: {
-                weekdays: station.weekdaysHours || '9:00 AM - 6:00 PM',
-                weekends: station.weekendsHours || '10:00 AM - 4:00 PM',
+                weekdays: station.weekdaysHours || '24/7',
+                weekends: station.weekendsHours || '24/7',
                 ...(station.holidaysHours ? { holidays: station.holidaysHours } : {}),
               },
               contact: {
-                phone: station.phone || '',
+                phone: formatPhoneFromCsv(station.phone),
                 ...(station.contactEmail ? { email: station.contactEmail } : {}),
                 ...(station.contactWebsite ? { website: station.contactWebsite } : {}),
               },
-              description: station.description || 'Network charging station',
+              description: station.description || `${name} in ${city}, ${state}.`,
               ...(station.notes ? { notes: station.notes } : {}),
-              verificationStatus: (String(station.verificationStatus || 'pending').toLowerCase() === 'rejected') ? 'rejected' : (String(station.verificationStatus || '').toLowerCase() === 'verified' ? 'verified' : 'pending'),
+              verificationStatus: (String(station.verificationStatus || 'pending').toLowerCase() === 'verified') ? 'verified' : ((String(station.verificationStatus || '').toLowerCase() === 'rejected') ? 'rejected' : 'pending'),
               isFeatured: String(station.isFeatured || '').toLowerCase() === 'true',
               amenities: [],
-              technical: { powerRating: '50kW', voltage: '400V', current: '125A', connectorTypes: station.chargerTypes || ['Type 2'] },
+              technical: { powerRating: '50kW', voltage: '400V', current: '125A', connectorTypes: station.chargerTypes || ['CCS'] },
               usage: { totalCharges: 0, averageDailyUsage: 0 }
             };
           });
