@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo, type ReactNode } from "react";
-import { Star, MapPin, Clock, BadgeCheck, Phone, Zap, Heart, Pause, Home } from "lucide-react";
+import { Star, MapPin, Clock, BadgeCheck, Phone, Zap, Heart, Pause, Home, Navigation } from "lucide-react";
 import FacilitiesChips from "@/components/FacilitiesChips";
 import { cn } from "@/lib/utils";
 import { isFavorite, toggleFavorite } from "@/lib/favoritesService";
@@ -287,7 +287,7 @@ export default function SpotCard({
 
   const handleBookNow = () => {
     if (isPaused) {
-      toast.info("This host is on a short break — their listing will be back soon.");
+      toast({ title: "Short break", description: "This host is on a short break — their listing will be back soon." });
       return;
     }
     if (!user) {
