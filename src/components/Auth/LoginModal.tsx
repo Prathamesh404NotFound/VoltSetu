@@ -54,11 +54,17 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
   if (!isOpen) return null;
 
   return createPortal(
-    <div 
-      className="fixed inset-0 bg-black/60 backdrop-blur-md z-[9999] flex items-center justify-center p-4 sm:p-6 overflow-y-auto animate-in fade-in-0 duration-200"
-      onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-label="Sign in to ChargePush"
+      className="fixed inset-0 bg-black/60 backdrop-blur-md z-[9999] overflow-y-auto animate-in fade-in-0 duration-200"
     >
-      <div className="bg-background rounded-3xl shadow-2xl w-full max-w-md relative border border-border/80 p-6 sm:p-8 animate-in zoom-in-95 duration-200 my-auto">
+      <div
+        className="flex min-h-full items-center justify-center p-4 sm:p-6"
+        onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
+      >
+      <div className="bg-background rounded-3xl shadow-2xl w-full max-w-md relative border border-border/80 p-6 sm:p-8 animate-in zoom-in-95 duration-200">
         <button
           type="button"
           onClick={onClose}
@@ -195,6 +201,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
             </TabsContent>
           </Tabs>
         </div>
+      </div>
       </div>
     </div>,
     document.body
