@@ -805,8 +805,16 @@ export default function BookingModal({ isOpen, onClose, spot }: BookingModalProp
                   </div>
                 )}
                 <div className="flex items-center gap-1.5 font-semibold text-foreground">
-                  ₹{spot.pricePerHour}
-                  <span className="text-xs font-normal text-muted-foreground">/hr</span>
+                  {spot.pricePerHour ? (
+                    <>
+                      ₹{spot.pricePerHour}
+                      <span className="text-xs font-normal text-muted-foreground">/hr</span>
+                    </>
+                  ) : spot.isNetworkStation ? (
+                    <span className="text-cyan-600 dark:text-cyan-400 font-bold">Pay at Station</span>
+                  ) : (
+                    <span className="text-emerald-600 dark:text-emerald-400 font-bold">Free Charging</span>
+                  )}
                 </div>
               </div>
 

@@ -444,11 +444,35 @@ export default function SpotCard({
             )}
           </div>
           <div className="flex items-baseline gap-1">
-            <span className="text-2xl font-black text-foreground tracking-tight">
-              ₹{pricePerHour}
-            </span>
-            <span className="text-xs font-semibold text-muted-foreground">/hr</span>
-            <span className="ml-auto text-[10px] uppercase font-bold tracking-wider text-muted-foreground bg-background px-2 py-0.5 rounded-md border border-border">Pay at spot</span>
+            {isNetworkStation && (!pricePerHour || pricePerHour === 0) ? (
+              <>
+                <span className="text-lg font-black text-cyan-600 dark:text-cyan-400 tracking-tight">
+                  Pay at Station
+                </span>
+                <span className="ml-auto text-[10px] uppercase font-bold tracking-wider text-cyan-700 dark:text-cyan-300 bg-cyan-50 dark:bg-cyan-950/50 px-2 py-0.5 rounded-md border border-cyan-200 dark:border-cyan-800">
+                  Network Rates
+                </span>
+              </>
+            ) : !pricePerHour || pricePerHour === 0 ? (
+              <>
+                <span className="text-lg font-black text-emerald-600 dark:text-emerald-400 tracking-tight">
+                  Free Charging
+                </span>
+                <span className="ml-auto text-[10px] uppercase font-bold tracking-wider text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/50 px-2 py-0.5 rounded-md border border-emerald-200 dark:border-emerald-800">
+                  No Charge
+                </span>
+              </>
+            ) : (
+              <>
+                <span className="text-2xl font-black text-foreground tracking-tight">
+                  ₹{pricePerHour}
+                </span>
+                <span className="text-xs font-semibold text-muted-foreground">/hr</span>
+                <span className="ml-auto text-[10px] uppercase font-bold tracking-wider text-muted-foreground bg-background px-2 py-0.5 rounded-md border border-border">
+                  {isNetworkStation ? "Network Rates" : "Pay at spot"}
+                </span>
+              </>
+            )}
           </div>
           {showCostPerKm && (() => {
             const perKm = pricePerKmRs(pricePerHour);

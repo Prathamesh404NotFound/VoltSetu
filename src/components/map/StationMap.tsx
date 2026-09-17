@@ -496,7 +496,7 @@ export function StationMap({
           </div>
           <div style="display: flex; justify-content: space-between; color: #334155;">
             <span>Charging Rate:</span>
-            <strong style="color: #2563EB;">₹${props.ratePerHour}/hr</strong>
+            <strong style="color: #2563EB;">${props.ratePerHour ? `₹${props.ratePerHour}/hr` : 'Pay at Station'}</strong>
           </div>
         </div>
 

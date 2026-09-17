@@ -565,7 +565,7 @@ export function ChargePushMap({
             </button>
           </div>
           <div className="text-xs text-muted-foreground mb-3">
-            {activePopupSpot.city || "Nearby Spot"} • ₹{activePopupSpot.pricePerHour || 0}/hr
+            {activePopupSpot.city || "Nearby Spot"} • {activePopupSpot.isNetworkStation && (!activePopupSpot.pricePerHour || activePopupSpot.pricePerHour === 0) ? "Pay at Station" : (activePopupSpot.pricePerHour ? `₹${activePopupSpot.pricePerHour}/hr` : "Free Charging")}
           </div>
           <button
             onClick={() => {
