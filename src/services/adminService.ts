@@ -116,12 +116,26 @@ export const adminGetAllSpots = async (): Promise<ChargingSpot[]> => {
     }
 
     const spots = snapshot.val();
-    return Object.keys(spots).map(key => ({
-      id: key,
-      ...spots[key],
-      createdAt: spots[key].createdAt ? new Date(spots[key].createdAt) : new Date(),
-      updatedAt: spots[key].updatedAt ? new Date(spots[key].updatedAt) : new Date(),
-    }));
+    return Object.keys(spots).map(key => {
+      const raw = spots[key];
+      return {
+        id: key,
+        ...raw,
+        // Numeric fields: coerce strings from old registrations and default missing fields to 0
+        rating: typeof raw.rating === 'number' ? raw.rating : Number(raw.rating) || 0,
+        pricePerHour: typeof raw.pricePerHour === 'number' ? raw.pricePerHour : Number(raw.pricePerHour) || 0,
+        pricePerMinute: raw.pricePerMinute != null ? (typeof raw.pricePerMinute === 'number' ? raw.pricePerMinute : Number(raw.pricePerMinute) || 0) : undefined,
+        totalCharges: typeof raw.totalCharges === 'number' ? raw.totalCharges : Number(raw.totalCharges) || 0,
+        // Array fields: guard against missing keys in legacy documents
+        reviews: Array.isArray(raw.reviews) ? raw.reviews : [],
+        photos: Array.isArray(raw.photos) ? raw.photos : [],
+        amenities: Array.isArray(raw.amenities) ? raw.amenities : [],
+        // Status: fall back to 'pending' so .charAt(0) never throws
+        status: raw.status || 'pending',
+        createdAt: raw.createdAt ? new Date(raw.createdAt) : new Date(),
+        updatedAt: raw.updatedAt ? new Date(raw.updatedAt) : new Date(),
+      };
+    });
   } catch (error) {
     console.error('Error fetching spots:', error);
     throw new Error('Failed to fetch charging spots');

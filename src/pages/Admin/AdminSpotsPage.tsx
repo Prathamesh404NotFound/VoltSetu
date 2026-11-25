@@ -254,132 +254,132 @@ const AdminSpotsPage: React.FC = () => {
 
   return (
     <ResponsiveContainer size="xl" className="py-6">
-      <SEO 
+      <SEO
         title="Manage Charging Spots | Admin | ChargePush"
         description="Oversee all charging spots across the network, manage their status, and review performance."
         noindex={true}
       />
       <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-foreground">Charging Spots</h1>
-          <p className="text-muted-foreground">Manage charging locations and availability</p>
-        </div>
-        <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" onClick={fetchSpots} disabled={loading} aria-label="Refresh spots">
-            <svg className={`w-4 h-4 mr-2 ${loading ? 'animate-spin' : ''}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
-              <path d="M21 12a9 9 0 1 1-3-6.7L21 8" />
-              <path d="M21 3v5h-5" />
-            </svg>
-            Refresh
-          </Button>
-          <Button onClick={() => setAddSpotModalOpen(true)} size="sm">
-            <Plus className="w-4 h-4 mr-2" />
-            Add Spot
-          </Button>
-        </div>
-      </div>
-
-      {/* Status and verification summary */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        {[
-          { label: 'Active', count: spots.filter(s => s.status === 'active').length, accent: 'bg-green-50 text-green-700' },
-          { label: 'Pending', count: spots.filter(s => s.status === 'pending').length, accent: 'bg-yellow-50 text-yellow-700' },
-          { label: 'Verified', count: spots.filter(s => s.isVerified).length, accent: 'bg-primary/10 text-primary' },
-          { label: 'Total', count: spots.length, accent: 'bg-muted text-muted-foreground' },
-        ].map(({ label, count, accent }) => (
-          <div key={label} className="flex items-center justify-between rounded-xl border border-border bg-card px-4 py-3">
-            <span className="text-sm font-medium text-muted-foreground">{label}</span>
-            <span className={`text-lg font-bold rounded-lg px-2 py-0.5 ${accent}`}>{count}</span>
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <h1 className="text-2xl sm:text-3xl font-bold text-foreground">Charging Spots</h1>
+            <p className="text-muted-foreground">Manage charging locations and availability</p>
           </div>
-        ))}
-      </div>
+          <div className="flex items-center gap-2">
+            <Button variant="outline" size="sm" onClick={fetchSpots} disabled={loading} aria-label="Refresh spots">
+              <svg className={`w-4 h-4 mr-2 ${loading ? 'animate-spin' : ''}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                <path d="M21 12a9 9 0 1 1-3-6.7L21 8" />
+                <path d="M21 3v5h-5" />
+              </svg>
+              Refresh
+            </Button>
+            <Button onClick={() => setAddSpotModalOpen(true)} size="sm">
+              <Plus className="w-4 h-4 mr-2" />
+              Add Spot
+            </Button>
+          </div>
+        </div>
 
-      {/* Error Display */}
-      {error && (
-        <Card className="border-destructive">
+        {/* Status and verification summary */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          {[
+            { label: 'Active', count: spots.filter(s => s.status === 'active').length, accent: 'bg-green-50 text-green-700' },
+            { label: 'Pending', count: spots.filter(s => s.status === 'pending').length, accent: 'bg-yellow-50 text-yellow-700' },
+            { label: 'Verified', count: spots.filter(s => s.isVerified).length, accent: 'bg-primary/10 text-primary' },
+            { label: 'Total', count: spots.length, accent: 'bg-muted text-muted-foreground' },
+          ].map(({ label, count, accent }) => (
+            <div key={label} className="flex items-center justify-between rounded-xl border border-border bg-card px-4 py-3">
+              <span className="text-sm font-medium text-muted-foreground">{label}</span>
+              <span className={`text-lg font-bold rounded-lg px-2 py-0.5 ${accent}`}>{count}</span>
+            </div>
+          ))}
+        </div>
+
+        {/* Error Display */}
+        {error && (
+          <Card className="border-destructive">
+            <CardContent className="p-4">
+              <div className="flex items-center gap-2 text-destructive">
+                <MapPin className="w-4 h-4" />
+                <span>{error}</span>
+                <Button variant="ghost" size="sm" onClick={() => setError('')}>
+                  <X className="w-4 h-4" />
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Filters and Search */}
+        <Card>
           <CardContent className="p-4">
-            <div className="flex items-center gap-2 text-destructive">
-              <MapPin className="w-4 h-4" />
-              <span>{error}</span>
-              <Button variant="ghost" size="sm" onClick={() => setError('')}>
-                <X className="w-4 h-4" />
-              </Button>
+            <div className="flex flex-col sm:flex-row gap-4">
+              <div className="flex-1">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                  <Input
+                    placeholder="Search spots by name, host, or address..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="pl-10"
+                  />
+                </div>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                <Button
+                  variant={statusFilter === 'all' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => setStatusFilter('all')}
+                >
+                  All
+                </Button>
+                <Button
+                  variant={statusFilter === 'active' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => setStatusFilter('active')}
+                >
+                  Active
+                </Button>
+                <Button
+                  variant={statusFilter === 'pending' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => setStatusFilter('pending')}
+                >
+                  Pending
+                </Button>
+                <Button
+                  variant={statusFilter === 'inactive' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => setStatusFilter('inactive')}
+                >
+                  Inactive
+                </Button>
+              </div>
             </div>
           </CardContent>
         </Card>
-      )}
 
-      {/* Filters and Search */}
-      <Card>
-        <CardContent className="p-4">
-          <div className="flex flex-col sm:flex-row gap-4">
-            <div className="flex-1">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                <Input
-                  placeholder="Search spots by name, host, or address..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10"
-                />
+        {/* Spots Table */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Charging Spots ({filteredSpots.length})</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {loading ? (
+              <div className="flex items-center justify-center py-12">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                <p className="ml-4 text-muted-foreground">Loading charging spots...</p>
               </div>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              <Button
-                variant={statusFilter === 'all' ? 'default' : 'outline'}
-                size="sm"
-                onClick={() => setStatusFilter('all')}
-              >
-                All
-              </Button>
-              <Button
-                variant={statusFilter === 'active' ? 'default' : 'outline'}
-                size="sm"
-                onClick={() => setStatusFilter('active')}
-              >
-                Active
-              </Button>
-              <Button
-                variant={statusFilter === 'pending' ? 'default' : 'outline'}
-                size="sm"
-                onClick={() => setStatusFilter('pending')}
-              >
-                Pending
-              </Button>
-              <Button
-                variant={statusFilter === 'inactive' ? 'default' : 'outline'}
-                size="sm"
-                onClick={() => setStatusFilter('inactive')}
-              >
-                Inactive
-              </Button>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Spots Table */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Charging Spots ({filteredSpots.length})</CardTitle>
-        </CardHeader>
-        <CardContent>
-          {loading ? (
-            <div className="flex items-center justify-center py-12">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-              <p className="ml-4 text-muted-foreground">Loading charging spots...</p>
-            </div>
-          ) : filteredSpots.length === 0 ? (
-            <div className="text-center py-12">
-              <MapPin className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-              <h3 className="text-lg font-semibold mb-2">No charging spots found</h3>
-              <p className="text-muted-foreground">
-                {searchTerm ? 'Try adjusting your search terms' : 'No charging spots match the current filter'}
-              </p>
-            </div>
-          ) : (
+            ) : filteredSpots.length === 0 ? (
+              <div className="text-center py-12">
+                <MapPin className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+                <h3 className="text-lg font-semibold mb-2">No charging spots found</h3>
+                <p className="text-muted-foreground">
+                  {searchTerm ? 'Try adjusting your search terms' : 'No charging spots match the current filter'}
+                </p>
+              </div>
+            ) : (
               <div className="responsive-table">
                 <Table>
                   <TableHeader>
@@ -428,12 +428,12 @@ const AdminSpotsPage: React.FC = () => {
                               className: `w-4 h-4 ${getStatusBadgeColor(spot.status).split(' ')[0]}`
                             })}
                             <Badge className={getStatusBadgeColor(spot.status)}>
-                              {spot.status.charAt(0).toUpperCase() + spot.status.slice(1)}
+                              {spot.status ? spot.status.charAt(0).toUpperCase() + spot.status.slice(1) : 'Unknown'}
                             </Badge>
                           </div>
                         </TableCell>
                         <TableCell>
-                          <div className="font-medium">{formatCurrency(spot.pricePerHour)}/hr</div>
+                          <div className="font-medium">{formatCurrency(spot.pricePerHour ?? 0)}/hr</div>
                           {spot.pricePerMinute && (
                             <div className="text-sm text-muted-foreground">
                               {formatCurrency(spot.pricePerMinute)}/min
@@ -443,7 +443,7 @@ const AdminSpotsPage: React.FC = () => {
                         <TableCell>
                           <div className="flex items-center gap-1">
                             <Star className="w-4 h-4 text-yellow-500 fill-current" />
-                            <span className="font-medium">{spot.rating.toFixed(1)}</span>
+                            <span className="font-medium">{(spot.rating ?? 0).toFixed(1)}</span>
                             <span className="text-sm text-muted-foreground">
                               ({spot.reviews ? spot.reviews.length : 0} reviews)
                             </span>
@@ -513,143 +513,143 @@ const AdminSpotsPage: React.FC = () => {
                   </TableBody>
                 </Table>
               </div>
-          )}
-        </CardContent>
-      </Card>
-
-      {/* Delete Confirmation Dialog */}
-      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Delete Charging Spot</AlertDialogTitle>
-            <AlertDialogDescription>
-              Are you sure you want to delete "{selectedSpot?.name}"? This action cannot be undone and will remove all associated data including charging history and reviews.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={handleDeleteSpot}
-              className="bg-destructive text-destructive-foreground"
-              disabled={actionLoading}
-            >
-              {actionLoading ? 'Deleting...' : 'Delete'}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-
-      {/* Spot Details Dialog */}
-      <Dialog open={detailDialogOpen} onOpenChange={setDetailDialogOpen}>
-        <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              {selectedSpot?.name ?? 'Charging Spot'}
-              {selectedSpot?.status && (
-                <Badge className={getStatusBadgeColor(selectedSpot.status)}>
-                  {selectedSpot.status}
-                </Badge>
-              )}
-            </DialogTitle>
-            {selectedSpot?.description && (
-              <DialogDescription className="text-sm">{selectedSpot.description}</DialogDescription>
             )}
-          </DialogHeader>
+          </CardContent>
+        </Card>
 
-          {selectedSpot && (
-            <div className="space-y-5">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <DetailItem icon={MapPin} label="Address" value={`${selectedSpot.address}, ${selectedSpot.city}, ${selectedSpot.state} - ${selectedSpot.pincode}`} />
-                <DetailItem
-                  icon={MapPin}
-                  label="Coordinates"
-                  value={`Lat ${selectedSpot.coordinates?.lat?.toFixed(5) ?? '—'}, Lng ${selectedSpot.coordinates?.lng?.toFixed(5) ?? '—'}`}
-                />
-                <DetailItem icon={Zap} label="Outlet Type" value={selectedSpot.outletType?.replace('_', ' ').toUpperCase() ?? '—'} />
-                <DetailItem icon={Zap} label="Charging Speed" value={selectedSpot.chargingSpeed?.toUpperCase() ?? '—'} />
-                <DetailItem icon={Clock} label="Available Hours" value={selectedSpot.availableHours || '—'} />
-                <DetailItem icon={ImageIcon} label="Category" value={selectedSpot.category?.replace('_', ' ').toUpperCase() ?? '—'} />
-                <DetailItem icon={Zap} label="Price per Hour" value={formatCurrency(selectedSpot.pricePerHour || 0)} />
-                {selectedSpot.pricePerMinute ? (
-                  <DetailItem icon={Zap} label="Price per Minute" value={formatCurrency(selectedSpot.pricePerMinute)} />
-                ) : (
-                  <DetailItem icon={Zap} label="Price per Minute" value="—" />
+        {/* Delete Confirmation Dialog */}
+        <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Delete Charging Spot</AlertDialogTitle>
+              <AlertDialogDescription>
+                Are you sure you want to delete "{selectedSpot?.name}"? This action cannot be undone and will remove all associated data including charging history and reviews.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction
+                onClick={handleDeleteSpot}
+                className="bg-destructive text-destructive-foreground"
+                disabled={actionLoading}
+              >
+                {actionLoading ? 'Deleting...' : 'Delete'}
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+
+        {/* Spot Details Dialog */}
+        <Dialog open={detailDialogOpen} onOpenChange={setDetailDialogOpen}>
+          <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                {selectedSpot?.name ?? 'Charging Spot'}
+                {selectedSpot?.status && (
+                  <Badge className={getStatusBadgeColor(selectedSpot.status)}>
+                    {selectedSpot.status}
+                  </Badge>
                 )}
-              </div>
+              </DialogTitle>
+              {selectedSpot?.description && (
+                <DialogDescription className="text-sm">{selectedSpot.description}</DialogDescription>
+              )}
+            </DialogHeader>
 
-              {selectedSpot.amenities?.length > 0 && (
-                <div>
-                  <p className="text-sm font-medium mb-2">Facilities</p>
-                  <div className="flex flex-wrap gap-2">
-                    {selectedSpot.amenities
-                      .filter(a => a.available)
-                      .map(a => (
-                        <StatusBadge key={a.id} variant="secondary" className="text-xs">
-                          {a.name}
-                        </StatusBadge>
-                      ))}
+            {selectedSpot && (
+              <div className="space-y-5">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <DetailItem icon={MapPin} label="Address" value={`${selectedSpot.address}, ${selectedSpot.city}, ${selectedSpot.state} - ${selectedSpot.pincode}`} />
+                  <DetailItem
+                    icon={MapPin}
+                    label="Coordinates"
+                    value={`Lat ${selectedSpot.coordinates?.lat?.toFixed(5) ?? '—'}, Lng ${selectedSpot.coordinates?.lng?.toFixed(5) ?? '—'}`}
+                  />
+                  <DetailItem icon={Zap} label="Outlet Type" value={selectedSpot.outletType?.replace('_', ' ').toUpperCase() ?? '—'} />
+                  <DetailItem icon={Zap} label="Charging Speed" value={selectedSpot.chargingSpeed?.toUpperCase() ?? '—'} />
+                  <DetailItem icon={Clock} label="Available Hours" value={selectedSpot.availableHours || '—'} />
+                  <DetailItem icon={ImageIcon} label="Category" value={selectedSpot.category?.replace('_', ' ').toUpperCase() ?? '—'} />
+                  <DetailItem icon={Zap} label="Price per Hour" value={formatCurrency(selectedSpot.pricePerHour || 0)} />
+                  {selectedSpot.pricePerMinute ? (
+                    <DetailItem icon={Zap} label="Price per Minute" value={formatCurrency(selectedSpot.pricePerMinute)} />
+                  ) : (
+                    <DetailItem icon={Zap} label="Price per Minute" value="—" />
+                  )}
+                </div>
+
+                {selectedSpot.amenities?.length > 0 && (
+                  <div>
+                    <p className="text-sm font-medium mb-2">Facilities</p>
+                    <div className="flex flex-wrap gap-2">
+                      {selectedSpot.amenities
+                        .filter(a => a.available)
+                        .map(a => (
+                          <StatusBadge key={a.id} variant="secondary" className="text-xs">
+                            {a.name}
+                          </StatusBadge>
+                        ))}
+                    </div>
+                  </div>
+                )}
+
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 bg-muted/40 rounded-lg p-4">
+                  <div>
+                    <p className="text-xs text-muted-foreground">Rating</p>
+                    <p className="font-semibold flex items-center gap-1">
+                      <Star className="w-4 h-4 text-yellow-500 fill-current" /> {(selectedSpot.rating ?? 0).toFixed(1)}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-muted-foreground">Reviews</p>
+                    <p className="font-semibold">{selectedSpot.reviews ? selectedSpot.reviews.length : 0}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-muted-foreground">Total Charges</p>
+                    <p className="font-semibold">{selectedSpot.totalCharges ?? 0}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-muted-foreground">Verified</p>
+                    <p className="font-semibold">{selectedSpot.isVerified ? 'Yes' : 'No'}</p>
                   </div>
                 </div>
-              )}
 
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 bg-muted/40 rounded-lg p-4">
-                <div>
-                  <p className="text-xs text-muted-foreground">Rating</p>
-                  <p className="font-semibold flex items-center gap-1">
-                    <Star className="w-4 h-4 text-yellow-500 fill-current" /> {selectedSpot.rating.toFixed(1)}
+                <div className="text-xs text-muted-foreground space-y-1">
+                  <p><strong>Host:</strong> {selectedSpot.hostName} ({selectedSpot.hostEmail}){selectedSpot.hostPhone ? ` · ${selectedSpot.hostPhone}` : ''}</p>
+                  {selectedSpot.googleMapsLink && (
+                    <a href={selectedSpot.googleMapsLink} target="_blank" rel="noopener noreferrer" className="text-primary underline break-all">
+                      Open in Google Maps
+                    </a>
+                  )}
+                  <p>
+                    <strong>Created:</strong> {selectedSpot.createdAt ? formatDate(selectedSpot.createdAt) : '—'} · <strong>Updated:</strong> {selectedSpot.updatedAt ? formatDate(selectedSpot.updatedAt) : '—'}
                   </p>
                 </div>
-                <div>
-                  <p className="text-xs text-muted-foreground">Reviews</p>
-                  <p className="font-semibold">{selectedSpot.reviews ? selectedSpot.reviews.length : 0}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-muted-foreground">Total Charges</p>
-                  <p className="font-semibold">{selectedSpot.totalCharges ?? 0}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-muted-foreground">Verified</p>
-                  <p className="font-semibold">{selectedSpot.isVerified ? 'Yes' : 'No'}</p>
-                </div>
-              </div>
 
-              <div className="text-xs text-muted-foreground space-y-1">
-                <p><strong>Host:</strong> {selectedSpot.hostName} ({selectedSpot.hostEmail}){selectedSpot.hostPhone ? ` · ${selectedSpot.hostPhone}` : ''}</p>
-                {selectedSpot.googleMapsLink && (
-                  <a href={selectedSpot.googleMapsLink} target="_blank" rel="noopener noreferrer" className="text-primary underline break-all">
-                    Open in Google Maps
-                  </a>
-                )}
-                <p>
-                  <strong>Created:</strong> {selectedSpot.createdAt ? formatDate(selectedSpot.createdAt) : '—'} · <strong>Updated:</strong> {selectedSpot.updatedAt ? formatDate(selectedSpot.updatedAt) : '—'}
-                </p>
-              </div>
-
-              {selectedSpot.photos?.length > 0 && (
-                <div>
-                  <p className="text-sm font-medium mb-2">Photos ({selectedSpot.photos.length})</p>
-                  <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
-                    {selectedSpot.photos.map((url, i) => (
-                      <img key={i} src={url} alt={`${selectedSpot.name} photo ${i + 1}`} className="w-full h-20 object-cover rounded-md" />
-                    ))}
+                {selectedSpot.photos?.length > 0 && (
+                  <div>
+                    <p className="text-sm font-medium mb-2">Photos ({selectedSpot.photos.length})</p>
+                    <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
+                      {selectedSpot.photos.map((url, i) => (
+                        <img key={i} src={url} alt={`${selectedSpot.name} photo ${i + 1}`} className="w-full h-20 object-cover rounded-md" />
+                      ))}
+                    </div>
                   </div>
-                </div>
-              )}
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
+                )}
+              </div>
+            )}
+          </DialogContent>
+        </Dialog>
 
-      {/* Add / Edit Spot Modal */}
-      <AddSpotModal
-        isOpen={addSpotModalOpen}
-        onClose={() => {
-          setAddSpotModalOpen(false);
-          setEditSpot(null);
-        }}
-        onSuccess={editSpot ? handleSpotEdited : handleSpotCreated}
-        editSpot={editSpot ?? undefined}
-      />
+        {/* Add / Edit Spot Modal */}
+        <AddSpotModal
+          isOpen={addSpotModalOpen}
+          onClose={() => {
+            setAddSpotModalOpen(false);
+            setEditSpot(null);
+          }}
+          onSuccess={editSpot ? handleSpotEdited : handleSpotCreated}
+          editSpot={editSpot ?? undefined}
+        />
       </div>
     </ResponsiveContainer>
   );
