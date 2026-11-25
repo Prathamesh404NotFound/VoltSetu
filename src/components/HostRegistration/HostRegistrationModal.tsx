@@ -11,10 +11,9 @@ import StepIndicator from "@/components/StepIndicator";
 import FacilityPicker from "@/components/FacilityPicker";
 import FacilitiesChips from "@/components/FacilitiesChips";
 import { sanitizeFacilityIds, FACILITIES as FACILITY_LIST, type Facility } from "@/lib/facilities";
-import { submitHostRegistration } from "@/lib/hostRegistration";
+import { submitHostRegistration, getCityFallbackCoordinates } from "@/lib/hostRegistration";
 import {
   submitHostVerification,
-  getOwnVerificationCase,
   setVerificationContactPhone,
 } from "@/lib/hostVerificationService";
 import { toast } from "sonner";
@@ -94,8 +93,8 @@ const haversineKm = (a: Coords, b: Coords): number => {
   const s =
     Math.sin(dLat / 2) ** 2 +
     Math.cos((a.lat * Math.PI) / 180) *
-      Math.cos((b.lat * Math.PI) / 180) *
-      Math.sin(dLng / 2) ** 2;
+    Math.cos((b.lat * Math.PI) / 180) *
+    Math.sin(dLng / 2) ** 2;
   return R * 2 * Math.atan2(Math.sqrt(s), Math.sqrt(1 - s));
 };
 
@@ -125,11 +124,11 @@ const defaultFormData = (user: any): FormData => ({
 });
 
 const STEPS = [
-  { label: "Personal Info",    icon: User            },
-  { label: "Location Details", icon: Home            },
-  { label: "Charging Setup",   icon: Zap             },
-  { label: "Identity Docs",    icon: FileText        },
-  { label: "Confirm & Submit", icon: CheckCircle2    },
+  { label: "Personal Info", icon: User },
+  { label: "Location Details", icon: Home },
+  { label: "Charging Setup", icon: Zap },
+  { label: "Identity Docs", icon: FileText },
+  { label: "Confirm & Submit", icon: CheckCircle2 },
 ];
 const TOTAL_STEPS = 5;
 
@@ -156,24 +155,24 @@ const HostRegistrationModal = ({ isOpen, onClose }: HostRegistrationModalProps) 
   const [docDetail, setDocDetail] = useState("");
 
   // ── Autocomplete state ──
-  const [addressQuery, setAddressQuery]         = useState("");
-  const [suggestions, setSuggestions]           = useState<NominatimResult[]>([]);
-  const [suggestLoading, setSuggestLoading]     = useState(false);
-  const [showSuggestions, setShowSuggestions]   = useState(false);
+  const [addressQuery, setAddressQuery] = useState("");
+  const [suggestions, setSuggestions] = useState<NominatimResult[]>([]);
+  const [suggestLoading, setSuggestLoading] = useState(false);
+  const [showSuggestions, setShowSuggestions] = useState(false);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const suggBoxRef  = useRef<HTMLDivElement>(null);
+  const suggBoxRef = useRef<HTMLDivElement>(null);
 
   // ── GPS state ──
-  const [gpsLoading,  setGpsLoading]  = useState(false);
-  const [gpsError,    setGpsError]    = useState("");
-  const [gpsSuccess,  setGpsSuccess]  = useState(false);
+  const [gpsLoading, setGpsLoading] = useState(false);
+  const [gpsError, setGpsError] = useState("");
+  const [gpsSuccess, setGpsSuccess] = useState(false);
   const [locationAccuracy, setLocationAccuracy] = useState<number | null>(null);
-  const [gpsQuality, setGpsQuality]   = useState<"reliable" | "approximate" | "imprecise" | null>(null);
+  const [gpsQuality, setGpsQuality] = useState<"reliable" | "approximate" | "imprecise" | null>(null);
 
   // ── Google Maps link state ──
-  const [gmapsError,        setGmapsError]        = useState("");
-  const [linkCopied,        setLinkCopied]        = useState(false);
-  const [gmapsLinkLoading,  setGmapsLinkLoading]  = useState(false);
+  const [gmapsError, setGmapsError] = useState("");
+  const [linkCopied, setLinkCopied] = useState(false);
+  const [gmapsLinkLoading, setGmapsLinkLoading] = useState(false);
   const generateLinkOnGpsRef = useRef(false);
 
   // ── Live preview toggle ──
@@ -240,14 +239,14 @@ const HostRegistrationModal = ({ isOpen, onClose }: HostRegistrationModalProps) 
 
     setForm(prev => ({
       ...prev,
-      address:       result.display_name.split(",")[0] || prev.address,
-      city:          addr.city || addr.town || addr.village || prev.city,
-      state:         addr.state || prev.state,
-      pincode:       addr.postcode || prev.pincode,
+      address: result.display_name.split(",")[0] || prev.address,
+      city: addr.city || addr.town || addr.village || prev.city,
+      state: addr.state || prev.state,
+      pincode: addr.postcode || prev.pincode,
       addressCoords: addrCoords,
-      coordinates:   addrCoords,
+      coordinates: addrCoords,
       locationLabel: result.display_name,
-      coordSource:   newSource,
+      coordSource: newSource,
     }));
     setAddressQuery(result.display_name);
     setShowSuggestions(false);
@@ -258,7 +257,7 @@ const HostRegistrationModal = ({ isOpen, onClose }: HostRegistrationModalProps) 
     const gps: Coords = { lat, lng };
     let label = `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
     try {
-      const res  = await fetch(
+      const res = await fetch(
         `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&addressdetails=1`,
         { headers: { "Accept-Language": "en" } }
       );
@@ -267,20 +266,20 @@ const HostRegistrationModal = ({ isOpen, onClose }: HostRegistrationModalProps) 
       const a = json.address || {};
       const parts: string[] = [];
       if (a.house_number) parts.push(a.house_number);
-      if (a.road)         parts.push(a.road);
+      if (a.road) parts.push(a.road);
       if (a.suburb || a.neighbourhood) parts.push(a.suburb || a.neighbourhood);
       const detectedAddress = parts.length > 0 ? parts.join(", ") : (json.display_name?.split(",")[0] || "");
       setAddressQuery(json.display_name || label);
       setForm(prev => ({
         ...prev,
-        address:       detectedAddress || prev.address,
-        city:          a.city || a.town || a.village || prev.city,
-        state:         a.state || prev.state,
-        pincode:       a.postcode || prev.pincode,
-        gpsCoords:     gps,
-        coordinates:   gps,
+        address: detectedAddress || prev.address,
+        city: a.city || a.town || a.village || prev.city,
+        state: a.state || prev.state,
+        pincode: a.postcode || prev.pincode,
+        gpsCoords: gps,
+        coordinates: gps,
         locationLabel: label,
-        coordSource:   "gps",
+        coordSource: "gps",
       }));
     } catch {
       setForm(prev => ({ ...prev, gpsCoords: gps, coordinates: gps, locationLabel: label, coordSource: "gps" }));
@@ -301,25 +300,25 @@ const HostRegistrationModal = ({ isOpen, onClose }: HostRegistrationModalProps) 
     setGpsQuality(null);
 
     const applyGpsResult = async (pos: { coords: { latitude: number; longitude: number; accuracy: number } }) => {
-      const lat      = pos.coords.latitude;
-      const lng      = pos.coords.longitude;
+      const lat = pos.coords.latitude;
+      const lng = pos.coords.longitude;
       const accuracy = Math.round(pos.coords.accuracy);
       const gps: Coords = { lat, lng };
       let label = `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
 
       setLocationAccuracy(accuracy);
       const quality: "reliable" | "approximate" | "imprecise" =
-        accuracy <= 100  ? "reliable" :
-        accuracy <= 1000 ? "approximate" : "imprecise";
+        accuracy <= 100 ? "reliable" :
+          accuracy <= 1000 ? "approximate" : "imprecise";
       setGpsQuality(quality);
 
       if (quality !== "imprecise") {
         let detectedAddress = "";
-        let detectedCity    = "";
-        let detectedState   = "";
+        let detectedCity = "";
+        let detectedState = "";
         let detectedPincode = "";
         try {
-          const res  = await fetch(
+          const res = await fetch(
             `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&addressdetails=1`,
             { headers: { "Accept-Language": "en" } }
           );
@@ -328,13 +327,13 @@ const HostRegistrationModal = ({ isOpen, onClose }: HostRegistrationModalProps) 
           const a = json.address || {};
           const parts: string[] = [];
           if (a.house_number) parts.push(a.house_number);
-          if (a.road)         parts.push(a.road);
+          if (a.road) parts.push(a.road);
           if (a.suburb || a.neighbourhood) parts.push(a.suburb || a.neighbourhood);
           detectedAddress = parts.length > 0
             ? parts.join(", ")
             : (json.display_name?.split(",")[0] || "");
-          detectedCity    = a.city  || a.town  || a.village || "";
-          detectedState   = a.state || "";
+          detectedCity = a.city || a.town || a.village || "";
+          detectedState = a.state || "";
           detectedPincode = a.postcode || "";
           setAddressQuery(json.display_name || label);
         } catch { /* keep defaults on network error */ }
@@ -343,23 +342,23 @@ const HostRegistrationModal = ({ isOpen, onClose }: HostRegistrationModalProps) 
           const mismatch = prev.addressCoords && haversineKm(prev.addressCoords, gps) > 2;
           return {
             ...prev,
-            address:       detectedAddress || prev.address,
-            city:          detectedCity    || prev.city,
-            state:         detectedState   || prev.state,
-            pincode:       detectedPincode || prev.pincode,
-            gpsCoords:     gps,
-            coordinates:   mismatch ? prev.coordinates : gps,
+            address: detectedAddress || prev.address,
+            city: detectedCity || prev.city,
+            state: detectedState || prev.state,
+            pincode: detectedPincode || prev.pincode,
+            gpsCoords: gps,
+            coordinates: mismatch ? prev.coordinates : gps,
             locationLabel: mismatch ? prev.locationLabel : label,
-            coordSource:   mismatch ? "address" : "gps",
+            coordSource: mismatch ? "address" : "gps",
           };
         });
       } else {
         setForm(prev => ({
           ...prev,
-          gpsCoords:     gps,
-          coordinates:   gps,
+          gpsCoords: gps,
+          coordinates: gps,
           locationLabel: label,
-          coordSource:   "gps",
+          coordSource: "gps",
         }));
       }
 
@@ -471,9 +470,9 @@ const HostRegistrationModal = ({ isOpen, onClose }: HostRegistrationModalProps) 
       return;
     }
 
-    const qMatch  = url.match(/[?&]q=(-?\d+\.\d+),(-?\d+\.\d+)/);
+    const qMatch = url.match(/[?&]q=(-?\d+\.\d+),(-?\d+\.\d+)/);
     const atMatch = url.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/);
-    const match   = qMatch || atMatch;
+    const match = qMatch || atMatch;
 
     if (!match) {
       setGmapsError(
@@ -492,12 +491,24 @@ const HostRegistrationModal = ({ isOpen, onClose }: HostRegistrationModalProps) 
   const canProceed = () => {
     switch (step) {
       case 1: return !!(form.fullName.trim() && form.email.trim() && form.phone.trim());
-      case 2: return !!(form.city.trim() && form.coordinates);
-      case 3: return !!(form.outletType && form.availableHours && form.pricePerHour && form.coordinates);
+      // Allow proceeding with just a city name — coordinates will be resolved via
+      // city fallback in handleStepAdvance if GPS/geocoding never ran.
+      case 2: return !!(form.city.trim());
+      case 3: return !!(form.outletType && form.availableHours && form.pricePerHour);
       case 4: return form.documents.length >= 1;
       case 5: return form.agreeToTerms;
       default: return true;
     }
+  };
+
+  // Advance a step, applying a city-level coordinate fallback if the user
+  // never used GPS or the address geocoder so they are never blocked at step 2/3.
+  const handleStepAdvance = () => {
+    if ((step === 2 || step === 3) && !form.coordinates && form.city.trim()) {
+      const fallback = getCityFallbackCoordinates(form.city);
+      update("coordinates", fallback);
+    }
+    setStep(s => s + 1);
   };
 
   useEffect(() => {
@@ -515,37 +526,54 @@ const HostRegistrationModal = ({ isOpen, onClose }: HostRegistrationModalProps) 
     if (!user) return;
     setIsSubmitting(true);
     let registrationId: string | undefined;
+
+    // Resolve coordinates one last time — if the user typed a city but never
+    // used GPS or the geocoder, apply the city-level fallback before submitting.
+    const submitCoords =
+      form.coordinates ?? (form.city.trim() ? getCityFallbackCoordinates(form.city) : null);
+
+    // Hard timeout: if Firebase writes stall for >20 s the spinner will
+    // release and the user gets an actionable error instead of hanging forever.
+    const SUBMIT_TIMEOUT_MS = 20_000;
+    const timeoutSignal = new Promise<never>((_, reject) =>
+      setTimeout(
+        () => reject(new Error("Registration timed out — please check your connection and try again.")),
+        SUBMIT_TIMEOUT_MS,
+      ),
+    );
+
     try {
       // 1. Submit the host registration (spot listing application)
-      const regResult = await submitHostRegistration({
-        fullName:       form.fullName,
-        email:          form.email,
-        phone:          form.phone,
-        address:        form.address,
-        city:           form.city,
-        state:          form.state,
-        pincode:        form.pincode,
-        spotType:       form.spotType,
-        outletType:     form.outletType,
-        chargingSpeed:  form.chargingSpeed,
-        availableHours: form.availableHours,
-        pricePerHour:   form.pricePerHour,
-        coordinates:    form.coordinates,
-        agreeToTerms:   form.agreeToTerms,
-        googleMapsLink: form.googleMapsLink || "",
-        facilities:     sanitizeFacilityIds(form.facilities),
-        referralCode:   form.referralCode?.trim() || "",
-      });
+      const regResult = await Promise.race([
+        submitHostRegistration({
+          fullName: form.fullName,
+          email: form.email,
+          phone: form.phone,
+          address: form.address,
+          city: form.city,
+          state: form.state,
+          pincode: form.pincode,
+          spotType: form.spotType,
+          outletType: form.outletType,
+          chargingSpeed: form.chargingSpeed,
+          availableHours: form.availableHours,
+          pricePerHour: form.pricePerHour,
+          coordinates: submitCoords,
+          agreeToTerms: form.agreeToTerms,
+          googleMapsLink: form.googleMapsLink || "",
+          facilities: sanitizeFacilityIds(form.facilities),
+          referralCode: form.referralCode?.trim() || "",
+        }),
+        timeoutSignal,
+      ]);
       registrationId = regResult.registrationId;
 
       // 2. Submit identity documents so the host enters the verification queue
       if (form.documents.length > 0) {
-        const existing = await getOwnVerificationCase(user.uid);
-        // Mirror contact phone onto the verification case for the review queue
-        if (form.phone && (!existing || !existing.userPhone)) {
-          await setVerificationContactPhone(user.uid, form.phone);
-        }
         try {
+          // Create the verification case first so the record exists before
+          // we write the contact phone onto it (fixes the race where
+          // setVerificationContactPhone found no case and silently dropped the phone).
           await submitHostVerification({
             registrationId,
             documents: form.documents.map((d) => ({
@@ -556,6 +584,10 @@ const HostRegistrationModal = ({ isOpen, onClose }: HostRegistrationModalProps) 
               documentNumber: d.detail.slice(0, 40),
             })),
           });
+          // Now that the case is guaranteed to exist, mirror the contact phone.
+          if (form.phone) {
+            await setVerificationContactPhone(user.id, form.phone);
+          }
         } catch (docError) {
           console.error("Document submission failed:", docError);
           toast.warning("Registration saved, but documents failed to attach — you can upload them later in Dashboard → Settings.");
@@ -569,7 +601,7 @@ const HostRegistrationModal = ({ isOpen, onClose }: HostRegistrationModalProps) 
       setAddressQuery("");
     } catch (error) {
       console.error("Registration error:", error);
-      toast.error("Registration failed. Please try again.");
+      toast.error((error as Error).message || "Registration failed. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -643,15 +675,14 @@ const HostRegistrationModal = ({ isOpen, onClose }: HostRegistrationModalProps) 
             <button
               onClick={handleGetGps}
               disabled={gpsLoading}
-              className={`w-full flex items-center justify-center gap-3 py-3 px-6 rounded-xl border-2 border-dashed transition-all font-semibold text-sm ${
-                gpsQuality === "reliable"
-                  ? "border-green-500 bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400"
-                  : gpsQuality === "approximate"
+              className={`w-full flex items-center justify-center gap-3 py-3 px-6 rounded-xl border-2 border-dashed transition-all font-semibold text-sm ${gpsQuality === "reliable"
+                ? "border-green-500 bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400"
+                : gpsQuality === "approximate"
                   ? "border-amber-400 bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-400"
                   : gpsQuality === "imprecise"
-                  ? "border-orange-500 bg-orange-50 dark:bg-orange-900/20 text-orange-700 dark:text-orange-400"
-                  : "border-primary bg-primary/5 text-primary hover:bg-primary/10"
-              }`}
+                    ? "border-orange-500 bg-orange-50 dark:bg-orange-900/20 text-orange-700 dark:text-orange-400"
+                    : "border-primary bg-primary/5 text-primary hover:bg-primary/10"
+                }`}
             >
               {gpsLoading ? (
                 <><Loader2 className="w-4 h-4 animate-spin" />Detecting location…</>
@@ -789,11 +820,10 @@ const HostRegistrationModal = ({ isOpen, onClose }: HostRegistrationModalProps) 
                         ...prev, coordinates: prev.addressCoords, coordSource: "address",
                         locationLabel: addressQuery,
                       }))}
-                      className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all ${
-                        form.coordSource === "address"
-                          ? "bg-primary text-primary-foreground border-primary"
-                          : "border-border text-foreground hover:bg-muted"
-                      }`}
+                      className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all ${form.coordSource === "address"
+                        ? "bg-primary text-primary-foreground border-primary"
+                        : "border-border text-foreground hover:bg-muted"
+                        }`}
                     >
                       <MapPin className="inline w-3 h-3 mr-1" />Use Searched Address
                     </button>
@@ -802,11 +832,10 @@ const HostRegistrationModal = ({ isOpen, onClose }: HostRegistrationModalProps) 
                         ...prev, coordinates: prev.gpsCoords, coordSource: "gps",
                         locationLabel: `${prev.gpsCoords!.lat.toFixed(5)}, ${prev.gpsCoords!.lng.toFixed(5)}`,
                       }))}
-                      className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all ${
-                        form.coordSource === "gps"
-                          ? "bg-primary text-primary-foreground border-primary"
-                          : "border-border text-foreground hover:bg-muted"
-                      }`}
+                      className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all ${form.coordSource === "gps"
+                        ? "bg-primary text-primary-foreground border-primary"
+                        : "border-border text-foreground hover:bg-muted"
+                        }`}
                     >
                       <Navigation className="inline w-3 h-3 mr-1" />Use GPS Position
                     </button>
@@ -825,19 +854,17 @@ const HostRegistrationModal = ({ isOpen, onClose }: HostRegistrationModalProps) 
 
             {form.coordinates && (
               <div className="flex items-center gap-2 text-xs text-muted-foreground px-1 flex-wrap">
-                <CheckCircle2 className={`w-4 h-4 flex-shrink-0 ${
-                  gpsQuality === "reliable" || gpsQuality === null ? "text-green-500" :
+                <CheckCircle2 className={`w-4 h-4 flex-shrink-0 ${gpsQuality === "reliable" || gpsQuality === null ? "text-green-500" :
                   gpsQuality === "approximate" ? "text-amber-500" : "text-orange-500"
-                }`} />
+                  }`} />
                 <span>
                   Pin set via <strong className="text-foreground">{form.coordSource === "gps" ? (gpsQuality === null ? "manual map" : "GPS") : "address search"}</strong>
                   {" · "}
                   <span className="font-mono">{form.coordinates.lat.toFixed(5)}, {form.coordinates.lng.toFixed(5)}</span>
                   {locationAccuracy !== null && (
-                    <span className={`ml-1 ${
-                      gpsQuality === "reliable" ? "text-green-600" :
+                    <span className={`ml-1 ${gpsQuality === "reliable" ? "text-green-600" :
                       gpsQuality === "approximate" ? "text-amber-600" : "text-orange-600"
-                    }`}>
+                      }`}>
                       {" · accuracy: ±"}{locationAccuracy}{"m"}
                     </span>
                   )}
@@ -937,11 +964,10 @@ const HostRegistrationModal = ({ isOpen, onClose }: HostRegistrationModalProps) 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {["Home", "Shop", "Café / Restaurant", "Office", "Parking / Garage"].map(type => (
                     <button key={type} onClick={() => update("spotType", type)}
-                      className={`p-3 rounded-xl border-2 transition-all text-sm font-medium ${
-                        form.spotType === type
-                          ? "border-primary bg-primary/10 text-primary"
-                          : "border-border hover:border-primary/50 text-foreground"
-                      }`}>
+                      className={`p-3 rounded-xl border-2 transition-all text-sm font-medium ${form.spotType === type
+                        ? "border-primary bg-primary/10 text-primary"
+                        : "border-border hover:border-primary/50 text-foreground"
+                        }`}>
                       {type}
                     </button>
                   ))}
@@ -952,11 +978,10 @@ const HostRegistrationModal = ({ isOpen, onClose }: HostRegistrationModalProps) 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {["Standard 3-Pin", "5-Amp Socket", "16-Amp Socket", "Type 2 EV Charger"].map(type => (
                     <button key={type} onClick={() => update("outletType", type)}
-                      className={`p-3 rounded-xl border-2 transition-all text-sm font-medium ${
-                        form.outletType === type
-                          ? "border-primary bg-primary/10 text-primary"
-                          : "border-border hover:border-primary/50 text-foreground"
-                      }`}>
+                      className={`p-3 rounded-xl border-2 transition-all text-sm font-medium ${form.outletType === type
+                        ? "border-primary bg-primary/10 text-primary"
+                        : "border-border hover:border-primary/50 text-foreground"
+                        }`}>
                       {type}
                     </button>
                   ))}
@@ -967,11 +992,10 @@ const HostRegistrationModal = ({ isOpen, onClose }: HostRegistrationModalProps) 
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                   {["Slow (2-3 kW)", "Fast (7-22 kW)", "Rapid (50+ kW)"].map(speed => (
                     <button key={speed} onClick={() => update("chargingSpeed", speed)}
-                      className={`p-3 rounded-xl border-2 transition-all text-xs font-medium ${
-                        form.chargingSpeed === speed
-                          ? "border-primary bg-primary/10 text-primary"
-                          : "border-border hover:border-primary/50 text-foreground"
-                      }`}>
+                      className={`p-3 rounded-xl border-2 transition-all text-xs font-medium ${form.chargingSpeed === speed
+                        ? "border-primary bg-primary/10 text-primary"
+                        : "border-border hover:border-primary/50 text-foreground"
+                        }`}>
                       {speed}
                     </button>
                   ))}
@@ -1042,11 +1066,10 @@ const HostRegistrationModal = ({ isOpen, onClose }: HostRegistrationModalProps) 
                   <button
                     key={m.type}
                     onClick={() => setDocType(m.type)}
-                    className={`p-3 rounded-xl border-2 text-left transition-all ${
-                      docType === m.type
-                        ? "border-primary bg-primary/10"
-                        : "border-border hover:border-primary/50"
-                    }`}
+                    className={`p-3 rounded-xl border-2 text-left transition-all ${docType === m.type
+                      ? "border-primary bg-primary/10"
+                      : "border-border hover:border-primary/50"
+                      }`}
                   >
                     <p className={`text-sm font-medium ${docType === m.type ? "text-primary" : "text-foreground"}`}>
                       {m.label}
@@ -1264,7 +1287,7 @@ const HostRegistrationModal = ({ isOpen, onClose }: HostRegistrationModalProps) 
 
             <div className="flex items-start gap-3">
               <input type="checkbox" id="terms" checked={form.agreeToTerms}
-                onChange={e => update("agreeToTerms", e.checked)}
+                onChange={e => update("agreeToTerms", e.target.checked)}
                 className="mt-1 w-4 h-4 text-primary border-border rounded focus:ring-primary" />
               <label htmlFor="terms" className="text-sm text-muted-foreground">
                 I agree to the{" "}
@@ -1297,9 +1320,8 @@ const HostRegistrationModal = ({ isOpen, onClose }: HostRegistrationModalProps) 
             </button>
             <button
               onClick={() => setPreviewOpen(v => !v)}
-              className={`hidden lg:flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold border transition-colors ${
-                previewOpen ? "border-primary bg-primary/10 text-primary" : "border-border text-muted-foreground hover:bg-muted"
-              }`}
+              className={`hidden lg:flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold border transition-colors ${previewOpen ? "border-primary bg-primary/10 text-primary" : "border-border text-muted-foreground hover:bg-muted"
+                }`}
             >
               <Eye className="w-3.5 h-3.5" /> {previewOpen ? "Hide Live Preview" : "Show Live Preview"}
             </button>
@@ -1342,11 +1364,10 @@ const HostRegistrationModal = ({ isOpen, onClose }: HostRegistrationModalProps) 
                         <MapPin className="w-3 h-3" />
                         {form.coordSource === "gps" ? "GPS pinned" : form.coordinates ? "Address pinned" : "No pin yet"}
                       </span>
-                      <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                        form.coordinates
-                          ? "bg-emerald-100 text-emerald-700"
-                          : "bg-muted text-muted-foreground"
-                      }`}>
+                      <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${form.coordinates
+                        ? "bg-emerald-100 text-emerald-700"
+                        : "bg-muted text-muted-foreground"
+                        }`}>
                         {form.coordinates ? "Ready" : "Missing pin"}
                       </span>
                     </div>
@@ -1414,7 +1435,7 @@ const HostRegistrationModal = ({ isOpen, onClose }: HostRegistrationModalProps) 
                 )}
               </Button>
             ) : (
-              <Button onClick={() => setStep(s => s + 1)} disabled={!canProceed()}
+              <Button onClick={handleStepAdvance} disabled={!canProceed()}
                 className="flex items-center gap-2 px-8">
                 Next Step <ArrowRight className="w-4 h-4" />
               </Button>
