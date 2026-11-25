@@ -301,7 +301,7 @@ export default function FindSpots() {
       <SpotCard
         id={spot.id}
         name={spot.name}
-        host={spot.hostName}
+        host={spot.hostName ?? ""}
         hostId={spot.hostId}
         hostPhone={spot.hostPhone}
         distance={
@@ -423,11 +423,10 @@ export default function FindSpots() {
                     key={f}
                     onClick={() => setActiveFilter(f)}
                     aria-pressed={activeFilter === f}
-                    className={`px-4 py-2 rounded-full text-xs sm:text-sm font-semibold whitespace-nowrap transition-all ${
-                      activeFilter === f
+                    className={`px-4 py-2 rounded-full text-xs sm:text-sm font-semibold whitespace-nowrap transition-all ${activeFilter === f
                         ? "bg-primary text-primary-foreground shadow-md"
                         : "bg-white border border-slate-200/90 text-slate-700 hover:bg-slate-100/80 shadow-2xs"
-                    }`}
+                      }`}
                   >
                     {f}
                     {count !== null && (

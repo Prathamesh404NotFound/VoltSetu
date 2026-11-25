@@ -1,17 +1,17 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { 
-  ArrowRight, 
-  MapPin, 
-  Zap, 
-  Shield, 
-  Clock, 
-  Home, 
-  DollarSign, 
-  Users, 
-  CheckCircle, 
-  Sparkles, 
-  TrendingUp, 
+import {
+  ArrowRight,
+  MapPin,
+  Zap,
+  Shield,
+  Clock,
+  Home,
+  DollarSign,
+  Users,
+  CheckCircle,
+  Sparkles,
+  TrendingUp,
   Loader2,
   Navigation,
   AlertTriangle,
@@ -148,7 +148,7 @@ const Index = () => {
                 className="w-full h-[420px] sm:h-[500px] object-cover group-hover:scale-105 transition-transform duration-700"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/30 to-transparent" />
-              
+
               {/* Floating Overlay Badge */}
               <div className="absolute bottom-6 left-6 right-6 p-5 rounded-2xl bg-white/95 backdrop-blur-md border border-slate-200/80 shadow-xl">
                 <div className="flex items-center justify-between">
@@ -646,7 +646,7 @@ const Index = () => {
                 <SpotCard
                   id={spot.id}
                   name={spot.name}
-                  host={spot.hostName}
+                  host={spot.hostName ?? ""}
                   hostId={spot.hostId}
                   hostPhone={spot.hostPhone}
                   distance="0.8 km"
@@ -680,12 +680,12 @@ const Index = () => {
 
   return (
     <div className="overflow-hidden">
-      <SEO 
+      <SEO
         title="ChargePush — EV Charging Access That Keeps You Moving"
         description="Find EV charging access near you or along your route. Discover charging spots, compare options, plan charging and keep moving with ChargePush."
         schema={[orgSchema, faqSchema]}
       />
-      
+
       {heroSection}
       {trustStrip}
       {brandStorySection}

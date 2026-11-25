@@ -174,7 +174,7 @@ export async function getAllChargingSpots() {
     const spots = snapshot.val();
     return Object.keys(spots)
       .map((key) => ({ id: key, ...spots[key] }))
-      .filter(spot => spot.status !== "rejected"); // show pending and active spots in MVP
+      .filter(spot => spot.status === "active"); // only show admin-approved live spots
   } catch (error) {
     console.error("Error fetching all charging spots:", error);
     throw error;

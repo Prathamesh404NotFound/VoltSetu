@@ -149,7 +149,7 @@ export default function SpotCard({
     setImgError(false);
   }, [image]);
 
-  const hostFirstName = host.trim().split(/\s+/)[0] || host;
+  const hostFirstName = (host ?? "").trim().split(/\s+/)[0] || host || "Host";
   const isNew = !rating || reviews === 0;
   const showImage = Boolean(image) && !imgError;
 
